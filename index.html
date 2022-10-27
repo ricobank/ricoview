@@ -1,0 +1,57 @@
+<!DOC TYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ricobank</title>
+    <img src="ricobank.png" class="center">
+    <link rel="icon" type="image/x-icon" href="ricobank.png">
+    <style>
+      body {
+          text-align: center;
+          margin-left: auto;
+          margin-right: auto;
+          font-family: monospace;
+          max-width: 120ch;
+      }
+    </style>
+    <script defer src="dependencies.unmin.js"></script>
+    <script defer src="main.unmin.js"></script>
+</head>
+<body>
+
+<div>
+    <input type="radio" id="weth" name="ilk" value="weth" checked>
+    <label for="weth">WETH</label>
+    <input type="radio" id="reth" name="ilk" value="reth">
+    <label for="reth">RETH</label>
+    <input type="radio" id="gold" name="ilk" value="gold">
+    <label for="gold">GOLD</label>
+</div>
+
+<div>
+    <pre id="stats"></pre>
+</div>
+
+</br>
+
+<div>
+    <input type="button" id="btnFrob" value="modify">
+    <label for="rico">rico</label>
+    <input type="text" id="rico" name="rico" value="0" style='width:20ch'>
+    <label for="ink" id="gem">ink</label>
+    <input type="text" id="ink" name="ink" value="0" style='width:20ch'>
+</div>
+
+</br>
+</br>
+
+<hr>
+
+<p>
+  This page is designed to be saved (as in "File > Save") and be usable even if DNS or this web host go offline or are compromised.
+</p>
+
+<noscript>You need to enable JavaScript to use ricobank.</noscript>
+</body>
+</html>
