@@ -21,6 +21,12 @@
 <body>
 
 <div>
+    <pre id="ricoStats"></pre>
+</div>
+
+<br>
+
+<div>
     <input type="radio" id="weth" name="ilk" value="weth" checked>
     <label for="weth">WETH</label>
     <input type="radio" id="reth" name="ilk" value="reth">
@@ -30,25 +36,32 @@
 </div>
 
 <div>
-    <pre id="stats"></pre>
+    <pre id="ilkStats"></pre>
 </div>
-
-</br>
 
 <div>
-    <input type="button" id="btnFrob" value="modify">
-    <label for="rico">rico</label>
-    <input type="text" id="rico" name="rico" value="0" style='width:20ch'>
-    <label for="ink" id="gem">ink</label>
-    <input type="text" id="ink" name="ink" value="0" style='width:20ch'>
+    <input type="radio" id="borrow" name="sign" value="borrow" checked>
+    <label for="borrow">Borrow/deposit</label>
+    <input type="radio" id="repay" name="sign" value="repay">
+    <label for="repay">Repay/withdraw</label>
 </div>
 
-</br>
-</br>
+<br>
 
-<hr>
+<div>
+    <label for="dart">rico</label>
+    <input type="text" id="dart" name="dart" value="0" style='width:15ch'>
+    <label for="dink" id="gem">ink</label>
+    <input type="text" id="dink" name="dink" value="0" style='width:15ch'>
+    <input type="button" id="btnFrob" value="☀️">
+</div>
 
-<p>
+<div>
+    <pre id="urnStats"></pre>
+    <pre id="hookStats"></pre>
+</div>
+
+<p style="position:absolute; bottom:0">
   This page is designed to be saved (as in "File > Save") and be usable even if DNS or this web host go offline or are compromised.
 </p>
 

@@ -1,40 +1,100 @@
 import { ethers } from "ethers"
 import { BigNumber, utils } from 'ethers'
 
-const vatAddress = "0x3F18ace54E688Cd073582E1E68EAa759D69ecB61"
-const voxAddress = "0x7Dfd1007fb63c0f157daDC1932888a4eA8DBd239"
-const fbAddress  = "0xCa1D199b6F53Af7387ac543Af8e8a34455BBe5E0"
+const vatAddress = "0xbEB4945BdA47cFf99BC089D76CC5Df37C9334c4D"
+const voxAddress = "0x6B608893F6FE63A52C3A2954151f6C4058f1BA76"
+const fbAddress  = "0x9eb6F70fDdC4288fC842bAE36E022E4d51Bf1345"
+const erc20HookAddress = "0xEE91700336A256924E1D4f1EAe46cDEA0C90C478"
+
 const vatAbi = [
     "function par() public view returns (uint)",
-    "function ilks(bytes32) public view  returns (tuple(uint256 tart, uint256 rack, address fsrc, bytes32 ftag, uint256 line, uint256 dust, uint256 fee, uint256 rho, uint256 chop, uint256 liqr, address hook, address gem))",
+    "function ilks(bytes32) public view  returns (tuple(uint256 tart, uint256 rack, uint256 line, uint256 dust, uint256 fee, uint256 rho, uint256 chop, uint256 liqr, address hook))",
+    "function frob(bytes32 i, address u, bytes memory dink, int256 dart)",
+    "function urns(bytes32 ilk, address usr) external view returns (uint256 art)"
 ]
 const voxAbi = [
-    "function way() public view returns (uint)"
+    "function way() external view returns (uint256)",
+    "function tip() external view returns (address)",
+    "function tag() external view returns (bytes32)"
 ]
 const fbAbi  = [
-    "function pull(address src, bytes32 tag) public view returns (bytes32 val, uint256 ttl)"
+    "function pull(address src, bytes32 tag) external view returns (bytes32 val, uint256 ttl)"
 ]
+const gemAbi = [
+    "function allowance(address, address) external view returns (uint256)",
+    "function approve(address usr, uint256 wad) external payable returns (bool ok)",
+    "function balanceOf(address) external view returns (uint256)"
+]
+const erc20HookAbi = [
+    "function items(bytes32 ilk) external view returns (address gem, address fsrc, bytes32 ftag)",
+    "function inks(bytes32 ilk, address usr) external view returns (uint256)"
+]
+const gems = {weth: "0xa9d267C3334fF4F74836DCbFAfB358d9fDf1E470", reth: "0x0", gold: "0x0"}
+
 let provider, signer
-let vat, vox, fb
+let vat, vox, fb, erc20Hook
+let usrGemBal, usrGemAllowance
 
 const $ = document.querySelector.bind(document);
 const BANKYEAR = ((365 * 24) + 6) * 3600
 const apy =r=> round(((r / 10**27) ** BANKYEAR - 1) * 100)
 const round =f=> parseFloat(f).toPrecision(4)
-const stats =s=> $('#stats').textContent = s
 
-const updateStats = async () => {
-    stats(' ')
-    const ilkBytes = $('input[name="ilk"]:checked').value
-    $('#gem').textContent = ilkBytes
-    const ilk  = await vat.ilks(utils.formatBytes32String(ilkBytes))
-    const par  = utils.formatUnits((await vat.par()), 27)
-    const dust = utils.formatUnits(ilk.dust, 45)
-    const res = await fb.pull(ilk.fsrc, ilk.ftag)
-    const mark = utils.formatUnits(BigNumber.from(res.val), 27)
+const updateRicoStats = async () => {
+    $('#ricoStats').textContent = ' '
+    const par = utils.formatUnits((await vat.par()), 27)
+    const way = apy(await vox.way())
+    const tip = await vox.tip()
+    const tag = await vox.tag()
+    let mar
+    try {
+        const res = await fb.pull(tip, tag)
+        mar = utils.formatUnits(BigNumber.from(res.val), 27)
+    } catch (e) {
+        console.log(`failed to read market price of rico with tip ${tip} and tag ${tag}`)
+        console.log(e)
+        mar = -1.0
+    }
+    $('#ricoStats').textContent = `Rico system price: ${round(par)}, market price: ${round(mar)}, Price rate: ${way}%`
+}
+
+const updateIlkStats = async () => {
+    $('#ilkStats').textContent = ' '
+    const ilkStr = $('input[name="ilk"]:checked').value
+    $('#gem').textContent = ilkStr
+    const ilk  = await vat.ilks(utils.formatBytes32String(ilkStr))
     const fee  = apy(ilk.fee)
-    const way  = apy(await vox.way())
-    stats(`System price: ${round(par)}, Market price: ${round(mark)}, Quantity rate: ${fee}%, Price rate: ${way}%, Min debt: ${round(dust)}`)
+    const dust = utils.formatUnits(ilk.dust, 45)
+    $('#ilkStats').textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)}`
+
+    const gem = new ethers.Contract(gems[ilkStr], gemAbi, signer)
+    usrGemAllowance = await gem.allowance(signer.getAddress(), vatAddress)
+    usrGemBal = await gem.balanceOf(signer.getAddress())
+}
+
+// todo only considers gem hook
+const getHookStats = async () => {
+    const ilkStr = $('input[name="ilk"]:checked').value
+    const ink  = await erc20Hook.inks( utils.formatBytes32String(ilkStr), signer.getAddress())
+    const item = await erc20Hook.items(utils.formatBytes32String(ilkStr))
+    let mark;
+    try {
+        const res  = await fb.pull(item.fsrc, item.ftag)
+        const mark = utils.formatUnits(BigNumber.from(res.val), 27)
+    } catch(e) {
+        console.log(`unable to read market val for item ${item}`)
+        mark = -1.0
+    }
+    return `Feed price: ${round(mark)}, ${ilkStr} collateral: ${round(ink)}`
+}
+
+const updateUrnStats = async () => {
+    const ilkStr = $('input[name="ilk"]:checked').value
+    const ilk  = await vat.ilks(utils.formatBytes32String(ilkStr))
+    const urn = await vat.urns(utils.formatBytes32String(ilkStr), signer.getAddress())
+    const debt = utils.formatUnits(urn.mul(ilk.rack), 45)
+    const hookStats = await getHookStats()
+    $('#urnStats').textContent = `rico debt: ${round(debt)}, ${hookStats}`
 }
 
 window.onload = async() => {
@@ -42,19 +102,34 @@ window.onload = async() => {
     await provider.send("eth_requestAccounts", [])
     signer = provider.getSigner()
 
-    vat = new ethers.Contract(vatAddress, vatAbi, provider)
-    vox = new ethers.Contract(voxAddress, voxAbi, provider)
-    fb  = new ethers.Contract(fbAddress,  fbAbi,  provider)
+    vat       = new ethers.Contract(vatAddress, vatAbi, signer)
+    vox       = new ethers.Contract(voxAddress, voxAbi, signer)
+    fb        = new ethers.Contract(fbAddress,  fbAbi,  signer)
+    erc20Hook = new ethers.Contract(erc20HookAddress, erc20HookAbi, signer)
 
     $('#btnFrob').addEventListener('click', async () =>  {
-        await updateStats()
+        const ilk = $('input[name="ilk"]:checked').value
+        let dink = utils.parseUnits($('#dink').value, 18);
+        let dart = utils.parseUnits($('#dart').value, 18);
+        if ($('input[name="sign"]:checked').value == "repay") {
+            dink = dink.mul("-1")
+            dart = dart.mul("-1")
+        }
+        if (dink > usrGemAllowance) {
+            const gem = new ethers.Contract(gems[ilk], gemAbi, signer)
+            await gem.approve(vatAddress, ethers.constants.MaxUint256)
+        }
+        await vat.frob(utils.formatBytes32String(ilk), signer.getAddress(), dink.toHexString(), dart, {gasLimit:1000000})
+        await updateUrnStats()
     });
 
     document.querySelectorAll('input[name="ilk"]').forEach((elem) => {
         elem.addEventListener("change", async () => {
-            await updateStats()
+            await updateIlkStats()
         });
     });
 
-    await updateStats()
+    await updateRicoStats()
+    await updateIlkStats()
+    await updateUrnStats()
 }
