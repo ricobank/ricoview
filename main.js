@@ -68,7 +68,7 @@ const updateIlkStats = async () => {
     $('#ilkStats').textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)}`
 
     const gem = new ethers.Contract(gems[ilkStr], gemAbi, signer)
-    usrGemAllowance = await gem.allowance(signer.getAddress(), vatAddress)
+    usrGemAllowance = await gem.allowance(signer.getAddress(), erc20HookAddress)
     usrGemBal = await gem.balanceOf(signer.getAddress())
 }
 
@@ -80,7 +80,7 @@ const getHookStats = async () => {
     let mark;
     try {
         const res  = await fb.pull(item.fsrc, item.ftag)
-        const mark = utils.formatUnits(BigNumber.from(res.val), 27)
+        mark = utils.formatUnits(BigNumber.from(res.val), 27)
     } catch(e) {
         console.log(`unable to read market val for item ${item}`)
         mark = -1.0
@@ -109,17 +109,16 @@ window.onload = async() => {
 
     $('#btnFrob').addEventListener('click', async () =>  {
         const ilk = $('input[name="ilk"]:checked').value
-        let dink = utils.parseUnits($('#dink').value, 18);
-        let dart = utils.parseUnits($('#dart').value, 18);
-        if ($('input[name="sign"]:checked').value == "repay") {
-            dink = dink.mul("-1")
-            dart = dart.mul("-1")
-        }
+        const sign = ($('input[name="sign"]:checked').value == "repay") ? "-" : ""
+        const dink = ethers.FixedNumber.from(sign + $('#dink').value, "fixed256x18")
+        const dart = utils.parseUnits(sign + $('#dart').value, 18)
         if (dink > usrGemAllowance) {
             const gem = new ethers.Contract(gems[ilk], gemAbi, signer)
-            await gem.approve(vatAddress, ethers.constants.MaxUint256)
+            await gem.approve(erc20HookAddress, ethers.constants.MaxUint256)
         }
-        await vat.frob(utils.formatBytes32String(ilk), signer.getAddress(), dink.toHexString(), dart, {gasLimit:1000000})
+        const urn = await signer.getAddress()
+        const dinkB32 = utils.hexZeroPad(dink.toHexString(), 32)
+        await vat.frob(utils.formatBytes32String(ilk), urn, dinkB32, dart, {gasLimit:10000000})
         await updateUrnStats()
     });
 
