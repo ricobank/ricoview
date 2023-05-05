@@ -80,7 +80,7 @@ const getHookStats = async () => {
     let mark;
     try {
         const res  = await fb.pull(item.fsrc, item.ftag)
-        const mark = utils.formatUnits(BigNumber.from(res.val), 27)
+        mark = utils.formatUnits(BigNumber.from(res.val), 27)
     } catch(e) {
         console.log(`unable to read market val for item ${item}`)
         mark = -1.0
