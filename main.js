@@ -1,10 +1,10 @@
 import { ethers } from "ethers"
 import { BigNumber, utils } from 'ethers'
 
-const vatAddress = "0xbEB4945BdA47cFf99BC089D76CC5Df37C9334c4D"
-const voxAddress = "0x6B608893F6FE63A52C3A2954151f6C4058f1BA76"
-const fbAddress  = "0x9eb6F70fDdC4288fC842bAE36E022E4d51Bf1345"
-const erc20HookAddress = "0xEE91700336A256924E1D4f1EAe46cDEA0C90C478"
+const vatAddress = "0x108405098F70D0bdc244eB4f30c0226Fc7f2e4D2"
+const voxAddress = "0x0a43f18212F0642c59797F73C684F291F54A3Ff6"
+const fbAddress  = "0xaB6cC116256f53f5468601aE3dB92b1745DA66eE"
+const erc20HookAddress = "0x29A953B1F6447B0Da0c6cF6a6E853FB172D0fe76"
 
 const vatAbi = [
     "function par() public view returns (uint)",
@@ -30,6 +30,10 @@ const erc20HookAbi = [
     "function inks(bytes32 ilk, address usr) external view returns (uint256)"
 ]
 const gems = {weth: "0xa9d267C3334fF4F74836DCbFAfB358d9fDf1E470", reth: "0x0", gold: "0x0"}
+
+
+const bn = (n) => ethers.BigNumber.from(n)
+const bn2b32 = (bn) => ethers.utils.hexZeroPad(bn.toHexString(), 32)
 
 let provider, signer
 let vat, vox, fb, erc20Hook
@@ -119,7 +123,7 @@ window.onload = async() => {
             const gem = new ethers.Contract(gems[ilk], gemAbi, signer)
             await gem.approve(vatAddress, ethers.constants.MaxUint256)
         }
-        await vat.frob(utils.formatBytes32String(ilk), signer.getAddress(), dink.toHexString(), dart, {gasLimit:1000000})
+        await vat.frob(utils.formatBytes32String(ilk), signer.getAddress(), bn2b32(dink.toTwos(256)), dart)
         await updateUrnStats()
     });
 
