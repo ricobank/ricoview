@@ -31,10 +31,6 @@ const erc20HookAbi = [
 ]
 const gems = {weth: "0xa9d267C3334fF4F74836DCbFAfB358d9fDf1E470", reth: "0x0", gold: "0x0"}
 
-
-const bn = (n) => ethers.BigNumber.from(n)
-const bn2b32 = (bn) => ethers.utils.hexZeroPad(bn.toHexString(), 32)
-
 let provider, signer
 let vat, vox, fb, erc20Hook
 let usrGemBal, usrGemAllowance
@@ -121,7 +117,7 @@ window.onload = async() => {
             await gem.approve(erc20HookAddress, ethers.constants.MaxUint256)
         }
         const urn = await signer.getAddress()
-        const dinkB32 = utils.hexZeroPad(dink.toTwos(256).toHexString(), 32)
+        const dinkB32 = utils.hexZeroPad(dink.toHexString(), 32)
         await vat.frob(utils.formatBytes32String(ilk), urn, dinkB32, dart, {gasLimit:10000000})
         await updateUrnStats()
     });
