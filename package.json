@@ -17,7 +17,8 @@
     "react-app:eject": "yarn workspace @my-app/react-app eject",
     "react-app:ipfs": "yarn workspace @my-app/react-app ipfs",
     "react-app:start": "yarn workspace @my-app/react-app start",
-    "react-app:test": "yarn workspace @my-app/react-app test"
+    "react-app:test": "yarn workspace @my-app/react-app test",
+    "build": "cd packages/react-app/src/ricobank && npm i && npm run download-submodules && npx hardhat compile && cd -"
   },
   "workspaces": {
     "packages": [
