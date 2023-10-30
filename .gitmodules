@@ -1,0 +1,3 @@
+[submodule "packages/react-app/lib/ricobank"]
+	path = packages/react-app/src/ricobank
+	url = https://github.com/ricobank/ricobank
