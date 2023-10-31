@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
 import { Contract } from "@ethersproject/contracts";
-import { shortenAddress, useCall, useEthers, useLookupAddress } from "@usedapp/core";
+import { shortenAddress, useCall, useSendTransaction, useEthers, useLookupAddress } from "@usedapp/core";
 import React, { useEffect, useState } from "react";
 import { BrowserRouter, useNavigate } from 'react-router-dom';
 
@@ -11,7 +11,23 @@ import logo from "./ethereumLogo.png";
 
 import { addresses, abis } from "@my-app/contracts";
 import GET_TRANSFERS from "./graphql/subgraph";
-import { ethers, N as bn, b32, wad, ray } from 'minihat';
+import { N as bn, wad, ray } from 'minihat';
+import * as ethers from 'ethers';
+import { Buffer } from 'buffer';
+
+export function b32 (arg: any): Uint8Array {
+  if (arg._isBigNumber) {
+    const hex = arg.toHexString()
+    const buff = Buffer.from(hex.slice(2), 'hex')
+    const b32 = ethers.utils.zeroPad(buff, 32) 
+    return b32 
+  } else if (typeof (arg) === 'string') {
+    const b32 = Buffer.from(arg + '\0'.repeat(32 - arg.length))
+    return b32 
+  } else {
+    throw new Error(`b32 takes a BigNumber or string, got ${arg}, a ${typeof (arg)}`)
+  }
+}
 
 function WalletButton() {
   const [rendered, setRendered] = useState("");
@@ -67,22 +83,38 @@ function FrobForm() {
   const [i, setI] = useState("");
   const [u, setU] = useState("");
 
-  const { error: contractCallError, value: tokenBalance } =
-    useCall({
-       contract: new Contract(addresses.bank, abis.bank),
-       method: "frob",
-       args: [
-         "0x3f8CB69d9c0ED01923F11c829BaE4D9a4CB6c82C"],
-    }) ?? {};
+  const { sendTransaction, state } = useSendTransaction()
 
+  const handleFrob = () => {
+      const iface = new ethers.utils.Interface(abis.bank)
+      const dinkPacked = ethers.utils.solidityPack(['int'], [wad(dink)])
+      const data = iface.encodeFunctionData(
+          'frob', [b32(i), u, dinkPacked, wad(dart)]
+      )
+      sendTransaction({to: addresses.bank, data})
+  }
 
+  const handleBail = () => {
+    const iface = new ethers.utils.Interface(abis.bank)
+    const data = iface.encodeFunctionData('bail', [b32(i), u])
+    sendTransaction({to: addresses.bank, data})
+  }
 
-  const submitStyle = {
-    'display': 'flex',
-    'justify-content': 'center',
-    'align-items': 'center'
-  };
+  const handleDrip = () => {
+    const iface = new ethers.utils.Interface(abis.bank)
+    console.log("I ", i, "b32(i)", b32(i))
+    const data = iface.encodeFunctionData('drip', [b32(i)])
+    sendTransaction({to: addresses.bank, data})
+  }
 
+  const handleKeep = () => {
+    const iface = new ethers.utils.Interface(abis.bank)
+    const data = iface.encodeFunctionData('keep', [[]])
+    console.log("KEEP DATA", data)
+    sendTransaction({to: addresses.bank, data})
+  }
+ 
+ 
   return (
     <FormContainer>
       <RowContainer>
@@ -96,41 +128,10 @@ function FrobForm() {
           onChange={(e) => setDart(e.target.value)} placeholder="dart" />
       </RowContainer>
       <BankCallBody>
-        <FButton
-          onClick={() => {
-            const bank = new Contract(addresses.bank, abis.bank)
-            let dinkPacked = ethers.utils.solidityPack(['int'], [wad(dink)])
-            return bank.frob(b32(i), u, dinkPacked, wad(dart))
-          }}
-        >
-        frob
-        </FButton>
-        <BButton
-          onClick={() => {
-            const bank = new Contract(addresses.bank, abis.bank)
-            return bank.bail(b32(i), u)
-          }}
-        >
-          bail
-        </BButton>
-        <DButton
-          onClick={() => {
-            const bank = new Contract(addresses.bank, abis.bank)
-            return bank.drip(b32(i))
-          }}
-        >
-          drip
-        </DButton>
-        <KButton
-          onClick={() => {
-            const bank = new Contract(addresses.bank, abis.bank)
-            return bank.keep(b32(i))
-          }}
-        >
-          keep
-        </KButton>
- 
- 
+        <FButton onClick={handleFrob}>frob</FButton>
+        <BButton onClick={handleBail}>bail</BButton>
+        <DButton onClick={handleDrip}>drip</DButton>
+        <KButton onClick={handleKeep}>keep</KButton>
       </BankCallBody>
     </FormContainer>
   );

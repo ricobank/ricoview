@@ -1,3 +1,6 @@
 [submodule "packages/react-app/lib/ricobank"]
 	path = packages/react-app/src/ricobank
 	url = https://github.com/ricobank/ricobank
+	branch = testnet8
+[submodule "packages/react-app/src/ricobank"]
+	branch = testnet8
