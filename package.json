@@ -1,17 +1,36 @@
 {
-  "name": "ricoview",
-  "version": "0.0.1",
-  "type": "module",
-  "main": "index.js",
+  "name": "@my-app/monorepo",
+  "version": "1.0.0",
+  "keywords": [
+    "ethereum",
+    "react",
+    "workspaces",
+    "yarn"
+  ],
+  "private": true,
   "scripts": {
-    "build": "webpack --config webpack.config.js"
+    "subgraph:auth": "yarn workspace @my-app/subgraph auth",
+    "subgraph:codegen": "yarn workspace @my-app/subgraph codegen",
+    "subgraph:build": "yarn workspace @my-app/subgraph build",
+    "subgraph:deploy": "yarn workspace @my-app/subgraph deploy",
+    "react-app:build": "yarn workspace @my-app/react-app build",
+    "react-app:eject": "yarn workspace @my-app/react-app eject",
+    "react-app:ipfs": "yarn workspace @my-app/react-app ipfs",
+    "react-app:start": "yarn workspace @my-app/react-app start",
+    "react-app:test": "yarn workspace @my-app/react-app test",
+    "build": "cd packages/react-app/src/ricobank && npm i && npm run download-submodules && npx hardhat compile && cd -"
+  },
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
   },
   "dependencies": {
-    "ethers": "^5.7.2"
+    "minihat": "^0.0.6",
+    "node-stdlib-browser": "^1.2.0",
+    "react-router-dom": "^6.17.0"
   },
-  "license": "AGPL-3.0-or-later",
   "devDependencies": {
-    "webpack": "^5.74.0",
-    "webpack-cli": "^4.10.0"
+    "buffer": "^6.0.3"
   }
 }
