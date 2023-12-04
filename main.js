@@ -1,22 +1,11 @@
 import { ethers } from "ethers"
 import { BigNumber, utils } from 'ethers'
 
-const vatAddress = "0x108405098F70D0bdc244eB4f30c0226Fc7f2e4D2"
-const voxAddress = "0x0a43f18212F0642c59797F73C684F291F54A3Ff6"
-const fbAddress  = "0xaB6cC116256f53f5468601aE3dB92b1745DA66eE"
-const erc20HookAddress = "0x29A953B1F6447B0Da0c6cF6a6E853FB172D0fe76"
+const fbAddress  = "0x1dE162F7B87A9290c639f6f7bd4b3ea9a7B1a355"
+const bankAddress = "0x5D00C6A7aB8614Ebc5d8E9bD79089526B1469024"
 
-const vatAbi = [
-    "function par() public view returns (uint)",
-    "function ilks(bytes32) public view  returns (tuple(uint256 tart, uint256 rack, uint256 line, uint256 dust, uint256 fee, uint256 rho, uint256 chop, uint256 liqr, address hook))",
-    "function frob(bytes32 i, address u, bytes memory dink, int256 dart)",
-    "function urns(bytes32 ilk, address usr) external view returns (uint256 art)"
-]
-const voxAbi = [
-    "function way() external view returns (uint256)",
-    "function tip() external view returns (address)",
-    "function tag() external view returns (bytes32)"
-]
+import bankABI from './bankABI.js';
+
 const fbAbi  = [
     "function pull(address src, bytes32 tag) external view returns (bytes32 val, uint256 ttl)"
 ]
@@ -25,14 +14,12 @@ const gemAbi = [
     "function approve(address usr, uint256 wad) external payable returns (bool ok)",
     "function balanceOf(address) external view returns (uint256)"
 ]
-const erc20HookAbi = [
-    "function items(bytes32 ilk) external view returns (address gem, address fsrc, bytes32 ftag)",
-    "function inks(bytes32 ilk, address usr) external view returns (uint256)"
-]
+const bankAbi= bankABI
+
 const gems = {weth: "0xa9d267C3334fF4F74836DCbFAfB358d9fDf1E470", reth: "0x0", gold: "0x0"}
 
 let provider, signer
-let vat, vox, fb, erc20Hook
+let fb, bank
 let usrGemBal, usrGemAllowance
 
 const $ = document.querySelector.bind(document);
@@ -42,10 +29,9 @@ const round =f=> parseFloat(f).toPrecision(4)
 
 const updateRicoStats = async () => {
     $('#ricoStats').textContent = ' '
-    const par = utils.formatUnits((await vat.par()), 27)
-    const way = apy(await vox.way())
-    const tip = await vox.tip()
-    const tag = await vox.tag()
+    const par = utils.formatUnits((await bank.par()), 27)
+    const way = apy(await bank.way())
+    const [tip, tag] = await bank.tip();
     let mar
     try {
         const res = await fb.pull(tip, tag)
@@ -62,27 +48,30 @@ const updateIlkStats = async () => {
     $('#ilkStats').textContent = ' '
     const ilkStr = $('input[name="ilk"]:checked').value
     $('#gem').textContent = ilkStr
-    const ilk  = await vat.ilks(utils.formatBytes32String(ilkStr))
+    const ilk  = await bank.ilks(utils.formatBytes32String(ilkStr))
     const fee  = apy(ilk.fee)
     const dust = utils.formatUnits(ilk.dust, 45)
     $('#ilkStats').textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)}`
 
     const gem = new ethers.Contract(gems[ilkStr], gemAbi, signer)
-    usrGemAllowance = await gem.allowance(signer.getAddress(), erc20HookAddress)
+    usrGemAllowance = await gem.allowance(signer.getAddress(), bankAddress)
     usrGemBal = await gem.balanceOf(signer.getAddress())
 }
 
 // todo only considers gem hook
 const getHookStats = async () => {
     const ilkStr = $('input[name="ilk"]:checked').value
-    const ink  = await erc20Hook.inks( utils.formatBytes32String(ilkStr), signer.getAddress())
-    const item = await erc20Hook.items(utils.formatBytes32String(ilkStr))
+    const ink  = await bank.ink(utils.formatBytes32String(ilkStr), signer.getAddress())
+
+    const rawSrc = await bank.geth(utils.formatBytes32String(ilkStr), utils.formatBytes32String('src'), [])
+    const tag = await bank.geth(utils.formatBytes32String(ilkStr), utils.formatBytes32String('tag'), [])
+    const src = rawSrc.slice(2, 42);
+
     let mark;
     try {
-        const res  = await fb.pull(item.fsrc, item.ftag)
+        const res  = await fb.pull(src, tag)
         mark = utils.formatUnits(BigNumber.from(res.val), 27)
     } catch(e) {
-        console.log(`unable to read market val for item ${item}`)
         mark = -1.0
     }
     return `Feed price: ${round(mark)}, ${ilkStr} collateral: ${round(ink)}`
@@ -90,8 +79,8 @@ const getHookStats = async () => {
 
 const updateUrnStats = async () => {
     const ilkStr = $('input[name="ilk"]:checked').value
-    const ilk  = await vat.ilks(utils.formatBytes32String(ilkStr))
-    const urn = await vat.urns(utils.formatBytes32String(ilkStr), signer.getAddress())
+    const ilk  = await bank.ilks(utils.formatBytes32String(ilkStr))
+    const urn = await bank.urns(utils.formatBytes32String(ilkStr), signer.getAddress())
     const debt = utils.formatUnits(urn.mul(ilk.rack), 45)
     const hookStats = await getHookStats()
     $('#urnStats').textContent = `rico debt: ${round(debt)}, ${hookStats}`
@@ -101,11 +90,8 @@ window.onload = async() => {
     provider = new ethers.providers.Web3Provider(window.ethereum)
     await provider.send("eth_requestAccounts", [])
     signer = provider.getSigner()
-
-    vat       = new ethers.Contract(vatAddress, vatAbi, signer)
-    vox       = new ethers.Contract(voxAddress, voxAbi, signer)
-    fb        = new ethers.Contract(fbAddress,  fbAbi,  signer)
-    erc20Hook = new ethers.Contract(erc20HookAddress, erc20HookAbi, signer)
+    bank = new ethers.Contract(bankAddress, bankAbi, signer)
+    fb   = new ethers.Contract(fbAddress,   fbAbi,   signer)
 
     $('#btnFrob').addEventListener('click', async () =>  {
         const ilk = $('input[name="ilk"]:checked').value
@@ -114,11 +100,11 @@ window.onload = async() => {
         const dart = utils.parseUnits(sign + $('#dart').value, 18)
         if (dink > usrGemAllowance) {
             const gem = new ethers.Contract(gems[ilk], gemAbi, signer)
-            await gem.approve(erc20HookAddress, ethers.constants.MaxUint256)
+            await gem.approve(bankAddress, ethers.constants.MaxUint256)
         }
         const urn = await signer.getAddress()
         const dinkB32 = utils.hexZeroPad(dink.toHexString(), 32)
-        await vat.frob(utils.formatBytes32String(ilk), urn, dinkB32, dart, {gasLimit:10000000})
+        await bank.frob(utils.formatBytes32String(ilk), urn, dinkB32, dart, {gasLimit:10000000})
         await updateUrnStats()
     });
 
