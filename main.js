@@ -1,43 +1,54 @@
-import { ethers } from "ethers"
-import { BigNumber, utils } from 'ethers'
+import { createPublicClient, createWalletClient, custom, formatUnits, http, parseAbi, stringToHex, toHex } from 'viem'
+import { arbitrumGoerli } from 'viem/chains'
 
 const fbAddress  = "0x1dE162F7B87A9290c639f6f7bd4b3ea9a7B1a355"
 const bankAddress = "0x5D00C6A7aB8614Ebc5d8E9bD79089526B1469024"
 
-import bankABI from './bankABI.js';
-
-const fbAbi  = [
+const fbAbi  = parseAbi([
     "function pull(address src, bytes32 tag) external view returns (bytes32 val, uint256 ttl)"
-]
-const gemAbi = [
+])
+const gemAbi = parseAbi([
     "function allowance(address, address) external view returns (uint256)",
     "function approve(address usr, uint256 wad) external payable returns (bool ok)",
     "function balanceOf(address) external view returns (uint256)"
-]
-const bankAbi= bankABI
+])
+
+import BankDiamond from './BankDiamond.json';
+const bankAbi = BankDiamond.abi
 
 const gems = {weth: "0xa9d267C3334fF4F74836DCbFAfB358d9fDf1E470", reth: "0x0", gold: "0x0"}
 
-let provider, signer
-let fb, bank
+const bankConfig = {
+    address: bankAddress,
+    abi: bankAbi
+};
+const fbConfig = {
+    address: fbAddress,
+    abi: fbAbi
+}
+
+let account, clientPub, clientWal
 let usrGemBal, usrGemAllowance
 
 const $ = document.querySelector.bind(document);
 const BANKYEAR = ((365 * 24) + 6) * 3600
-const apy =r=> round(((r / 10**27) ** BANKYEAR - 1) * 100)
+const MAXUINT  = BigInt(2)**BigInt(256) - BigInt(1);
+const apy =r=> round(((Number(r) / 10**27) ** BANKYEAR - 1) * 100)
 const round =f=> parseFloat(f).toPrecision(4)
 
 const updateRicoStats = async () => {
     $('#ricoStats').textContent = ' '
-    const par = utils.formatUnits((await bank.par()), 27)
-    const way = apy(await bank.way())
-    const [tip, tag] = await bank.tip();
+    const parRay = await clientPub.readContract({...bankConfig, functionName: 'par'})
+    const par = formatUnits(parRay, 27)
+    const wayRay = await clientPub.readContract({...bankConfig, functionName: 'way'})
+    const way = apy(wayRay)
+    const {src, tag} = await clientPub.readContract({...bankConfig, functionName: 'tip'})
     let mar
     try {
-        const res = await fb.pull(tip, tag)
-        mar = utils.formatUnits(BigNumber.from(res.val), 27)
+        const [val, ttl] = await clientPub.readContract({...fbConfig, functionName: 'pull', args: [src, tag]})
+        mar = formatUnits(BigInt(val), 27)
     } catch (e) {
-        console.log(`failed to read market price of rico with tip ${tip} and tag ${tag}`)
+        console.log(`failed to read market price of rico with src ${src} and tag ${tag}`)
         console.log(e)
         mar = -1.0
     }
@@ -47,31 +58,49 @@ const updateRicoStats = async () => {
 const updateIlkStats = async () => {
     $('#ilkStats').textContent = ' '
     const ilkStr = $('input[name="ilk"]:checked').value
+    const ilkHex = stringToHex(ilkStr, {size: 32})
     $('#gem').textContent = ilkStr
-    const ilk  = await bank.ilks(utils.formatBytes32String(ilkStr))
+    const ilk  = await clientPub.readContract({...bankConfig,
+                                            functionName: 'ilks',
+                                            args: [ilkHex]})
     const fee  = apy(ilk.fee)
-    const dust = utils.formatUnits(ilk.dust, 45)
+    const dust = formatUnits(ilk.dust, 45)
     $('#ilkStats').textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)}`
 
-    const gem = new ethers.Contract(gems[ilkStr], gemAbi, signer)
-    usrGemAllowance = await gem.allowance(signer.getAddress(), bankAddress)
-    usrGemBal = await gem.balanceOf(signer.getAddress())
+    usrGemAllowance = await clientPub.readContract({
+        address: gems[ilkStr],
+        abi: gemAbi,
+        functionName: 'allowance',
+        args: [account, bankAddress]
+    })
+    usrGemBal = await clientPub.readContract({
+        address: gems[ilkStr],
+        abi: gemAbi,
+        functionName: 'balanceOf',
+        args: [account]
+    })
 }
 
-// todo only considers gem hook
 const getHookStats = async () => {
     const ilkStr = $('input[name="ilk"]:checked').value
-    const ink  = await bank.ink(utils.formatBytes32String(ilkStr), signer.getAddress())
-
-    const rawSrc = await bank.geth(utils.formatBytes32String(ilkStr), utils.formatBytes32String('src'), [])
-    const tag = await bank.geth(utils.formatBytes32String(ilkStr), utils.formatBytes32String('tag'), [])
-    const src = rawSrc.slice(2, 42);
+    const ilkHex = stringToHex(ilkStr, {size: 32})
+    const ink = await clientPub.readContract({...bankConfig,
+                                           functionName: 'ink',
+                                           args: [ilkHex, account]})
+    const rawSrc = await clientPub.readContract({...bankConfig,
+                                              functionName: 'geth',
+                                              args: [ilkHex, stringToHex('src', {size: 32}), []]})
+    const tag    = await clientPub.readContract({...bankConfig,
+                                              functionName: 'geth',
+                                              args: [ilkHex, stringToHex('tag', {size: 32}), []]})
+    const src = rawSrc.slice(0, 42);
 
     let mark;
     try {
-        const res  = await fb.pull(src, tag)
-        mark = utils.formatUnits(BigNumber.from(res.val), 27)
+        const [val, ttl] = await clientPub.readContract({...fbConfig, functionName: 'pull', args: [src, tag]})
+        mark = formatUnits(BigInt(val), 27)
     } catch(e) {
+        console.log(e)
         mark = -1.0
     }
     return `Feed price: ${round(mark)}, ${ilkStr} collateral: ${round(ink)}`
@@ -79,32 +108,51 @@ const getHookStats = async () => {
 
 const updateUrnStats = async () => {
     const ilkStr = $('input[name="ilk"]:checked').value
-    const ilk  = await bank.ilks(utils.formatBytes32String(ilkStr))
-    const urn = await bank.urns(utils.formatBytes32String(ilkStr), signer.getAddress())
-    const debt = utils.formatUnits(urn.mul(ilk.rack), 45)
+    const ilkHex = stringToHex(ilkStr, {size: 32})
+    const ilk  = await clientPub.readContract({...bankConfig,
+                                            functionName: 'ilks',
+                                            args: [ilkHex]})
+    const urn  = await clientPub.readContract({...bankConfig,
+                                            functionName: 'urns',
+                                            args: [ilkHex, account]})
+    const debt = formatUnits(urn * ilk.rack, 45)
     const hookStats = await getHookStats()
     $('#urnStats').textContent = `rico debt: ${round(debt)}, ${hookStats}`
 }
 
 window.onload = async() => {
-    provider = new ethers.providers.Web3Provider(window.ethereum)
-    await provider.send("eth_requestAccounts", [])
-    signer = provider.getSigner()
-    bank = new ethers.Contract(bankAddress, bankAbi, signer)
-    fb   = new ethers.Contract(fbAddress,   fbAbi,   signer)
+    [account] = await window.ethereum.request({ method: 'eth_requestAccounts' })
+    clientWal = createWalletClient({
+      account,
+      chain: arbitrumGoerli,
+      transport: custom(window.ethereum)
+    })
+    clientPub = createPublicClient({
+      batch: {
+        multicall: true,
+      },
+      chain: arbitrumGoerli,
+      transport: http(),
+})
 
     $('#btnFrob').addEventListener('click', async () =>  {
         const ilk = $('input[name="ilk"]:checked').value
         const sign = ($('input[name="sign"]:checked').value == "repay") ? "-" : ""
-        const dink = ethers.FixedNumber.from(sign + $('#dink').value, "fixed256x18")
-        const dart = utils.parseUnits(sign + $('#dart').value, 18)
+        const dink = parseUnits(sign + $('#dink').value, 18);
+        const dart = parseUnits(sign + $('#dart').value, 18)
         if (dink > usrGemAllowance) {
-            const gem = new ethers.Contract(gems[ilk], gemAbi, signer)
-            await gem.approve(bankAddress, ethers.constants.MaxUint256)
+            const { request } = await publicClient.simulateContract({
+              abi: gemAbi,
+              address: gems[ilk],
+              functionName: 'approve',
+              args: [MAXUINT],
+              account: account,
+            })
+            await walletClient.writeContract(request)
         }
-        const urn = await signer.getAddress()
-        const dinkB32 = utils.hexZeroPad(dink.toHexString(), 32)
-        await bank.frob(utils.formatBytes32String(ilk), urn, dinkB32, dart, {gasLimit:10000000})
+        const urn = account
+        const dinkB32 = pad(toHex(dink))
+        await bank.frob(stringToHex(ilk, {size: 32}), urn, dinkB32, dart, {gasLimit:10000000})
         await updateUrnStats()
     });
 
