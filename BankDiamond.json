@@ -1551,6 +1551,19 @@
     },
     {
       "inputs": [],
+      "name": "loot",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "plat",
       "outputs": [
         {
@@ -1564,6 +1577,11 @@
               "internalType": "uint256",
               "name": "pop",
               "type": "uint256"
+            },
+            {
+              "internalType": "int256",
+              "name": "pup",
+              "type": "int256"
             }
           ],
           "internalType": "struct Bank.Plx",
@@ -1589,6 +1607,11 @@
               "internalType": "uint256",
               "name": "pop",
               "type": "uint256"
+            },
+            {
+              "internalType": "int256",
+              "name": "pup",
+              "type": "int256"
             }
           ],
           "internalType": "struct Bank.Plx",
@@ -1654,19 +1677,6 @@
           "internalType": "struct Bank.Rudd",
           "name": "",
           "type": "tuple"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "toll",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
         }
       ],
       "stateMutability": "view",
