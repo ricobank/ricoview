@@ -1,134 +1,325 @@
-import { ethers } from "ethers"
-import { BigNumber, utils } from 'ethers'
+import { createPublicClient, createWalletClient, custom, formatUnits, getContract,
+    hexToString, http, pad, parseAbi, parseUnits, stringToHex, toHex } from 'viem'  // todo update to viem 2.0
+import { sepolia } from 'viem/chains'
 
-const vatAddress = "0x108405098F70D0bdc244eB4f30c0226Fc7f2e4D2"
-const voxAddress = "0x0a43f18212F0642c59797F73C684F291F54A3Ff6"
-const fbAddress  = "0xaB6cC116256f53f5468601aE3dB92b1745DA66eE"
-const erc20HookAddress = "0x29A953B1F6447B0Da0c6cF6a6E853FB172D0fe76"
+// sepolia addresses
+const bankAddress   = "0x343d30cCCe6c02987329C4fE2664E20F0aD39aa2"
+const feedAddress   = "0x16Bb244cd38C2B5EeF3E5a1d5F7B6CC56d52AeF3"
+const nfpmAddress   = "0x1238536071E1c677A632429e3655c799b22cDA52"
+const rico_addr     = "0x6c9BFDfBbAd23418b5c19e4c7aF2f926ffAbaDfa"
+const dai_addr      = "0x290eCE67DDA5eEc618b3Bb5DF04BE96f38894e29"
 
-const vatAbi = [
-    "function par() public view returns (uint)",
-    "function ilks(bytes32) public view  returns (tuple(uint256 tart, uint256 rack, uint256 line, uint256 dust, uint256 fee, uint256 rho, uint256 chop, uint256 liqr, address hook))",
-    "function frob(bytes32 i, address u, bytes memory dink, int256 dart)",
-    "function urns(bytes32 ilk, address usr) external view returns (uint256 art)"
-]
-const voxAbi = [
-    "function way() external view returns (uint256)",
-    "function tip() external view returns (address)",
-    "function tag() external view returns (bytes32)"
-]
-const fbAbi  = [
+const arb_addr      = "0x3c6765dd58D75786CD2B20968Aa13beF2a1D85B8"
+const stable_addr   = "0x698DEE4d8b5B9cbD435705ca523095230340D875"
+const wdiveth_addr  = "0x69619b71b52826B93205299e33259E1547ff3331"
+
+const ricorisk_addr = "0x5dD4Ff6070629F879353d02fFdA3404085298669"
+const ricodai_addr  = "0x6443Da3Df6DAE6F33e53611f31ec90d101Bf7FbF"
+
+const gems = {
+    arb:     arb_addr,
+    wdiveth: wdiveth_addr,
+    stable:  stable_addr
+}
+
+const uniIlk = stringToHex(":uninft", {size: 32})
+
+const feedAbi  = parseAbi([
     "function pull(address src, bytes32 tag) external view returns (bytes32 val, uint256 ttl)"
-]
-const gemAbi = [
+])
+const gemAbi = parseAbi([
     "function allowance(address, address) external view returns (uint256)",
     "function approve(address usr, uint256 wad) external payable returns (bool ok)",
     "function balanceOf(address) external view returns (uint256)"
-]
-const erc20HookAbi = [
-    "function items(bytes32 ilk) external view returns (address gem, address fsrc, bytes32 ftag)",
-    "function inks(bytes32 ilk, address usr) external view returns (uint256)"
-]
-const gems = {weth: "0xa9d267C3334fF4F74836DCbFAfB358d9fDf1E470", reth: "0x0", gold: "0x0"}
+])
+const nfpmAbi = parseAbi([
+    "function approve(address to, uint256 tokenId)",
+    "function getApproved(uint256 tokenId) returns (address operator)",
+    "function setApprovalForAll(address operator, bool approved)",
+    "function isApprovedForAll(address owner, address operator) returns (bool approved)",
+    "function balanceOf(address owner) view returns (uint)",
+    "function positions(uint256 tokenId) view returns (uint96 nonce, address operator, address token0, address token1, uint24 fee, int24 tickLower, int24 tickUpper, uint128 liquidity, uint256 feeGrowthInside0LastX128, uint256 feeGrowthInside1LastX128, uint128 tokensOwed0, uint128 tokensOwed1)",
+    "function tokenOfOwnerByIndex(address owner, uint256 index) view returns (uint256)"
+])
 
-let provider, signer
-let vat, vox, fb, erc20Hook
+// todo mainly unused, should use something like this to avoid multiple roundtrips reading state to use to read state
+const tokenData = {
+    "arb":     { src: "0x111", tag: "tag", decimals: 18 },
+    "wdiveth": { src: "0x111", tag: "tag", decimals: 18 },
+    "stable":  { src: "0x111", tag: "tag", decimals: 18 },
+};
+
+import BankDiamond from './BankDiamond.json';
+const bankAbi = BankDiamond.abi
+
+const fbConfig = {
+    address: feedAddress,
+    abi: feedAbi
+}
+
+let account, publicClient, walletClient
 let usrGemBal, usrGemAllowance
+let bank, nfpm, feed
 
 const $ = document.querySelector.bind(document);
 const BANKYEAR = ((365 * 24) + 6) * 3600
-const apy =r=> round(((r / 10**27) ** BANKYEAR - 1) * 100)
+const MAXUINT  = BigInt(2)**BigInt(256) - BigInt(1);
+const apy =r=> round(((Number(r) / 10**27) ** BANKYEAR - 1) * 100)
 const round =f=> parseFloat(f).toPrecision(4)
 
 const updateRicoStats = async () => {
     $('#ricoStats').textContent = ' '
-    const par = utils.formatUnits((await vat.par()), 27)
-    const way = apy(await vox.way())
-    const tip = await vox.tip()
-    const tag = await vox.tag()
+
+    const [parRay, wayRay, tipData] = await Promise.all([
+        bank.read.par(),
+        bank.read.way(),
+        bank.read.tip(),
+    ]);
+    const { src, tag } = tipData;
+
+    const par = formatUnits(parRay, 27)
+    const way = apy(wayRay)
     let mar
     try {
-        const res = await fb.pull(tip, tag)
-        mar = utils.formatUnits(BigNumber.from(res.val), 27)
+        const [val, ttl] = await publicClient.readContract({...fbConfig, functionName: 'pull', args: [src, tag]})
+        mar = formatUnits(BigInt(val), 27)
     } catch (e) {
-        console.log(`failed to read market price of rico with tip ${tip} and tag ${tag}`)
+        console.log(`failed to read market price of rico with src ${src} and tag ${tag}`)
         console.log(e)
         mar = -1.0
     }
-    $('#ricoStats').textContent = `Rico system price: ${round(par)}, market price: ${round(mar)}, Price rate: ${way}%`
+    $('#ricoStats').textContent = `Rico system price: ${round(par)}, Price rate: ${way}%, market price: ${round(mar)}`
 }
 
-const updateIlkStats = async () => {
+const updateHook = async () => {
+    const showUni = $('input[name="ctype"]:checked').value == "UNIV3 LP NFTs"
+    document.getElementById("uniHook").style.display   = showUni ? "flex" : "none";
+    document.getElementById("erc20Hook").style.display = showUni ? "none"  : "block";
+    if(showUni){
+        await updateUni()
+    } else {
+        await updateERC20IlkStats()
+        await updateERC20UrnStats()
+    }
+}
+
+const updateUni = async () => {
+    const container = document.getElementById('nftContainer');
+    container.innerHTML = '';
+    // either get deposited ink, or users own available NFTs
+    if ($('input[name="sign"]:checked').value == "borrow") {
+        document.getElementById("NFTList").textContent = `LP NFTS to deposit:`;
+        const numNFTs = await nfpm.read.balanceOf([account])
+        const idsProm = Array.from({ length: Number(numNFTs) }, (_, i) => nfpm.read.tokenOfOwnerByIndex([account, i]));
+        const ids = await Promise.all(idsProm);
+        displayNfts(ids)
+    } else {
+        // get ink from bank
+        document.getElementById("NFTList").textContent = `LP NFTS to withdraw:`;
+        const uniInk = await bank.read.ink([uniIlk, account])
+        console.log(uniInk)
+    }
+}
+
+// todo this displays checkboxes for each uni nft with token IDs for labels
+// symbol/symbol min price, max price could be better. People can find id in uni app
+function displayNfts(nftIds) {
+    const container = document.getElementById('nftContainer');
+
+    nftIds.forEach(id => {
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = `nft-${id}`;
+        checkbox.value = id;
+
+        const label = document.createElement('label');
+        label.htmlFor = `nft-${id}`;
+        label.textContent = `NFT ID: ${id}`;
+
+        const div = document.createElement('div');
+        div.style.marginRight = '10px'
+        div.appendChild(checkbox);
+        div.appendChild(label);
+
+        container.appendChild(div);
+    });
+}
+
+function getSelectedNfts() {
+    const checkboxes = document.querySelectorAll('#nftContainer input[type="checkbox"]:checked');
+    return Array.from(checkboxes).map(checkbox => BigInt(checkbox.value));
+}
+
+const updateERC20IlkStats = async () => {
     $('#ilkStats').textContent = ' '
     const ilkStr = $('input[name="ilk"]:checked').value
+    const ilkHex = stringToHex(ilkStr, {size: 32})
     $('#gem').textContent = ilkStr
-    const ilk  = await vat.ilks(utils.formatBytes32String(ilkStr))
+    const ilk  = await bank.read.ilks([ilkHex])
     const fee  = apy(ilk.fee)
-    const dust = utils.formatUnits(ilk.dust, 45)
-    $('#ilkStats').textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)}`
+    const dust = formatUnits(ilk.dust, 45)
+    $('#ilkStats').textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)} rico`
 
-    const gem = new ethers.Contract(gems[ilkStr], gemAbi, signer)
-    usrGemAllowance = await gem.allowance(signer.getAddress(), erc20HookAddress)
-    usrGemBal = await gem.balanceOf(signer.getAddress())
+    // todo 3 serial waits, replace with single viem multicall "await publicClient.multicall..."
+    // or at least concurrent promise group
+    usrGemAllowance = await publicClient.readContract({
+        address: gems[ilkStr],
+        abi: gemAbi,
+        functionName: 'allowance',
+        args: [account, bankAddress]
+    })
+    usrGemBal = await publicClient.readContract({
+        address: gems[ilkStr],
+        abi: gemAbi,
+        functionName: 'balanceOf',
+        args: [account]
+    })
 }
 
-// todo only considers gem hook
 const getHookStats = async () => {
     const ilkStr = $('input[name="ilk"]:checked').value
-    const ink  = await erc20Hook.inks( utils.formatBytes32String(ilkStr), signer.getAddress())
-    const item = await erc20Hook.items(utils.formatBytes32String(ilkStr))
+    const ilkHex = stringToHex(ilkStr, {size: 32})
+
+    const [ink, rawSrc, tag] = await Promise.all([
+      bank.read.ink( [ilkHex, account]),
+      bank.read.geth([ilkHex, stringToHex('src', {size: 32}), []]),
+      bank.read.geth([ilkHex, stringToHex('tag', {size: 32}), []]),
+    ])
+    const inkStr = formatUnits(BigInt(ink), tokenData[ilkStr].decimals)
+    // todo use tokenData{} to get src, tag and reduce to one fetch
+    const src = rawSrc.slice(0, 42);
     let mark;
     try {
-        const res  = await fb.pull(item.fsrc, item.ftag)
-        mark = utils.formatUnits(BigNumber.from(res.val), 27)
+        const [val, ttl] = await publicClient.readContract({...fbConfig, functionName: 'pull', args: [src, tag]})
+        mark = formatUnits(BigInt(val), 27)
     } catch(e) {
-        console.log(`unable to read market val for item ${item}`)
+        console.log(e)
         mark = -1.0
     }
-    return `Feed price: ${round(mark)}, ${ilkStr} collateral: ${round(ink)}`
+    return `Feed price: ${round(mark)}, ${ilkStr} collateral: ${round(inkStr)}`
 }
 
-const updateUrnStats = async () => {
+const updateERC20UrnStats = async () => {
     const ilkStr = $('input[name="ilk"]:checked').value
-    const ilk  = await vat.ilks(utils.formatBytes32String(ilkStr))
-    const urn = await vat.urns(utils.formatBytes32String(ilkStr), signer.getAddress())
-    const debt = utils.formatUnits(urn.mul(ilk.rack), 45)
+    const ilkHex = stringToHex(ilkStr, {size: 32})
+
+    const [ilk, urn] = await Promise.all([
+      bank.read.ilks([ilkHex]),
+      bank.read.urns([ilkHex, account]),
+    ])
+
+    const debt = formatUnits(urn * ilk.rack, 45)
     const hookStats = await getHookStats()
     $('#urnStats').textContent = `rico debt: ${round(debt)}, ${hookStats}`
 }
 
-window.onload = async() => {
-    provider = new ethers.providers.Web3Provider(window.ethereum)
-    await provider.send("eth_requestAccounts", [])
-    signer = provider.getSigner()
+const frobUni = async () => {
+    const sign = ($('input[name="sign"]:checked').value == "repay") ? "-" : ""
+    let dink = "0x"
+    const dart = parseUnits(sign + $('#uniDart').value, 18)
+    const nfts = getSelectedNfts()
 
-    vat       = new ethers.Contract(vatAddress, vatAbi, signer)
-    vox       = new ethers.Contract(voxAddress, voxAbi, signer)
-    fb        = new ethers.Contract(fbAddress,  fbAbi,  signer)
-    erc20Hook = new ethers.Contract(erc20HookAddress, erc20HookAbi, signer)
+    if (nfts.length > 0) {
+        dink = sign == "-" ? pad(toHex(-1)) : pad(toHex(1))
 
-    $('#btnFrob').addEventListener('click', async () =>  {
-        const ilk = $('input[name="ilk"]:checked').value
-        const sign = ($('input[name="sign"]:checked').value == "repay") ? "-" : ""
-        const dink = ethers.FixedNumber.from(sign + $('#dink').value, "fixed256x18")
-        const dart = utils.parseUnits(sign + $('#dart').value, 18)
-        if (dink > usrGemAllowance) {
-            const gem = new ethers.Contract(gems[ilk], gemAbi, signer)
-            await gem.approve(erc20HookAddress, ethers.constants.MaxUint256)
+        if (!await nfpm.read.isApprovedForAll([account, bankAddress])) {
+            await nfpm.write.setApprovalForAll([bankAddress, true])
         }
-        const urn = await signer.getAddress()
-        const dinkB32 = utils.hexZeroPad(dink.toHexString(), 32)
-        await vat.frob(utils.formatBytes32String(ilk), urn, dinkB32, dart, {gasLimit:10000000})
-        await updateUrnStats()
+        for (let id of nfts) {
+            dink += pad(toHex(id)).slice(2)
+        }
+    }
+
+    // todo deposit frob with NFTs always reverting on sepolia. config?
+
+    // const { request } = await bank.simulate.frob([uniIlk, account, dink, dart], {gasLimit:10_000_000, from: account})
+    // await walletClient.writeContract(request)
+    await bank.write.frob([uniIlk, account, dink, dart], {gasLimit:6_000_000})
+
+    await updateHook()
+}
+
+const frobERC20 = async () => {
+    const ilk = $('input[name="ilk"]:checked').value
+    const sign = ($('input[name="sign"]:checked').value == "repay") ? "-" : ""
+    let dink = parseUnits(sign + $('#dink').value, tokenData[ilk].decimals);
+    const dart = parseUnits(sign + $('#dart').value, 18)
+    if (dink > usrGemAllowance) {
+        const {request} = await publicClient.simulateContract({
+            abi: gemAbi,
+            address: gems[ilk],
+            functionName: 'approve',
+            args: [bankAddress, MAXUINT],
+            account: account,
+        })
+        await walletClient.writeContract(request)
+    }
+
+    if (dink < 0) dink += MAXUINT
+    const dinkB32 = pad(toHex(dink))
+
+    await bank.write.frob([stringToHex(ilk, {size: 32}), account, dinkB32, dart])
+    await updateERC20UrnStats()
+}
+
+window.onload = async() => {
+    [account] = await window.ethereum.request({ method: 'eth_requestAccounts' })
+    walletClient = createWalletClient({
+      account,
+      chain: sepolia,
+      transport: custom(window.ethereum)
+    })
+    publicClient = createPublicClient({
+      batch: {
+        multicall: true,
+      },
+      chain: sepolia,
+      transport: http(),
+    })
+
+    bank = getContract({
+      address: bankAddress,
+      abi: bankAbi,
+      publicClient: publicClient,
+      walletClient: walletClient
+    })
+    feed = getContract({
+      address: feedAddress,
+      abi: feedAbi,
+      publicClient: publicClient,
+      walletClient: walletClient
+    })
+    nfpm = getContract({
+      address: nfpmAddress,
+      abi: nfpmAbi,
+      publicClient: publicClient,
+      walletClient: walletClient
+    })
+
+    $('#btnFrob').addEventListener('click', async () => {
+        if ($('input[name="ctype"]:checked').value == "UNIV3 LP NFTs") {
+            await frobUni()
+        } else {
+            await frobERC20()
+        }
     });
 
-    document.querySelectorAll('input[name="ilk"]').forEach((elem) => {
+    document.querySelectorAll('input[name="ctype"]').forEach((elem) => {
         elem.addEventListener("change", async () => {
-            await updateIlkStats()
+            await updateHook()
         });
     });
+    document.querySelectorAll('input[name="sign"]').forEach((elem) => {
+        elem.addEventListener("change", async () => {
+            await updateHook()
+        });
+    });
+    document.querySelectorAll('input[name="ilk"]').forEach((elem) => {
+        elem.addEventListener("change", async () => {
+            await updateERC20IlkStats()
+        });
+    });
+    // todo update on palms
 
-    await updateRicoStats()
-    await updateIlkStats()
-    await updateUrnStats()
+    await Promise.all([updateRicoStats(), updateHook()]);
 }

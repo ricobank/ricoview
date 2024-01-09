@@ -6,15 +6,7 @@
     <title>Ricobank</title>
     <img src="ricobank.png" class="center">
     <link rel="icon" type="image/x-icon" href="ricobank.png">
-    <style>
-      body {
-          text-align: center;
-          margin-left: auto;
-          margin-right: auto;
-          font-family: monospace;
-          max-width: 120ch;
-      }
-    </style>
+    <link rel="stylesheet" type="text/css" href="styles.css">
     <script defer src="dependencies.unmin.js"></script>
     <script defer src="main.unmin.js"></script>
 </head>
@@ -27,19 +19,15 @@
 <br>
 
 <div>
-    <input type="radio" id="weth" name="ilk" value="weth" checked>
-    <label for="weth">WETH</label>
-    <input type="radio" id="reth" name="ilk" value="reth">
-    <label for="reth">RETH</label>
-    <input type="radio" id="gold" name="ilk" value="gold">
-    <label for="gold">GOLD</label>
+    <pre style="display: inline;">Collateral:</pre>
+    <input type="radio" id="UNIV3 LP NFTs" name="ctype" value="UNIV3 LP NFTs" checked>
+    <label for="UNIV3 LP NFTs">UNIV3 LP NFTs</label>
+    <input type="radio" id="ERC20" name="ctype" value="ERC20">
+    <label for="ERC20">ERC20 tokens</label>
 </div>
-
+<br>
 <div>
-    <pre id="ilkStats"></pre>
-</div>
-
-<div>
+    <pre style="display: inline;">Action:</pre>
     <input type="radio" id="borrow" name="sign" value="borrow" checked>
     <label for="borrow">Borrow/deposit</label>
     <input type="radio" id="repay" name="sign" value="repay">
@@ -48,17 +36,49 @@
 
 <br>
 
-<div>
-    <label for="dart">rico</label>
-    <input type="text" id="dart" name="dart" value="0" style='width:15ch'>
-    <label for="dink" id="gem">ink</label>
-    <input type="text" id="dink" name="dink" value="0" style='width:15ch'>
-    <input type="button" id="btnFrob" value="☀️">
+<div id="uniHook">
+    <div class="flex-item">
+        <label id="NFTList">LP NFTS to deposit:</label>
+        <div id="nftContainer"></div>
+    </div>
+    <div class="flex-item">
+        <label id="RicoAmount">RICO to borrow:</label>
+        <div>
+            <input type="text" id="uniDart" name="uniDart" value="0" style='width:15ch'>
+        </div>
+    </div>
+</div>
+
+<br>
+
+<div id="erc20Hook" style="display:none">
+    <div>
+        <input type="radio" id="arb" name="ilk" value="arb" checked>
+        <label for="arb">ARB</label>
+        <input type="radio" id="wdiveth" name="ilk" value="wdiveth">
+        <label for="wdiveth">wdivETH</label>
+        <input type="radio" id="stable" name="ilk" value="stable">
+        <label for="stable">STABLE</label>
+    </div>
+    <br>
+    <div>
+        <pre id="ilkStats"></pre>
+    </div>
+    <div>
+        <pre id="urnStats"></pre>
+        <pre id="hookStats"></pre>
+    </div>
+    <br>
+    <div>
+        <label for="dart">rico</label>
+        <input type="text" id="dart" name="dart" value="0" style='width:15ch'>
+        <label for="dink" id="gem">ink</label>
+        <input type="text" id="dink" name="dink" value="0" style='width:15ch'>
+    </div>
 </div>
 
 <div>
-    <pre id="urnStats"></pre>
-    <pre id="hookStats"></pre>
+    <input type="button" id="btnFrob" value="☀️">
 </div>
 
 <p style="position:absolute; bottom:0">

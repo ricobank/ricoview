@@ -1,0 +1,23 @@
+body {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    font-family: monospace;
+    max-width: 120ch;
+}
+
+input[type="radio"] {
+    accent-color: black;
+}
+
+#uniHook {
+    justify-content: center;
+}
+.flex-item {
+    margin: 10px;
+}
+
+#nftContainer {
+    display: flex;
+    flex-wrap: wrap;
+}
