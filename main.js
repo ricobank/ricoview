@@ -1,5 +1,5 @@
-import { createPublicClient, createWalletClient, custom, formatUnits, getContract,
-    hexToString, http, pad, parseAbi, parseUnits, stringToHex, toHex } from 'viem'  // todo update to viem 2.0
+import { createPublicClient, createWalletClient, custom, decodeAbiParameters, encodeAbiParameters, formatUnits,
+    getContract, http, pad, parseAbi, parseUnits, stringToHex, toHex } from 'viem'  // todo update to viem 2.0
 import { sepolia } from 'viem/chains'
 
 // sepolia addresses
@@ -64,6 +64,8 @@ let bank, nfpm, feed
 const $ = document.querySelector.bind(document);
 const BANKYEAR = ((365 * 24) + 6) * 3600
 const MAXUINT  = BigInt(2)**BigInt(256) - BigInt(1);
+const FREE = MAXUINT  // -1
+const LOCK = BigInt(1)
 const apy =r=> round(((Number(r) / 10**27) ** BANKYEAR - 1) * 100)
 const round =f=> parseFloat(f).toPrecision(4)
 
@@ -108,7 +110,8 @@ const updateUni = async () => {
     container.innerHTML = '';
     // either get deposited ink, or users own available NFTs
     if ($('input[name="sign"]:checked').value == "borrow") {
-        document.getElementById("NFTList").textContent = `LP NFTS to deposit:`;
+        document.getElementById("NFTList").textContent    = `LP NFTS to deposit:`
+        document.getElementById("RicoAmount").textContent = `RICO to borrow:`
         const numNFTs = await nfpm.read.balanceOf([account])
         const idsProm = Array.from({ length: Number(numNFTs) }, (_, i) => nfpm.read.tokenOfOwnerByIndex([account, i]));
         const ids = await Promise.all(idsProm);
@@ -116,13 +119,16 @@ const updateUni = async () => {
     } else {
         // get ink from bank
         document.getElementById("NFTList").textContent = `LP NFTS to withdraw:`;
+        document.getElementById("RicoAmount").textContent = `RICO to repay:`
         const uniInk = await bank.read.ink([uniIlk, account])
-        console.log(uniInk)
+        const ids = decodeAbiParameters([{ name: 'ink', type: 'uint[]' }], uniInk)[0]
+        displayNfts(ids)
     }
 }
 
 // todo this displays checkboxes for each uni nft with token IDs for labels
-// symbol/symbol min price, max price could be better. People can find id in uni app
+// ~"symbol/symbol [min price, max price]" could be better. Or people can find id in uni app
+// should also filter positions with at least one unsupported tok
 function displayNfts(nftIds) {
     const container = document.getElementById('nftContainer');
 
@@ -220,21 +226,16 @@ const frobUni = async () => {
     const nfts = getSelectedNfts()
 
     if (nfts.length > 0) {
-        dink = sign == "-" ? pad(toHex(-1)) : pad(toHex(1))
-
-        if (!await nfpm.read.isApprovedForAll([account, bankAddress])) {
+        const dir = sign === "-" ? FREE : LOCK
+        if (dir === LOCK && !await nfpm.read.isApprovedForAll([account, bankAddress])) {
             await nfpm.write.setApprovalForAll([bankAddress, true])
         }
-        for (let id of nfts) {
-            dink += pad(toHex(id)).slice(2)
-        }
+        dink = encodeAbiParameters([{ name: 'dink', type: 'uint[]' }], [[dir].concat(nfts)]);
     }
-
-    // todo deposit frob with NFTs always reverting on sepolia. config?
 
     // const { request } = await bank.simulate.frob([uniIlk, account, dink, dart], {gasLimit:10_000_000, from: account})
     // await walletClient.writeContract(request)
-    await bank.write.frob([uniIlk, account, dink, dart], {gasLimit:6_000_000})
+    await bank.write.frob([uniIlk, account, dink, dart])
 
     await updateHook()
 }
