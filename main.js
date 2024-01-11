@@ -13,8 +13,14 @@ const arb_addr      = "0x3c6765dd58D75786CD2B20968Aa13beF2a1D85B8"
 const stable_addr   = "0x698DEE4d8b5B9cbD435705ca523095230340D875"
 const wdiveth_addr  = "0x69619b71b52826B93205299e33259E1547ff3331"
 
-const ricorisk_addr = "0x5dD4Ff6070629F879353d02fFdA3404085298669"
-const ricodai_addr  = "0x6443Da3Df6DAE6F33e53611f31ec90d101Bf7FbF"
+const marSrc = "0x20A3e14b06DCD8Fd8eC582acC1cE1A08b698fa8e"
+const marTag = "0x7269636f3a726566000000000000000000000000000000000000000000000000"
+const arbSrc = "0x20a3e14b06dcd8fd8ec582acc1ce1a08b698fa8e"
+const arbTag = "0x6172623a72656600000000000000000000000000000000000000000000000000"
+const wdeSrc = "0x20a3e14b06dcd8fd8ec582acc1ce1a08b698fa8e"
+const wdeTag = "0x776469766574683a726566000000000000000000000000000000000000000000"
+const stbSrc = "0x20a3e14b06dcd8fd8ec582acc1ce1a08b698fa8e"
+const stbTag = "0x737461626c653a72656600000000000000000000000000000000000000000000"
 
 const gems = {
     arb:     arb_addr,
@@ -44,18 +50,15 @@ const nfpmAbi = parseAbi([
 
 // todo mainly unused, should use something like this to avoid multiple roundtrips reading state to use to read state
 const tokenData = {
-    "arb":     { src: "0x111", tag: "tag", decimals: 18 },
-    "wdiveth": { src: "0x111", tag: "tag", decimals: 18 },
-    "stable":  { src: "0x111", tag: "tag", decimals: 18 },
+    "mar":     { src: marSrc, tag: marTag, decimals: 0  },
+
+    "arb":     { src: arbSrc, tag: arbTag, decimals: 18 },
+    "wdiveth": { src: wdeSrc, tag: wdeTag, decimals: 18 },
+    "stable":  { src: stbSrc, tag: stbTag, decimals: 18 },
 };
 
 import BankDiamond from './BankDiamond.json';
 const bankAbi = BankDiamond.abi
-
-const fbConfig = {
-    address: feedAddress,
-    abi: feedAbi
-}
 
 let account, publicClient, walletClient
 let usrGemBal, usrGemAllowance
@@ -70,38 +73,27 @@ const apy =r=> round(((Number(r) / 10**27) ** BANKYEAR - 1) * 100)
 const round =f=> parseFloat(f).toPrecision(4)
 
 const updateRicoStats = async () => {
-    $('#ricoStats').textContent = ' '
-
-    const [parRay, wayRay, tipData] = await Promise.all([
+    const ricoStats = $('#ricoStats');
+    ricoStats.textContent = ' '
+    const [parRay, wayRay, feedData] = await Promise.all([
         bank.read.par(),
         bank.read.way(),
-        bank.read.tip(),
+        feed.read.pull([tokenData["mar"].src, tokenData["mar"].tag])
     ]);
-    const { src, tag } = tipData;
-
     const par = formatUnits(parRay, 27)
     const way = apy(wayRay)
-    let mar
-    try {
-        const [val, ttl] = await publicClient.readContract({...fbConfig, functionName: 'pull', args: [src, tag]})
-        mar = formatUnits(BigInt(val), 27)
-    } catch (e) {
-        console.log(`failed to read market price of rico with src ${src} and tag ${tag}`)
-        console.log(e)
-        mar = -1.0
-    }
-    $('#ricoStats').textContent = `Rico system price: ${round(par)}, Price rate: ${way}%, market price: ${round(mar)}`
+    const mar = formatUnits(BigInt(feedData[0]), 27)
+    ricoStats.textContent = `Rico system price: ${round(par)}, Price rate: ${way}%, market price: ${round(mar)}`
 }
 
 const updateHook = async () => {
     const showUni = $('input[name="ctype"]:checked').value == "UNIV3 LP NFTs"
-    document.getElementById("uniHook").style.display   = showUni ? "flex" : "none";
+    document.getElementById("uniHook").style.display   = showUni ? "block" : "none";
     document.getElementById("erc20Hook").style.display = showUni ? "none"  : "block";
     if(showUni){
         await updateUni()
     } else {
-        await updateERC20IlkStats()
-        await updateERC20UrnStats()
+        await Promise.all([updateERC20IlkStats(), updateERC20UrnStats()])
     }
 }
 
@@ -112,7 +104,16 @@ const updateUni = async () => {
     if ($('input[name="sign"]:checked').value == "borrow") {
         document.getElementById("NFTList").textContent    = `LP NFTS to deposit:`
         document.getElementById("RicoAmount").textContent = `RICO to borrow:`
-        const numNFTs = await nfpm.read.balanceOf([account])
+
+        const [numNFTs, ilk] = await Promise.all([
+            nfpm.read.balanceOf([account]),
+            bank.read.ilks([uniIlk]),
+        ])
+        const fee  = apy(ilk.fee)
+        const dust = formatUnits(ilk.dust, 45)
+        // todo should also show liqr or cratio, or show max borrow. same w erc20
+        $('#uniIlkStats').textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)} rico`
+
         const idsProm = Array.from({ length: Number(numNFTs) }, (_, i) => nfpm.read.tokenOfOwnerByIndex([account, i]));
         const ids = await Promise.all(idsProm);
         displayNfts(ids)
@@ -157,66 +158,50 @@ function getSelectedNfts() {
 }
 
 const updateERC20IlkStats = async () => {
-    $('#ilkStats').textContent = ' '
+    const ilkStats = $('#ilkStats');
+    ilkStats.textContent = ' '
     const ilkStr = $('input[name="ilk"]:checked').value
     const ilkHex = stringToHex(ilkStr, {size: 32})
     $('#gem').textContent = ilkStr
-    const ilk  = await bank.read.ilks([ilkHex])
+    let ilk
+
+    [ilk, usrGemAllowance, usrGemBal] = await Promise.all([
+        bank.read.ilks([ilkHex]),
+        publicClient.readContract({
+            address: gems[ilkStr],
+            abi: gemAbi,
+            functionName: 'allowance',
+            args: [account, bankAddress]
+        }),
+        publicClient.readContract({
+            address: gems[ilkStr],
+            abi: gemAbi,
+            functionName: 'balanceOf',
+            args: [account]
+        })
+    ])
+
     const fee  = apy(ilk.fee)
     const dust = formatUnits(ilk.dust, 45)
-    $('#ilkStats').textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)} rico`
-
-    // todo 3 serial waits, replace with single viem multicall "await publicClient.multicall..."
-    // or at least concurrent promise group
-    usrGemAllowance = await publicClient.readContract({
-        address: gems[ilkStr],
-        abi: gemAbi,
-        functionName: 'allowance',
-        args: [account, bankAddress]
-    })
-    usrGemBal = await publicClient.readContract({
-        address: gems[ilkStr],
-        abi: gemAbi,
-        functionName: 'balanceOf',
-        args: [account]
-    })
-}
-
-const getHookStats = async () => {
-    const ilkStr = $('input[name="ilk"]:checked').value
-    const ilkHex = stringToHex(ilkStr, {size: 32})
-
-    const [ink, rawSrc, tag] = await Promise.all([
-      bank.read.ink( [ilkHex, account]),
-      bank.read.geth([ilkHex, stringToHex('src', {size: 32}), []]),
-      bank.read.geth([ilkHex, stringToHex('tag', {size: 32}), []]),
-    ])
-    const inkStr = formatUnits(BigInt(ink), tokenData[ilkStr].decimals)
-    // todo use tokenData{} to get src, tag and reduce to one fetch
-    const src = rawSrc.slice(0, 42);
-    let mark;
-    try {
-        const [val, ttl] = await publicClient.readContract({...fbConfig, functionName: 'pull', args: [src, tag]})
-        mark = formatUnits(BigInt(val), 27)
-    } catch(e) {
-        console.log(e)
-        mark = -1.0
-    }
-    return `Feed price: ${round(mark)}, ${ilkStr} collateral: ${round(inkStr)}`
+    ilkStats.textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)} rico`
 }
 
 const updateERC20UrnStats = async () => {
     const ilkStr = $('input[name="ilk"]:checked').value
     const ilkHex = stringToHex(ilkStr, {size: 32})
 
-    const [ilk, urn] = await Promise.all([
+    const [ilk, urn, ink, feedData] = await Promise.all([
       bank.read.ilks([ilkHex]),
       bank.read.urns([ilkHex, account]),
+      bank.read.ink( [ilkHex, account]),
+      feed.read.pull([tokenData[ilkStr].src, tokenData[ilkStr].tag]),
     ])
 
     const debt = formatUnits(urn * ilk.rack, 45)
-    const hookStats = await getHookStats()
-    $('#urnStats').textContent = `rico debt: ${round(debt)}, ${hookStats}`
+    const inkStr = formatUnits(BigInt(ink), tokenData[ilkStr].decimals)
+    const mark = formatUnits(BigInt(feedData[0]), 27)
+    $('#urnStats').textContent =
+        `rico debt: ${round(debt)}, Feed price: ${round(mark)}, ${ilkStr} collateral: ${round(inkStr)}`
 }
 
 const frobUni = async () => {
@@ -256,14 +241,25 @@ const frobERC20 = async () => {
         await walletClient.writeContract(request)
     }
 
-    if (dink < 0) dink += MAXUINT
+    if (dink < 0) dink += (BigInt(2)**BigInt(256))
     const dinkB32 = pad(toHex(dink))
 
     await bank.write.frob([stringToHex(ilk, {size: 32}), account, dinkB32, dart])
     await updateERC20UrnStats()
 }
 
+const validateConstants = async () => {
+    // todo after page is loaded read values from chain and compare to hardcoded if running from saved file
+    //  warn and disable if saved page needs updating
+    if (window.location.protocol === 'file:') {
+        // bank.read.tip()
+        // bank.read.geth([ilkHex, stringToHex('src', {size: 32}), []]),
+        // etc
+    }
+}
+
 window.onload = async() => {
+    // todo manage connection, allow to proceed in some ways before connected. test with frame, rabby, coinbase wallet
     [account] = await window.ethereum.request({ method: 'eth_requestAccounts' })
     walletClient = createWalletClient({
       account,
@@ -305,22 +301,15 @@ window.onload = async() => {
         }
     });
 
-    document.querySelectorAll('input[name="ctype"]').forEach((elem) => {
+    document.querySelectorAll('input[name="ctype"], input[name="sign"], input[name="ilk"]').forEach((elem) => {
         elem.addEventListener("change", async () => {
-            await updateHook()
+            await updateHook();
         });
     });
-    document.querySelectorAll('input[name="sign"]').forEach((elem) => {
-        elem.addEventListener("change", async () => {
-            await updateHook()
-        });
-    });
-    document.querySelectorAll('input[name="ilk"]').forEach((elem) => {
-        elem.addEventListener("change", async () => {
-            await updateERC20IlkStats()
-        });
-    });
+
     // todo update on palms
 
     await Promise.all([updateRicoStats(), updateHook()]);
+    
+    await validateConstants()
 }
