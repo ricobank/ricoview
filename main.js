@@ -1,5 +1,5 @@
 import { createPublicClient, createWalletClient, custom, decodeAbiParameters, encodeAbiParameters, formatUnits,
-    getContract, http, pad, parseAbi, parseUnits, stringToHex, toHex } from 'viem'  // todo update to viem 2.0
+    getContract, http, pad, parseAbi, parseUnits, stringToHex, toHex } from 'viem'
 import { sepolia } from 'viem/chains'
 
 // sepolia addresses
@@ -277,20 +277,26 @@ window.onload = async() => {
     bank = getContract({
       address: bankAddress,
       abi: bankAbi,
-      publicClient: publicClient,
-      walletClient: walletClient
+      client: {
+          public: publicClient,
+          wallet: walletClient,
+      }
     })
     feed = getContract({
       address: feedAddress,
       abi: feedAbi,
-      publicClient: publicClient,
-      walletClient: walletClient
+      client: {
+          public: publicClient,
+          wallet: walletClient,
+      }
     })
     nfpm = getContract({
       address: nfpmAddress,
       abi: nfpmAbi,
-      publicClient: publicClient,
-      walletClient: walletClient
+      client: {
+          public: publicClient,
+          wallet: walletClient,
+      }
     })
 
     $('#btnFrob').addEventListener('click', async () => {
