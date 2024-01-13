@@ -17,6 +17,10 @@ input[type="radio"] {
     margin: 10px;
 }
 
+#frobControls {
+    justify-content: center;
+}
+
 #nftContainer {
     display: flex;
     flex-wrap: wrap;

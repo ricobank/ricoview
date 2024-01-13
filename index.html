@@ -37,19 +37,22 @@
 <br>
 
 <div id="uniHook">
-    <div class="flex-item">
-        <label id="NFTList">LP NFTS to deposit:</label>
-        <div id="nftContainer"></div>
+    <div>
+        <pre id="uniIlkStats"></pre>
     </div>
-    <div class="flex-item">
-        <label id="RicoAmount">RICO to borrow:</label>
-        <div>
-            <input type="text" id="uniDart" name="uniDart" value="0" style='width:15ch'>
+    <div id="frobControls" style="display:flex">
+        <div class="flex-item">
+            <label id="NFTList">LP NFTS to deposit:</label>
+            <div id="nftContainer"></div>
+        </div>
+        <div class="flex-item">
+            <label id="RicoAmount">RICO to borrow:</label>
+            <div>
+                <input type="text" id="uniDart" name="uniDart" value="0" style='width:15ch'>
+            </div>
         </div>
     </div>
 </div>
-
-<br>
 
 <div id="erc20Hook" style="display:none">
     <div>
@@ -66,7 +69,6 @@
     </div>
     <div>
         <pre id="urnStats"></pre>
-        <pre id="hookStats"></pre>
     </div>
     <br>
     <div>
@@ -76,6 +78,8 @@
         <input type="text" id="dink" name="dink" value="0" style='width:15ch'>
     </div>
 </div>
+
+<br>
 
 <div>
     <input type="button" id="btnFrob" value="☀️">

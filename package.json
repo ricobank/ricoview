@@ -7,7 +7,7 @@
     "build": "webpack --config webpack.config.js"
   },
   "dependencies": {
-    "viem": "^1.19.11"
+    "viem": "^2.0.6"
   },
   "license": "AGPL-3.0-or-later",
   "devDependencies": {
