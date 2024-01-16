@@ -17,7 +17,17 @@ input[type="radio"] {
     margin: 10px;
 }
 
+#erc20Hook {
+    justify-content: center;
+}
+.flex-item {
+    margin: 10px;
+}
+
 #frobControls {
+    justify-content: center;
+}
+#erc20FrobControls {
     justify-content: center;
 }
 
