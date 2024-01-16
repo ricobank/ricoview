@@ -1,4 +1,4 @@
-<!DOC TYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -40,6 +40,9 @@
     <div>
         <pre id="uniIlkStats"></pre>
     </div>
+    <div>
+        <pre id="uniUrnStats"></pre>
+    </div>
     <div id="frobControls" style="display:flex">
         <div class="flex-item">
             <label id="NFTList">LP NFTS to deposit:</label>
@@ -48,8 +51,12 @@
         <div class="flex-item">
             <label id="RicoAmount">RICO to borrow:</label>
             <div>
-                <input type="text" id="uniDart" name="uniDart" value="0" style='width:15ch'>
+                <input type="text" id="uniDrico" name="uniDrico" value="0" style='width:15ch'>
             </div>
+        </div>
+        <div class="flex-item">
+            <label id="ActionLimit">Max new borrow:</label>
+            <div id="limitContainer"></div>
         </div>
     </div>
 </div>
@@ -71,11 +78,21 @@
         <pre id="urnStats"></pre>
     </div>
     <br>
-    <div>
-        <label for="dart">rico</label>
-        <input type="text" id="dart" name="dart" value="0" style='width:15ch'>
-        <label for="dink" id="gem">ink</label>
-        <input type="text" id="dink" name="dink" value="0" style='width:15ch'>
+    <div id="erc20FrobControls" style="display:flex">
+        <div class="flex-item">
+            <label for="dink" id="gem">ink</label>
+            <div>
+                <input type="text" id="dink" name="dink" value="0" style='width:15ch'>
+            </div>
+        </div>
+        <div class="flex-item">
+            <label for=drico id="dricoLabel">RICO to borrow:</label>
+            <div>
+                <input type="text" id="drico" value="0" style='width:15ch'>
+            </div>
+        </div>
+
+
     </div>
 </div>
 
