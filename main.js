@@ -14,7 +14,7 @@ const arb_addr     = "0x3c6765dd58D75786CD2B20968Aa13beF2a1D85B8"
 const stable_addr  = "0x698DEE4d8b5B9cbD435705ca523095230340D875"
 const wdiveth_addr = "0x69619b71b52826B93205299e33259E1547ff3331"
 
-const marSrc = "0x20A3e14b06DCD8Fd8eC582acC1cE1A08b698fa8e"
+const marSrc = "0x2b01feaB27127DDfFEAaB057369Ddb4655b113F5"
 const marTag = "0x7269636f3a726566000000000000000000000000000000000000000000000000"
 const arbSrc = "0x20a3e14b06dcd8fd8ec582acc1ce1a08b698fa8e"
 const arbTag = "0x6172623a72656600000000000000000000000000000000000000000000000000"
@@ -47,15 +47,16 @@ const wrapAbi = parseAbi([
 ])
 
 const RAY = BigInt(10) ** BigInt(27)
+const BLN = BigInt(10) ** BigInt(9)
 
 const tokenData = {
-    "mar":          { src: marSrc, tag: marTag, decimals: 0 , liqr: RAY, uniLiqr: RAY },
-    "arb":          { src: arbSrc, tag: arbTag, decimals: 18, liqr: RAY, uniLiqr: RAY },
-    [arb_addr]:     { src: arbSrc, tag: arbTag, decimals: 18, liqr: RAY, uniLiqr: RAY },
-    "stable":       { src: stbSrc, tag: stbTag, decimals: 18, liqr: RAY, uniLiqr: RAY },
-    [stable_addr]:  { src: stbSrc, tag: stbTag, decimals: 18, liqr: RAY, uniLiqr: RAY },
-    "wdiveth":      { src: wdeSrc, tag: wdeTag, decimals: 18, liqr: RAY, uniLiqr: RAY },
-    [wdiveth_addr]: { src: wdeSrc, tag: wdeTag, decimals: 18, liqr: RAY, uniLiqr: RAY },
+    "mar":          { src: marSrc, tag: marTag, decimals: 0 , liqr: RAY, uniLiqr: RAY * 3n / 2n },
+    "arb":          { src: arbSrc, tag: arbTag, decimals: 18, liqr: RAY, uniLiqr: RAY * 3n / 2n },
+    [arb_addr]:     { src: arbSrc, tag: arbTag, decimals: 18, liqr: RAY, uniLiqr: RAY * 3n / 2n },
+    "stable":       { src: stbSrc, tag: stbTag, decimals: 18, liqr: RAY, uniLiqr: RAY * 3n / 2n },
+    [stable_addr]:  { src: stbSrc, tag: stbTag, decimals: 18, liqr: RAY, uniLiqr: RAY * 3n / 2n },
+    "wdiveth":      { src: wdeSrc, tag: wdeTag, decimals: 18, liqr: RAY, uniLiqr: RAY * 3n / 2n },
+    [wdiveth_addr]: { src: wdeSrc, tag: wdeTag, decimals: 18, liqr: RAY, uniLiqr: RAY * 3n / 2n },
 };
 const gems = {
     arb:     arb_addr,
@@ -72,7 +73,6 @@ import BankDiamond from './BankDiamond.json';
 const bankAbi = BankDiamond.abi
 
 let account, publicClient, walletClient
-let usrGemBal, usrGemAllowance
 let bank, feed, nfpm, wrap
 
 const $ = document.querySelector.bind(document);
@@ -92,7 +92,8 @@ let store = {}
 const apy =r=> round(((Number(r) / 10**27) ** BANKYEAR - 1) * 100)
 const round =f=> parseFloat(f).toPrecision(4)
 
-const borrowing = () => $('input[name="sign"]:checked').value === "borrow"
+const borrowing =()=> $('input[name="sign"]:checked').value === "borrow"
+const uniMode =()=> $('input[name="ctype"]:checked').value == "UNIV3 LP NFTs"
 
 const updateRicoStats = async () => {
     const ricoStats = $('#ricoStats');
@@ -110,23 +111,23 @@ const updateRicoStats = async () => {
 
 const updateHook = async () => {
     store = {}
+    $('#dricoLabelContainer').innerHTML = $('#uniDricoLabelContainer').innerHTML = ':'
 
-    const showUni = $('input[name="ctype"]:checked').value == "UNIV3 LP NFTs"
+    const showUni = uniMode()
     document.getElementById("uniHook").style.display   = showUni ? "block" : "none";
     document.getElementById("erc20Hook").style.display = showUni ? "none"  : "block";
     if(showUni){
         await updateUni()
     } else {
-        await Promise.all([updateERC20IlkStats(), updateERC20UrnStats()])
+        await updateERC20()
     }
+    updateSafetyFactor()
 }
 
 const updateUni = async () => {
     const NFTsContainer  = $('#nftContainer')
-    const limitContainer = $('#limitContainer')
     NFTsContainer.innerHTML = '';
-    limitContainer.innerHTML = '';
-    $('#uniDrico').disabled = false
+    updateDricoLabel($('#uniDricoLabelContainer'), $('#uniDrico'))
 
     const [numNFTs, ilk, ink, urn, par] = await Promise.all([
         nfpm.read.balanceOf([account]),
@@ -143,39 +144,23 @@ const updateUni = async () => {
     store.rack = ilk.rack
     store.par  = par
     $('#uniIlkStats').textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)} rico`
-    $('#uniUrnStats').textContent = `Rico debt: ${round(debt)}`
+    $('#uniUrnStats').textContent = `Deposited NFTS: ${store.ink}, Rico debt: ${round(debt)}`
 
-    // either get deposited ink, or users own available NFTs
+    let usrIDs = [];
     if (borrowing()) {
-        $('#NFTList').textContent     = `LP NFTS to deposit:`
-        $('#RicoAmount').textContent  = `RICO to borrow:`
-        $('#ActionLimit').textContent = `Max new borrow:`
+        $('#NFTList').textContent= `LP NFTS to deposit:`
         const idsProm = Array.from({ length: Number(numNFTs) }, (_, i) => nfpm.read.tokenOfOwnerByIndex([account, i]));
-        const ids = await Promise.all(idsProm);
-        displayNfts(ids)
-        await updateUniBorrowLimit()
+        usrIDs = await Promise.all(idsProm);
+        displayNfts(usrIDs)
     } else {
-        $('#NFTList').textContent     = `LP NFTS to withdraw:`;
-        $('#RicoAmount').textContent  = `RICO to repay:`
-        $('#ActionLimit').textContent = `Repay all:`
-
-        const checkbox = document.createElement('input');
-        checkbox.setAttribute('type', 'checkbox')
-        checkbox.setAttribute('id', 'uniRepayAll')
-        limitContainer.appendChild(checkbox)
-        checkbox.addEventListener('change', (event) => {
-            store.uniRepayAll = $('#uniDrico').disabled = event.target.checked
-        })
-
-        const uniInk = await bank.read.ink([uniIlk, account])
-        const ids = decodeAbiParameters([{ name: 'ink', type: 'uint[]' }], uniInk)[0]
-        displayNfts(ids)
+        $('#NFTList').textContent = `LP NFT IDS to withdraw:`;
+        displayNfts(store.ink)
     }
+    await valueNFTs([...usrIDs, ...store.ink])
 }
 
-const updateUniBorrowLimit = async () => {
-    const allInk = [...getSelectedNfts(), ...store.ink];
-    const posiProms = allInk.map(async nft => {
+const valueNFTs = async (nfts) => {
+    const posiProms = nfts.map(async nft => {
         const positions = await nfpm.read.positions([nft]);
         return [...positions, nft];
     });
@@ -187,19 +172,14 @@ const updateUniBorrowLimit = async () => {
     })
     const prices = await Promise.all(feedProms)
     const gemToPrice = Object.fromEntries(prices)
-    const limitProms = positions.map(async pos => {
+    const valProms = positions.map(async pos => {
         const sqrtPriceX96 = sqrt(gemToPrice[pos[t1]] * X96 * X96 / gemToPrice[pos[t0]])
         const [amt0, amt1] = await wrap.read.total([nfpmAddress, pos[id], sqrtPriceX96])
         const liqr = maxBigInt(tokenData[pos[t0]].uniLiqr, tokenData[pos[t1]].uniLiqr)
-        return (amt0 * gemToPrice[pos[t0]] + amt1 * gemToPrice[pos[t1]]) / liqr
+        return [pos[id], (amt0 * gemToPrice[pos[t0]] + amt1 * gemToPrice[pos[t1]]) / liqr]
     })
-    const vals = await Promise.all(limitProms)
-    const maxVal = vals.reduce((acc, val) => acc + val, BigInt(0))
-    const maxRico = maxVal * RAY / store.par
-    const limit = maxRico - (store.art * store.rack / RAY)
-
-    const container = document.getElementById('limitContainer');
-    container.textContent = `${parseFloat(formatUnits(limit, 18)).toFixed(4)}`;
+    const valsArr = await Promise.all(valProms)
+    store.idToVal = Object.fromEntries(valsArr)
 }
 
 // todo this displays checkboxes for each uni nft with token IDs for labels
@@ -207,6 +187,11 @@ const updateUniBorrowLimit = async () => {
 // should also filter positions with at least one unsupported tok
 function displayNfts(nftIds) {
     const container = document.getElementById('nftContainer');
+
+    if (nftIds.length == 0) {
+        container.textContent = 'none'
+        return
+    }
 
     nftIds.forEach(id => {
         const checkbox = document.createElement('input');
@@ -216,7 +201,7 @@ function displayNfts(nftIds) {
 
         const label = document.createElement('label');
         label.htmlFor = `nft-${id}`;
-        label.textContent = `NFT ID: ${id}`;
+        label.textContent = `${id}`;
 
         const div = document.createElement('div');
         div.style.marginRight = '10px'
@@ -228,7 +213,7 @@ function displayNfts(nftIds) {
 
     document.querySelectorAll('#nftContainer input[type="checkbox"]').forEach((elem) => {
         elem.addEventListener("change", async () => {
-            await onNFTSelection();
+            await updateSafetyFactor();
         });
     });
 }
@@ -238,30 +223,19 @@ function getSelectedNfts() {
     return Array.from(checkboxes).map(checkbox => BigInt(checkbox.value));
 }
 
-const onNFTSelection = async () => {
-    if (borrowing()) {
-        await updateUniBorrowLimit()
-    }
-}
-
-const updateERC20IlkStats = async () => {
-    const ilkStats = $('#ilkStats');
-    ilkStats.textContent = ' '
+const updateERC20 = async () => {
     const ilkStr = $('input[name="ilk"]:checked').value
     const ilkHex = stringToHex(ilkStr, {size: 32})
-
     const gemName = strToDisplay[ilkStr]
-    if (borrowing()) {
-        $('#gem').textContent  = `${gemName} to deposit:`
-        $('#drico').textContent = `RICO to borrow:`
-    } else {
-        $('#gem').textContent  =  `${gemName} to withdraw:`;
-        $('#drico').textContent = `RICO to repay:`
-    }
+    $('#gem').textContent = borrowing() ? `${gemName} to deposit:` : `${gemName} to withdraw:`
+    updateDricoLabel($('#dricoLabelContainer'), $('#drico'))
 
-    let ilk
-    [ilk, usrGemAllowance, usrGemBal] = await Promise.all([
+    const [ilk, urn, ink, par, liqr, usrGemAllowance, usrGemBal, feedData] = await Promise.all([
         bank.read.ilks([ilkHex]),
+        bank.read.urns([ilkHex, account]),
+        bank.read.ink( [ilkHex, account]),
+        bank.read.par(),
+        bank.read.geth([ilkHex, stringToHex('liqr', {size: 32}), []]),
         publicClient.readContract({
             address: gems[ilkStr],
             abi: gemAbi,
@@ -273,45 +247,84 @@ const updateERC20IlkStats = async () => {
             abi: gemAbi,
             functionName: 'balanceOf',
             args: [account]
-        })
+        }),
+        feed.read.pull([tokenData[ilkStr].src, tokenData[ilkStr].tag]),
     ])
 
     const fee  = apy(ilk.fee)
     const dust = formatUnits(ilk.dust, 45)
-    ilkStats.textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)} rico`
-}
-
-const updateERC20UrnStats = async () => {
-    const ilkStr = $('input[name="ilk"]:checked').value
-    const symStr = strToDisplay[ilkStr]
-    const ilkHex = stringToHex(ilkStr, {size: 32})
-
-    const [ilk, urn, ink, feedData] = await Promise.all([
-      bank.read.ilks([ilkHex]),
-      bank.read.urns([ilkHex, account]),
-      bank.read.ink( [ilkHex, account]),
-      feed.read.pull([tokenData[ilkStr].src, tokenData[ilkStr].tag]),
-    ])
-
+    const mark = formatUnits(BigInt(feedData[0]), 27)
     const debt = formatUnits(urn * ilk.rack, 45)
     const inkStr = formatUnits(BigInt(ink), tokenData[ilkStr].decimals)
-    const mark = formatUnits(BigInt(feedData[0]), 27)
-    $('#urnStats').textContent =
-        `Rico debt: ${round(debt)}, Feed price: ${round(mark)}, ${symStr} collateral: ${round(inkStr)}`
+    store.ink  = BigInt(ink)
+    store.art  = urn
+    store.par  = par
+    store.rack = ilk.rack
+    store.liqr = BigInt(liqr)
+    store.feed = BigInt(feedData[0])
+    store.usrGemAllowance = usrGemAllowance
+    store.usrGemBal = usrGemBal
+    $('#ilkStats').textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)} rico, Feed price: ${round(mark)}`
+    $('#urnStats').textContent = `Deposited ${gemName}: ${round(inkStr)}, Rico debt: ${round(debt)}`
+}
+
+const updateDricoLabel = (container, input) => {
+    if (borrowing()) {
+        container.textContent = `RICO to borrow:`
+    } else {
+        container.innerHTML = `Repay RICO(<input type="checkbox" id="dricoAllCheckbox">all):`
+        $('#dricoAllCheckbox').addEventListener('change', (event) => {
+            store.repayAll = input.disabled = event.target.checked
+            updateSafetyFactor();
+        })
+    }
+}
+
+const updateSafetyFactor =()=> {
+    let factor = ''
+    let loan, value
+    if (uniMode()) {
+        let art = store.art + readArt(borrowing() ? "" : "-", $('#uniDrico'))
+        loan = art * store.rack / RAY * store.par / RAY
+
+        const inkVal  = store.ink.reduce((acc, id) => acc + (store.idToVal[id]), BigInt(0));
+        const dinkVal = getSelectedNfts().reduce((acc, id) => acc + (store.idToVal[id]), BigInt(0));
+        value = inkVal + (borrowing() ? dinkVal : -dinkVal)
+    } else {
+        const sign = borrowing() ? "" : "-"
+        let art = store.art + readArt(sign, $('#drico'))
+        loan = art * store.rack * store.par / RAY  / RAY
+
+        let ink = store.ink + parseUnits(sign + $('#dink').value, $('input[name="ilk"]:checked').value)
+        value = ink * store.feed / store.liqr
+    }
+
+    if (loan === 0n) {
+        factor = 'safe'
+    } else {
+        // get Number ratio from BN WADs which may be > maximum Number
+        factor = round(Number(BLN * value / loan) / Number(BLN))
+    }
+
+    $('#safetyFactor').textContent = `New safety factor: ${factor}`
+}
+
+const readArt =(sign, input)=> {
+    let dart
+    if (store.repayAll && sign === "-")
+        dart = -store.art
+    else {
+        const drico = parseUnits(sign + input.value, 18)
+        dart = drico * RAY / store.rack
+    }
+    return dart
 }
 
 const frobUni = async () => {
     const sign = borrowing() ? "" : "-"
     let dink = "0x"
-    let dart
-    if (store.uniRepayAll && sign === "-")
-        dart = -store.art
-    else {
-        const drico = parseUnits(sign + $('#uniDrico').value, 18)
-        dart = drico * RAY / store.rack
-    }
+    const dart = readArt(sign, $('#uniDrico'))
     const nfts = getSelectedNfts()
-
     if (nfts.length > 0) {
         const dir = sign === "-" ? FREE : LOCK
         if (dir === LOCK && !await nfpm.read.isApprovedForAll([account, bankAddress])) {
@@ -319,17 +332,15 @@ const frobUni = async () => {
         }
         dink = encodeAbiParameters([{ name: 'dink', type: 'uint[]' }], [[dir].concat(nfts)]);
     }
-
     await bank.write.frob([uniIlk, account, dink, dart])
-    await updateHook()
 }
 
 const frobERC20 = async () => {
     const ilk = $('input[name="ilk"]:checked').value
     const sign = borrowing() ? "" : "-"
+    const dart = readArt(sign, $('#drico'))
     let dink = parseUnits(sign + $('#dink').value, tokenData[ilk].decimals);
-    const dart = parseUnits(sign + $('#dart').value, 18)
-    if (dink > usrGemAllowance) {
+    if (dink > store.usrGemAllowance) {
         const {request} = await publicClient.simulateContract({
             abi: gemAbi,
             address: gems[ilk],
@@ -344,7 +355,6 @@ const frobERC20 = async () => {
     const dinkB32 = pad(toHex(dink))
 
     await bank.write.frob([stringToHex(ilk, {size: 32}), account, dinkB32, dart])
-    await updateERC20UrnStats()
 }
 
 const validateConstants = async () => {
@@ -407,7 +417,7 @@ window.onload = async() => {
     })
 
     $('#btnFrob').addEventListener('click', async () => {
-        if ($('input[name="ctype"]:checked').value == "UNIV3 LP NFTs") {
+        if (uniMode()) {
             await frobUni()
         } else {
             await frobERC20()
@@ -417,6 +427,12 @@ window.onload = async() => {
     document.querySelectorAll('input[name="ctype"], input[name="sign"], input[name="ilk"]').forEach((elem) => {
         elem.addEventListener("change", async () => {
             await updateHook();
+        });
+    });
+
+    document.querySelectorAll('input[name="dink"], input[name="drico"], input[name="uniDrico"]').forEach((elem) => {
+        elem.addEventListener("change", async () => {
+            await updateSafetyFactor();
         });
     });
 
