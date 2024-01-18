@@ -43,20 +43,16 @@
     <div>
         <pre id="uniUrnStats"></pre>
     </div>
-    <div id="frobControls" style="display:flex">
+    <div id="uniFrobControls" style="display:flex">
         <div class="flex-item">
             <label id="NFTList">LP NFTS to deposit:</label>
             <div id="nftContainer"></div>
         </div>
         <div class="flex-item">
-            <label id="RicoAmount">RICO to borrow:</label>
+            <label id="uniDricoLabelContainer"></label>
             <div>
-                <input type="text" id="uniDrico" name="uniDrico" value="0" style='width:15ch'>
+                <input type="text" id="uniDrico" name="uniDrico" value="0" style='width:18ch'>
             </div>
-        </div>
-        <div class="flex-item">
-            <label id="ActionLimit">Max new borrow:</label>
-            <div id="limitContainer"></div>
         </div>
     </div>
 </div>
@@ -70,15 +66,13 @@
         <input type="radio" id="stable" name="ilk" value="stable">
         <label for="stable">STABLE</label>
     </div>
-    <br>
     <div>
         <pre id="ilkStats"></pre>
     </div>
     <div>
         <pre id="urnStats"></pre>
     </div>
-    <br>
-    <div id="erc20FrobControls" style="display:flex">
+    <div id="frobControls" style="display:flex">
         <div class="flex-item">
             <label for="dink" id="gem">ink</label>
             <div>
@@ -86,19 +80,18 @@
             </div>
         </div>
         <div class="flex-item">
-            <label for=drico id="dricoLabel">RICO to borrow:</label>
+            <label id="dricoLabelContainer"></label>
             <div>
-                <input type="text" id="drico" value="0" style='width:15ch'>
+                <input type="text" id="drico" name="drico" value="0" style='width:15ch'>
             </div>
         </div>
-
-
     </div>
 </div>
 
 <br>
 
 <div>
+    <pre style="display: inline;" id="safetyFactor" title="Ratio of collateral value to minimum required to avoid liquidation"></pre>
     <input type="button" id="btnFrob" value="☀️">
 </div>
 
