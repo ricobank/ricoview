@@ -28,9 +28,9 @@
 <br>
 <div>
     <pre style="display: inline;">Action:</pre>
-    <input type="radio" id="borrow" name="sign" value="borrow" checked>
+    <input type="radio" id="borrow" name="sign" value="Borrow/deposit" checked>
     <label for="borrow">Borrow/deposit</label>
-    <input type="radio" id="repay" name="sign" value="repay">
+    <input type="radio" id="repay" name="sign" value="Repay/withdraw">
     <label for="repay">Repay/withdraw</label>
 </div>
 
@@ -45,7 +45,7 @@
     </div>
     <div id="uniFrobControls" style="display:flex">
         <div class="flex-item">
-            <label id="NFTList">LP NFTS to deposit:</label>
+            <label id="NFTList"></label>
             <div id="nftContainer"></div>
         </div>
         <div class="flex-item">
@@ -74,7 +74,7 @@
     </div>
     <div id="frobControls" style="display:flex">
         <div class="flex-item">
-            <label for="dink" id="gem">ink</label>
+            <label id="dinkLabelContainer"></label>
             <div>
                 <input type="text" id="dink" name="dink" value="0" style='width:15ch'>
             </div>
@@ -91,8 +91,8 @@
 <br>
 
 <div>
-    <pre style="display: inline;" id="safetyFactor" title="Ratio of collateral value to minimum required to avoid liquidation"></pre>
-    <input type="button" id="btnFrob" value="☀️">
+    <pre style="display: inline;" id="safetyFactor" title="Liquidation possible when < 1.0">New safety factor: ∞</pre>
+    <input type="button" id="btnFrob">
 </div>
 
 <p style="position:absolute; bottom:0">

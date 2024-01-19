@@ -42,3 +42,11 @@ input[type="checkbox"] {
     vertical-align: text-top;
     margin: 0;
 }
+#dinkAllCheckbox {
+    vertical-align: text-top;
+    margin: 0;
+}
+
+#btnFrob {
+    font-family: monospace;
+}
