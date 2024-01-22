@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "outDir": "dist",
+    "esModuleInterop": true
+  },
+  "include": [
+    "task/**/*.ts",
+    "test/**/*.ts",
+    "hardhat.config.ts",
+    "jstest"
+  ]
+}

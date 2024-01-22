@@ -1,0 +1,52 @@
+body {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    font-family: monospace;
+    justify-content: center;
+}
+
+input[type="radio"] {
+    accent-color: black;
+}
+input[type="checkbox"] {
+    accent-color: black;
+}
+
+#uniHook {
+    justify-content: center;
+}
+.flex-item {
+    margin: 10px;
+}
+
+#erc20Hook {
+    justify-content: center;
+}
+.flex-item {
+    margin: 10px;
+}
+
+#uniFrobControls {
+    justify-content: center;
+}
+#frobControls {
+    justify-content: center;
+}
+#nftContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+#dricoAllCheckbox {
+    vertical-align: text-top;
+    margin: 0;
+}
+#dinkAllCheckbox {
+    vertical-align: text-top;
+    margin: 0;
+}
+
+#btnFrob {
+    font-family: monospace;
+}

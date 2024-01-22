@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ricobank</title>
+    <img src="./ricoshift-noborder-noname.png" class="center" width="200">
+    <link rel="icon" type="image/x-icon" href="./ricoshift-noborder-noname.png">
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script defer src="dependencies.unmin.js"></script>
+    <script defer src="main.unmin.js"></script>
+</head>
+<body>
+
+<div>
+    <pre id="ricoStats"></pre>
+</div>
+
+<br>
+
+<div>
+    <pre style="display: inline;">Collateral:</pre>
+    <input type="radio" id="UNIV3 LP NFTs" name="ctype" value="UNIV3 LP NFTs" checked>
+    <label for="UNIV3 LP NFTs">UNIV3 LP NFTs</label>
+    <input type="radio" id="ERC20" name="ctype" value="ERC20">
+    <label for="ERC20">ERC20 tokens</label>
+</div>
+<br>
+<div>
+    <pre style="display: inline;">Action:</pre>
+    <input type="radio" id="borrow" name="sign" value="Borrow/deposit" checked>
+    <label for="borrow">Borrow/deposit</label>
+    <input type="radio" id="repay" name="sign" value="Repay/withdraw">
+    <label for="repay">Repay/withdraw</label>
+</div>
+
+<br>
+
+<div id="uniHook">
+    <div>
+        <pre id="uniIlkStats"></pre>
+    </div>
+    <div>
+        <pre id="uniUrnStats"></pre>
+    </div>
+    <div id="uniFrobControls" style="display:flex">
+        <div class="flex-item">
+            <label id="NFTList"></label>
+            <div id="nftContainer"></div>
+        </div>
+        <div class="flex-item">
+            <label id="uniDricoLabelContainer"></label>
+            <div>
+                <input type="text" id="uniDrico" name="uniDrico" value="0" style='width:18ch'>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="erc20Hook" style="display:none">
+    <div>
+        <input type="radio" id="arb" name="ilk" value="arb" checked>
+        <label for="arb">ARB</label>
+        <input type="radio" id="wdiveth" name="ilk" value="wdiveth">
+        <label for="wdiveth">wdivETH</label>
+        <input type="radio" id="stable" name="ilk" value="stable">
+        <label for="stable">STABLE</label>
+    </div>
+    <div>
+        <pre id="ilkStats"></pre>
+    </div>
+    <div>
+        <pre id="urnStats"></pre>
+    </div>
+    <div id="frobControls" style="display:flex">
+        <div class="flex-item">
+            <label id="dinkLabelContainer"></label>
+            <div>
+                <input type="text" id="dink" name="dink" value="0" style='width:15ch'>
+            </div>
+        </div>
+        <div class="flex-item">
+            <label id="dricoLabelContainer"></label>
+            <div>
+                <input type="text" id="drico" name="drico" value="0" style='width:15ch'>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br>
+
+<div>
+    <pre style="display: inline;" id="safetyFactor" title="Liquidation possible when < 1.0">New safety factor: ∞</pre>
+    <input type="button" id="btnFrob">
+</div>
+
+<p style="position:absolute; bottom:0">
+  This page is designed to be saved (as in "File > Save") and be usable even if DNS or this web host go offline or are compromised.
+</p>
+
+<noscript>You need to enable JavaScript to use Rico.</noscript>
+</body>
+</html>

@@ -1,0 +1,215 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "Block",
+  "sourceName": "lib/feedbase/src/mixin/Read.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "ErrMatch",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ErrShort",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "caller",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "object",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes4",
+          "name": "sig",
+          "type": "bytes4"
+        }
+      ],
+      "name": "ErrWard",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "caller",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "trusts",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "bit",
+          "type": "bool"
+        }
+      ],
+      "name": "SetWard",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "feedbase",
+      "outputs": [
+        {
+          "internalType": "contract Feedbase",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "tag",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getConfig",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "address[]",
+              "name": "sources",
+              "type": "address[]"
+            },
+            {
+              "internalType": "bytes32[]",
+              "name": "tags",
+              "type": "bytes32[]"
+            }
+          ],
+          "internalType": "struct Block.Config",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "usr",
+          "type": "address"
+        }
+      ],
+      "name": "give",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "tag",
+          "type": "bytes32"
+        }
+      ],
+      "name": "read",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "val",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "ttl",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "tag",
+          "type": "bytes32"
+        },
+        {
+          "components": [
+            {
+              "internalType": "address[]",
+              "name": "sources",
+              "type": "address[]"
+            },
+            {
+              "internalType": "bytes32[]",
+              "name": "tags",
+              "type": "bytes32[]"
+            }
+          ],
+          "internalType": "struct Block.Config",
+          "name": "_config",
+          "type": "tuple"
+        }
+      ],
+      "name": "setConfig",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "usr",
+          "type": "address"
+        },
+        {
+          "internalType": "bool",
+          "name": "bit",
+          "type": "bool"
+        }
+      ],
+      "name": "ward",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "usr",
+          "type": "address"
+        }
+      ],
+      "name": "wards",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
