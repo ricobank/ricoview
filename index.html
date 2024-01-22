@@ -91,11 +91,15 @@
 <br>
 
 <div>
-    <pre style="display: inline;" id="safetyFactor" title="Liquidation possible when < 1.0">New safety factor: ∞</pre>
+    <pre style="display: inline;" id="safetyFactor" title="Liquidation possible when safety factor < 1.0">New safety factor: ∞</pre>
     <input type="button" id="btnFrob">
 </div>
 
-<p style="position:absolute; bottom:0">
+<div id="connectionError" style="display:none; color: red;">
+    <p>No account found, use a browser wallet like frame.sh/rabby/metamask and allow access</p>
+</div>
+
+<p style="position:absolute; bottom:0; left:0; right:0">
   This page is designed to be saved (as in "File > Save") and be usable even if DNS or this web host go offline or are compromised.
 </p>
 
