@@ -14,15 +14,6 @@ const arb_addr     = "0x3c6765dd58D75786CD2B20968Aa13beF2a1D85B8"
 const stable_addr  = "0x698DEE4d8b5B9cbD435705ca523095230340D875"
 const wdiveth_addr = "0x69619b71b52826B93205299e33259E1547ff3331"
 
-const marSrc = "0x2b01feaB27127DDfFEAaB057369Ddb4655b113F5"
-const marTag = "0x7269636f3a726566000000000000000000000000000000000000000000000000"
-const arbSrc = "0x20a3e14b06dcd8fd8ec582acc1ce1a08b698fa8e"
-const arbTag = "0x6172623a72656600000000000000000000000000000000000000000000000000"
-const wdeSrc = "0x20a3e14b06dcd8fd8ec582acc1ce1a08b698fa8e"
-const wdeTag = "0x776469766574683a726566000000000000000000000000000000000000000000"
-const stbSrc = "0x20a3e14b06dcd8fd8ec582acc1ce1a08b698fa8e"
-const stbTag = "0x737461626c653a72656600000000000000000000000000000000000000000000"
-
 const uniIlk = stringToHex(":uninft", {size: 32})
 
 const feedAbi  = parseAbi([
@@ -76,7 +67,7 @@ const bankAbi = BankDiamond.abi
 const x32 = (s) => stringToHex(s, {size: 32})
 const rpaddr = (a) => a + '00'.repeat(12)
 
-let account, publicClient, walletClient
+let account, transport, publicClient, walletClient
 let bank, feed, nfpm, wrap
 
 const $ = document.querySelector.bind(document);
@@ -116,15 +107,15 @@ const updateRicoStats = async () => {
 
 const updateHook = async () => {
     reset()
+    $('#btnFrob').disabled = true
     const showUni = uniMode()
+
     document.getElementById("uniHook").style.display   = showUni ? "block" : "none";
     document.getElementById("erc20Hook").style.display = showUni ? "none"  : "block";
-    if(showUni){
-        await updateUni()
-    } else {
-        await updateERC20()
-    }
+    await (showUni ? updateUni() : updateERC20());
     updateSafetyFactor()
+
+    $('#btnFrob').disabled = false
 }
 
 const updateUni = async () => {
@@ -163,6 +154,7 @@ const updateUni = async () => {
     await valueNFTs([...usrIDs, ...store.ink])
 }
 
+// store the liqr adjusted rico value of all NFTs
 const valueNFTs = async (nfts) => {
     const posiProms = nfts.map(async nft => {
         const positions = await nfpm.read.positions([nft]);
@@ -170,22 +162,34 @@ const valueNFTs = async (nfts) => {
     });
     const positions = await Promise.all(posiProms);
     const tokens    = new Set(positions.flatMap(pos => [pos[t0], pos[t1]]))
+
+    // get src, tag and liqr for all tokens in one multicall trip
+    const argProms = {}
+    Array.from(tokens).forEach(tok => {
+        argProms[tok] = [
+            bank.read.geth([uniIlk, x32('src'),  [rpaddr(tok)]]),
+            bank.read.geth([uniIlk, x32('tag'),  [rpaddr(tok)]]),
+            bank.read.geth([uniIlk, x32('liqr'), [rpaddr(tok)]]),
+        ];
+    })
+    const tokToArgs = {};
+    for (const tok of Object.keys(argProms)) {
+        const [src, tag, liqr] = await Promise.all(argProms[tok]);
+        tokToArgs[tok] = { src: src.slice(0, 42), tag, liqr };
+    }
+
     const feedProms = Array.from(tokens).map(async tok => {
-        const src = (await bank.read.geth([uniIlk, x32('src'), [rpaddr(tok)]]))
-            .slice(0, 42)
-        const tag = (await bank.read.geth([uniIlk, x32('tag'), [rpaddr(tok)]]))
-        const [val,] = await feed.read.pull([src, tag])
+        const { src, tag } = tokToArgs[tok]
+        const [val] = await feed.read.pull([src, tag])
         return [tok, hexToBigInt(val, { size: 32 })]
     })
     const prices = await Promise.all(feedProms)
     const gemToPrice = Object.fromEntries(prices)
+
     const valProms = positions.map(async pos => {
         const sqrtPriceX96 = sqrt(gemToPrice[pos[t1]] * X96 * X96 / gemToPrice[pos[t0]])
         const [amt0, amt1] = await wrap.read.total([nfpmAddress, pos[id], sqrtPriceX96])
-        const liqr = maxBigInt(
-            BigInt(await bank.read.geth([uniIlk, x32('liqr'), [rpaddr(pos[t0])]])),
-            BigInt(await bank.read.geth([uniIlk, x32('liqr'), [rpaddr(pos[t1])]]))
-        )
+        const liqr = maxBigInt(BigInt(tokToArgs[pos[t0]].liqr), BigInt(tokToArgs[pos[t1]].liqr))
         return [pos[id], (amt0 * gemToPrice[pos[t0]] + amt1 * gemToPrice[pos[t1]]) / liqr]
     })
     const valsArr = await Promise.all(valProms)
@@ -240,8 +244,12 @@ const updateERC20 = async () => {
     updateDricoLabel($('#dricoLabelContainer'), $('#drico'))
     updateDinkLabel(ilkStr, gemName)
 
-    const src = (await bank.read.geth([ilkHex, x32('src'), []])).slice(0, 42)
-    const tag = await bank.read.geth([ilkHex, x32('tag'), []])
+    const [srcB32, tag] = await Promise.all([
+        bank.read.geth([ilkHex, x32('src'), []]),
+        bank.read.geth([ilkHex, x32('tag'), []]),
+    ])
+    const src = srcB32.slice(0, 42)
+
     const [ilk, urn, ink, par, liqr, usrGemAllowance, usrGemBal, feedData] = await Promise.all([
         bank.read.ilks([ilkHex]),
         bank.read.urns([ilkHex, account]),
@@ -346,6 +354,7 @@ const reset =()=> {
     $('#dink').disabled = $('#drico').disabled = $('#uniDrico').disabled = false
     $('#dink').value = $('#drico').value = $('#uniDrico').value = 0
     $('#btnFrob').value = $('input[name="sign"]:checked').value
+    $('#safetyFactor').textContent = `New safety factor: …`
 }
 
 const readArt =(sign, input)=> {
@@ -401,23 +410,28 @@ const frobERC20 = async () => {
     await bank.write.frob([stringToHex(ilk, {size: 32}), account, dinkB32, dart])
 }
 
-const validateConstants = async () => {
-    // todo after page is loaded read values from chain and compare to hardcoded if running from saved file
-    //  warn and disable if saved page needs updating
-    if (window.location.protocol === 'file:') {
-        // bank.read.tip()
-        // bank.read.geth([ilkHex, stringToHex('src', {size: 32}), []]),
-        // etc
+// attempt connect to injected window.ethereum. No connect button, direct wallet connect support, or dependency
+const simpleConnect = async () => {
+    let _account, _transport
+    try {
+        if (!window.ethereum) throw new Error("Ethereum wallet is not detected.");
+        [_account] = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        _transport = custom(window.ethereum)
+    } catch (error) {
+        _account = '0x' + '1'.repeat(40);
+        _transport = http()
+        $('#btnFrob').disabled = true
+        $('#connectionError').style.display = "block"
     }
+    return [_account, _transport]
 }
 
 window.onload = async() => {
-    // todo manage connection, allow to proceed in some ways before connected. test with frame, rabby, coinbase wallet
-    [account] = await window.ethereum.request({ method: 'eth_requestAccounts' })
+    [account, transport] = await simpleConnect();
     walletClient = createWalletClient({
       account,
       chain: sepolia,
-      transport: custom(window.ethereum)
+      transport: transport
     })
     publicClient = createPublicClient({
       batch: {
@@ -426,38 +440,26 @@ window.onload = async() => {
       chain: sepolia,
       transport: http(),  // todo should replace with a dedicated RPC URL to prevent rate-limiting
     })
-
+    const _client = {public: publicClient, wallet: walletClient}
     bank = getContract({
       address: bankAddress,
       abi: bankAbi,
-      client: {
-          public: publicClient,
-          wallet: walletClient,
-      }
+      client: _client
     })
     feed = getContract({
       address: feedAddress,
       abi: feedAbi,
-      client: {
-          public: publicClient,
-          wallet: walletClient,
-      }
+      client: _client
     })
     nfpm = getContract({
       address: nfpmAddress,
       abi: nfpmAbi,
-      client: {
-          public: publicClient,
-          wallet: walletClient,
-      }
+      client: _client
     })
     wrap = getContract({
       address: wrapAddress,
       abi: wrapAbi,
-      client: {
-          public: publicClient,
-          wallet: walletClient,
-      }
+      client: _client
     })
 
     $('#btnFrob').addEventListener('click', async () => {
