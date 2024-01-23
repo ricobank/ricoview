@@ -51,13 +51,13 @@ const WAD = BigInt(10) ** BigInt(18)
 const RAY = BigInt(10) ** BigInt(27)
 
 const tokenData = {
-    "mar":          { src: marSrc, tag: marTag, decimals: 0 , liqr: RAY, uniLiqr: RAY * 3n / 2n },
-    "arb":          { src: arbSrc, tag: arbTag, decimals: 18, liqr: RAY, uniLiqr: RAY * 3n / 2n },
-    [arb_addr]:     { src: arbSrc, tag: arbTag, decimals: 18, liqr: RAY, uniLiqr: RAY * 3n / 2n },
-    "stable":       { src: stbSrc, tag: stbTag, decimals: 18, liqr: RAY, uniLiqr: RAY * 3n / 2n },
-    [stable_addr]:  { src: stbSrc, tag: stbTag, decimals: 18, liqr: RAY, uniLiqr: RAY * 3n / 2n },
-    "wdiveth":      { src: wdeSrc, tag: wdeTag, decimals: 18, liqr: RAY, uniLiqr: RAY * 3n / 2n },
-    [wdiveth_addr]: { src: wdeSrc, tag: wdeTag, decimals: 18, liqr: RAY, uniLiqr: RAY * 3n / 2n },
+    "mar":          { decimals: 0 },
+    "arb":          { decimals: 18 },
+    [arb_addr]:     { decimals: 18 },
+    "stable":       { decimals: 18 },
+    [stable_addr]:  { decimals: 18 },
+    "wdiveth":      { decimals: 18 },
+    [wdiveth_addr]: { decimals: 18 },
 };
 const gems = {
     arb:     arb_addr,
@@ -72,6 +72,9 @@ const strToDisplay = {
 
 import BankDiamond from './BankDiamond.json';
 const bankAbi = BankDiamond.abi
+
+const x32 = (s) => stringToHex(s, {size: 32})
+const rpaddr = (a) => a + '00'.repeat(12)
 
 let account, transport, publicClient, walletClient
 let bank, feed, nfpm, wrap
@@ -99,15 +102,16 @@ const uniMode =()=> $('input[name="ctype"]:checked').value == "UNIV3 LP NFTs"
 const updateRicoStats = async () => {
     const ricoStats = $('#ricoStats');
     ricoStats.textContent = ' '
+    const tip = await bank.read.tip()
     const [parRay, wayRay, feedData] = await Promise.all([
         bank.read.par(),
         bank.read.way(),
-        feed.read.pull([tokenData["mar"].src, tokenData["mar"].tag])
+        feed.read.pull([tip.src, tip.tag])
     ]);
     const par = formatUnits(parRay, 27)
     const way = apy(wayRay)
     const mar = formatUnits(BigInt(feedData[0]), 27)
-    ricoStats.textContent = `Rico system price: ${round(par)}, Price rate: ${way}%, market price: ${round(mar)}`
+    ricoStats.textContent = `Rico system price: ${round(par)}, Price rate: ${way}%, Market price: ${round(mar)}`
 }
 
 const updateHook = async () => {
@@ -148,7 +152,7 @@ const updateUni = async () => {
 
     let usrIDs = [];
     if (borrowing()) {
-        $('#NFTList').textContent= `LP NFTS to deposit:`
+        $('#NFTList').textContent= `LP NFTs to deposit:`
         const idsProm = Array.from({ length: Number(numNFTs) }, (_, i) => nfpm.read.tokenOfOwnerByIndex([account, i]));
         usrIDs = await Promise.all(idsProm);
         displayNfts(usrIDs)
@@ -168,7 +172,10 @@ const valueNFTs = async (nfts) => {
     const positions = await Promise.all(posiProms);
     const tokens    = new Set(positions.flatMap(pos => [pos[t0], pos[t1]]))
     const feedProms = Array.from(tokens).map(async tok => {
-        const [val,] = await feed.read.pull([tokenData[tok].src, tokenData[tok].tag])
+        const src = (await bank.read.geth([uniIlk, x32('src'), [rpaddr(tok)]]))
+            .slice(0, 42)
+        const tag = (await bank.read.geth([uniIlk, x32('tag'), [rpaddr(tok)]]))
+        const [val,] = await feed.read.pull([src, tag])
         return [tok, hexToBigInt(val, { size: 32 })]
     })
     const prices = await Promise.all(feedProms)
@@ -176,7 +183,10 @@ const valueNFTs = async (nfts) => {
     const valProms = positions.map(async pos => {
         const sqrtPriceX96 = sqrt(gemToPrice[pos[t1]] * X96 * X96 / gemToPrice[pos[t0]])
         const [amt0, amt1] = await wrap.read.total([nfpmAddress, pos[id], sqrtPriceX96])
-        const liqr = maxBigInt(tokenData[pos[t0]].uniLiqr, tokenData[pos[t1]].uniLiqr)
+        const liqr = maxBigInt(
+            BigInt(await bank.read.geth([uniIlk, x32('liqr'), [rpaddr(pos[t0])]])),
+            BigInt(await bank.read.geth([uniIlk, x32('liqr'), [rpaddr(pos[t1])]]))
+        )
         return [pos[id], (amt0 * gemToPrice[pos[t0]] + amt1 * gemToPrice[pos[t1]]) / liqr]
     })
     const valsArr = await Promise.all(valProms)
@@ -231,6 +241,8 @@ const updateERC20 = async () => {
     updateDricoLabel($('#dricoLabelContainer'), $('#drico'))
     updateDinkLabel(ilkStr, gemName)
 
+    const src = (await bank.read.geth([ilkHex, x32('src'), []])).slice(0, 42)
+    const tag = await bank.read.geth([ilkHex, x32('tag'), []])
     const [ilk, urn, ink, par, liqr, usrGemAllowance, usrGemBal, feedData] = await Promise.all([
         bank.read.ilks([ilkHex]),
         bank.read.urns([ilkHex, account]),
@@ -249,7 +261,7 @@ const updateERC20 = async () => {
             functionName: 'balanceOf',
             args: [account]
         }),
-        feed.read.pull([tokenData[ilkStr].src, tokenData[ilkStr].tag]),
+        feed.read.pull([src, tag]),
     ])
 
     const fee  = apy(ilk.fee)
@@ -272,7 +284,7 @@ const updateERC20 = async () => {
 
 const updateDricoLabel = (container, input) => {
     if (borrowing()) {
-        container.textContent = `Rico to borrow:`
+        container.textContent = 'Borrow Rico:'
     } else {
         container.innerHTML = `Repay Rico(<input type="checkbox" id="dricoAllCheckbox">all):`
         $('#dricoAllCheckbox').addEventListener('change', (event) => {
