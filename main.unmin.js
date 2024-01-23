@@ -22,14 +22,14 @@ var parseUnits = __webpack_require__(1803);
 var encodeAbiParameters = __webpack_require__(5444);
 // EXTERNAL MODULE: ./node_modules/viem/_esm/utils/data/pad.js
 var pad = __webpack_require__(1769);
-// EXTERNAL MODULE: ./node_modules/viem/_esm/clients/createWalletClient.js + 12 modules
-var createWalletClient = __webpack_require__(1677);
 // EXTERNAL MODULE: ./node_modules/viem/_esm/clients/transports/custom.js
 var custom = __webpack_require__(3980);
-// EXTERNAL MODULE: ./node_modules/viem/_esm/clients/createPublicClient.js + 46 modules
-var createPublicClient = __webpack_require__(7759);
 // EXTERNAL MODULE: ./node_modules/viem/_esm/clients/transports/http.js + 3 modules
 var http = __webpack_require__(494);
+// EXTERNAL MODULE: ./node_modules/viem/_esm/clients/createWalletClient.js + 12 modules
+var createWalletClient = __webpack_require__(1677);
+// EXTERNAL MODULE: ./node_modules/viem/_esm/clients/createPublicClient.js + 46 modules
+var createPublicClient = __webpack_require__(7759);
 // EXTERNAL MODULE: ./node_modules/viem/_esm/actions/getContract.js
 var getContract = __webpack_require__(8541);
 // EXTERNAL MODULE: ./node_modules/viem/_esm/chains/definitions/sepolia.js + 1 modules
@@ -114,7 +114,7 @@ const bankAbi = BankDiamond_namespaceObject.Mt
 const x32 = (s) => (0,toHex/* stringToHex */.$G)(s, {size: 32})
 const rpaddr = (a) => a + '00'.repeat(12)
 
-let account, publicClient, walletClient
+let account, transport, publicClient, walletClient
 let bank, feed, nfpm, wrap
 
 const $ = document.querySelector.bind(document);
@@ -201,6 +201,7 @@ const updateUni = async () => {
     await valueNFTs([...usrIDs, ...store.ink])
 }
 
+// store the liqr adjusted rico value of all NFTs
 const valueNFTs = async (nfts) => {
     const posiProms = nfts.map(async nft => {
         const positions = await nfpm.read.positions([nft]);
@@ -449,13 +450,28 @@ const validateConstants = async () => {
     }
 }
 
+// attempt connect to injected window.ethereum. No connect button, direct wallet connect support, or dependency
+const simpleConnect = async () => {
+    let _account, _transport
+    try {
+        if (!window.ethereum) throw new Error("Ethereum wallet is not detected.");
+        [_account] = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        _transport = (0,custom/* custom */.P)(window.ethereum)
+    } catch (error) {
+        _account = '0x' + '1'.repeat(40);
+        _transport = (0,http/* http */.d)()
+        $('#btnFrob').disabled = true
+        $('#connectionError').style.display = "block"
+    }
+    return [_account, _transport]
+}
+
 window.onload = async() => {
-    // todo manage connection, allow to proceed in some ways before connected. test with frame, rabby, coinbase wallet
-    [account] = await window.ethereum.request({ method: 'eth_requestAccounts' })
+    [account, transport] = await simpleConnect();
     walletClient = (0,createWalletClient/* createWalletClient */.K)({
       account,
       chain: sepolia/* sepolia */.F,
-      transport: (0,custom/* custom */.P)(window.ethereum)
+      transport: transport
     })
     publicClient = (0,createPublicClient/* createPublicClient */.v)({
       batch: {
@@ -464,38 +480,26 @@ window.onload = async() => {
       chain: sepolia/* sepolia */.F,
       transport: (0,http/* http */.d)(),  // todo should replace with a dedicated RPC URL to prevent rate-limiting
     })
-
+    const _client = {public: publicClient, wallet: walletClient}
     bank = (0,getContract/* getContract */.uN)({
       address: bankAddress,
       abi: bankAbi,
-      client: {
-          public: publicClient,
-          wallet: walletClient,
-      }
+      client: _client
     })
     feed = (0,getContract/* getContract */.uN)({
       address: feedAddress,
       abi: feedAbi,
-      client: {
-          public: publicClient,
-          wallet: walletClient,
-      }
+      client: _client
     })
     nfpm = (0,getContract/* getContract */.uN)({
       address: nfpmAddress,
       abi: nfpmAbi,
-      client: {
-          public: publicClient,
-          wallet: walletClient,
-      }
+      client: _client
     })
     wrap = (0,getContract/* getContract */.uN)({
       address: wrapAddress,
       abi: wrapAbi,
-      client: {
-          public: publicClient,
-          wallet: walletClient,
-      }
+      client: _client
     })
 
     $('#btnFrob').addEventListener('click', async () => {

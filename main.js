@@ -76,7 +76,7 @@ const bankAbi = BankDiamond.abi
 const x32 = (s) => stringToHex(s, {size: 32})
 const rpaddr = (a) => a + '00'.repeat(12)
 
-let account, publicClient, walletClient
+let account, transport, publicClient, walletClient
 let bank, feed, nfpm, wrap
 
 const $ = document.querySelector.bind(document);
@@ -163,6 +163,7 @@ const updateUni = async () => {
     await valueNFTs([...usrIDs, ...store.ink])
 }
 
+// store the liqr adjusted rico value of all NFTs
 const valueNFTs = async (nfts) => {
     const posiProms = nfts.map(async nft => {
         const positions = await nfpm.read.positions([nft]);
@@ -411,13 +412,28 @@ const validateConstants = async () => {
     }
 }
 
+// attempt connect to injected window.ethereum. No connect button, direct wallet connect support, or dependency
+const simpleConnect = async () => {
+    let _account, _transport
+    try {
+        if (!window.ethereum) throw new Error("Ethereum wallet is not detected.");
+        [_account] = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        _transport = custom(window.ethereum)
+    } catch (error) {
+        _account = '0x' + '1'.repeat(40);
+        _transport = http()
+        $('#btnFrob').disabled = true
+        $('#connectionError').style.display = "block"
+    }
+    return [_account, _transport]
+}
+
 window.onload = async() => {
-    // todo manage connection, allow to proceed in some ways before connected. test with frame, rabby, coinbase wallet
-    [account] = await window.ethereum.request({ method: 'eth_requestAccounts' })
+    [account, transport] = await simpleConnect();
     walletClient = createWalletClient({
       account,
       chain: sepolia,
-      transport: custom(window.ethereum)
+      transport: transport
     })
     publicClient = createPublicClient({
       batch: {
@@ -426,38 +442,26 @@ window.onload = async() => {
       chain: sepolia,
       transport: http(),  // todo should replace with a dedicated RPC URL to prevent rate-limiting
     })
-
+    const _client = {public: publicClient, wallet: walletClient}
     bank = getContract({
       address: bankAddress,
       abi: bankAbi,
-      client: {
-          public: publicClient,
-          wallet: walletClient,
-      }
+      client: _client
     })
     feed = getContract({
       address: feedAddress,
       abi: feedAbi,
-      client: {
-          public: publicClient,
-          wallet: walletClient,
-      }
+      client: _client
     })
     nfpm = getContract({
       address: nfpmAddress,
       abi: nfpmAbi,
-      client: {
-          public: publicClient,
-          wallet: walletClient,
-      }
+      client: _client
     })
     wrap = getContract({
       address: wrapAddress,
       abi: wrapAbi,
-      client: {
-          public: publicClient,
-          wallet: walletClient,
-      }
+      client: _client
     })
 
     $('#btnFrob').addEventListener('click', async () => {

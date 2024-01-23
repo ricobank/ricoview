@@ -91,7 +91,7 @@
 <br>
 
 <div>
-    <pre style="display: inline;" id="safetyFactor" title="Liquidation possible when < 1.0">New safety factor: ∞</pre>
+    <pre style="display: inline;" id="safetyFactor" title="Liquidation possible when safety factor < 1.0">New safety factor: ∞</pre>
     <input type="button" id="btnFrob">
 </div>
 <div style="height: 150px"></div>
@@ -103,7 +103,10 @@ This page is designed to be saved (as in "File > Save") and be usable even if DN
 While we try our best to avoid software errors, we can't guarantee their absence.  Use this site at your own risk and only if you know what you're doing.
 </p>
 <a href="https://github.com/ricobank/ricoview">Code for this site on GitHub</a>
-</p>
+
+<div id="connectionError" style="display:none; color: red;">
+    <p>No account found, use a browser wallet like frame.sh/rabby/metamask and allow access</p>
+</div>
 
 <noscript>You need to enable JavaScript to use Rico.</noscript>
 </body>
