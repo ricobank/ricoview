@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "type": "module",
   "url": "git+https://github.com/ricobank/ricoview",
-  "homepage": "https://ricobank.github.io/ricoview",
+  "homepage": "https://app.bank.dev",
   "main": "index.js",
   "scripts": {
     "build": "webpack --config webpack.config.js",
