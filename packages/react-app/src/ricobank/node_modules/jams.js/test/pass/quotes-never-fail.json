@@ -1,0 +1,11 @@
+{
+  "es1":                       "\/",
+  "es2":                       "\\",
+  "es3":                       "\n",
+  "es4":                       "\r",
+  "es5":                       "\b",
+  "es6":                       "\f",
+  "es7":                       "\t",
+  "es8":                       "\u0024",
+  "backslashed":               "\\double \\backslashes \\go \\anywhere"
+}

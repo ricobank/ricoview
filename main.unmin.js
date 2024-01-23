@@ -12,8 +12,8 @@ var toHex = __webpack_require__(2106);
 var parseAbi = __webpack_require__(7246);
 // EXTERNAL MODULE: ./node_modules/viem/_esm/utils/unit/formatUnits.js
 var formatUnits = __webpack_require__(5229);
-// EXTERNAL MODULE: ./node_modules/viem/_esm/utils/abi/decodeAbiParameters.js
-var decodeAbiParameters = __webpack_require__(4450);
+// EXTERNAL MODULE: ./node_modules/viem/_esm/utils/abi/decodeAbiParameters.js + 2 modules
+var decodeAbiParameters = __webpack_require__(5821);
 // EXTERNAL MODULE: ./node_modules/viem/_esm/utils/encoding/fromHex.js
 var fromHex = __webpack_require__(5946);
 // EXTERNAL MODULE: ./node_modules/viem/_esm/utils/unit/parseUnits.js
@@ -176,7 +176,9 @@ const updateUni = async () => {
     store.rack = ilk.rack
     store.par  = par
     store.debtStr = parseFloat(debt).toFixed(3)
-    $('#uniIlkStats').textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)} Rico`
+    const since = BigInt(Math.ceil(Date.now() / 1000)) - ilk.rho
+    $('#uniIlkStats0').textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)} Rico`
+    $('#uniIlkStats1').textContent = `Time since rate accumulator update: ${since} seconds`
     $('#uniUrnStats').textContent = `Deposited NFTS: ${store.ink}, Rico debt: ${store.debtStr}`
 
     let usrIDs = [];
@@ -523,8 +525,6 @@ window.onload = async() => {
     // todo update on palms
 
     await Promise.all([updateRicoStats(), updateHook()]);
-    
-    await validateConstants()
 }
 
 const maxBigInt = (a, b) => a > b ? a : b

@@ -1,0 +1,70 @@
+{
+  "format": "dpack-1",
+  "network": "arbitrum",
+  "types": {
+    "SwapRouter": {
+      "typename": "SwapRouter",
+      "artifact": {
+        "/": "bafkreib2n35tcvimnxjzxrl6qqzg5eyxclbc33kswygf2cqgmleidef5o4"
+      }
+    },
+    "UniswapV3Factory": {
+      "typename": "UniswapV3Factory",
+      "artifact": {
+        "/": "bafkreienusuuwkhdtzv6xk22fbmny4mi5hn6tsdlvokfbnzb3ouyaaxh4u"
+      }
+    },
+    "NonfungiblePositionManager": {
+      "typename": "NonfungiblePositionManager",
+      "artifact": {
+        "/": "bafkreidrlo6gimuqdguz7jbdh5zjkzkljx5p3nrgkk5vg4oqxr6oha6czu"
+      }
+    },
+    "UniswapV3Pool": {
+      "typename": "UniswapV3Pool",
+      "artifact": {
+        "/": "bafkreihifi6scj7hjyyhvvh6qxvzow3zpijbugveepskqm2nil2vxrl5oe"
+      }
+    },
+    "UniversalRouter": {
+      "typename": "UniversalRouter",
+      "artifact": {
+        "/": "bafkreibw4lo6gxpsqboulpxcsfjsbvkmwearhcaitsk2v34bte2i3mjnoi"
+      }
+    }
+  },
+  "objects": {
+    "swapRouter": {
+      "objectname": "swapRouter",
+      "address": "0xE592427A0AEce92De3Edee1F18E0157C05861564",
+      "typename": "SwapRouter",
+      "artifact": {
+        "/": "bafkreib2n35tcvimnxjzxrl6qqzg5eyxclbc33kswygf2cqgmleidef5o4"
+      }
+    },
+    "uniswapV3Factory": {
+      "objectname": "uniswapV3Factory",
+      "address": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
+      "typename": "UniswapV3Factory",
+      "artifact": {
+        "/": "bafkreienusuuwkhdtzv6xk22fbmny4mi5hn6tsdlvokfbnzb3ouyaaxh4u"
+      }
+    },
+    "nonfungiblePositionManager": {
+      "objectname": "nonfungiblePositionManager",
+      "address": "0xC36442b4a4522E871399CD717aBDD847Ab11FE88",
+      "typename": "NonfungiblePositionManager",
+      "artifact": {
+        "/": "bafkreidrlo6gimuqdguz7jbdh5zjkzkljx5p3nrgkk5vg4oqxr6oha6czu"
+      }
+    },
+    "universalRouter": {
+      "objectname": "universalRouter",
+      "typename": "UniversalRouter",
+      "artifact": {
+        "/": "bafkreibw4lo6gxpsqboulpxcsfjsbvkmwearhcaitsk2v34bte2i3mjnoi"
+      },
+      "address": "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD"
+    }
+  }
+}

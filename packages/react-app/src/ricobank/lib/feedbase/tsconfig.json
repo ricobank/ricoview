@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "outDir": "dist",
+    "esModuleInterop": true
+  },
+  "include": [
+    "scripts/**/*.ts",
+    "task/**.ts",
+    "hardhat.config.ts"
+  ]
+}

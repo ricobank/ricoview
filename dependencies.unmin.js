@@ -78,7 +78,7 @@ const functionModifiers = new Set([
 ]);
 //# sourceMappingURL=signatures.js.map
 ;// CONCATENATED MODULE: ./node_modules/abitype/dist/esm/version.js
-const version = '0.10.0';
+const version = '1.0.0';
 //# sourceMappingURL=version.js.map
 ;// CONCATENATED MODULE: ./node_modules/abitype/dist/esm/errors.js
 
@@ -146,7 +146,7 @@ class InvalidAbiItemError extends (/* unused pure expression or super */ null &&
     constructor({ signature }) {
         super('Failed to parse ABI item.', {
             details: `parseAbiItem(${JSON.stringify(signature, null, 2)})`,
-            docsPath: '/api/human.html#parseabiitem-1',
+            docsPath: '/api/human#parseabiitem-1',
         });
         Object.defineProperty(this, "name", {
             enumerable: true,
@@ -191,7 +191,7 @@ class InvalidAbiParameterError extends (/* unused pure expression or super */ nu
     constructor({ param }) {
         super('Failed to parse ABI parameter.', {
             details: `parseAbiParameter(${JSON.stringify(param, null, 2)})`,
-            docsPath: '/api/human.html#parseabiparameter-1',
+            docsPath: '/api/human#parseabiparameter-1',
         });
         Object.defineProperty(this, "name", {
             enumerable: true,
@@ -205,7 +205,7 @@ class InvalidAbiParametersError extends (/* unused pure expression or super */ n
     constructor({ params }) {
         super('Failed to parse ABI parameters.', {
             details: `parseAbiParameters(${JSON.stringify(params, null, 2)})`,
-            docsPath: '/api/human.html#parseabiparameters-1',
+            docsPath: '/api/human#parseabiparameters-1',
         });
         Object.defineProperty(this, "name", {
             enumerable: true,
@@ -869,9 +869,9 @@ function parseAccount(account) {
 /**
  * Gets type-safe interface for performing contract-related actions with a specific `abi` and `address`.
  *
- * - Docs https://viem.sh/docs/contract/getContract.html
+ * - Docs https://viem.sh/docs/contract/getContract
  *
- * Using Contract Instances can make it easier to work with contracts if you don't want to pass the `abi` and `address` properites every time you perform contract actions, e.g. [`readContract`](https://viem.sh/docs/contract/readContract.html), [`writeContract`](https://viem.sh/docs/contract/writeContract.html), [`estimateContractGas`](https://viem.sh/docs/contract/estimateContractGas.html), etc.
+ * Using Contract Instances can make it easier to work with contracts if you don't want to pass the `abi` and `address` properites every time you perform contract actions, e.g. [`readContract`](https://viem.sh/docs/contract/readContract), [`writeContract`](https://viem.sh/docs/contract/writeContract), [`estimateContractGas`](https://viem.sh/docs/contract/estimateContractGas), etc.
  *
  * @example
  * import { createPublicClient, getContract, http, parseAbi } from 'viem'
@@ -1155,7 +1155,7 @@ var assertRequest = __webpack_require__(7531);
 /**
  * Executes a new message call immediately without submitting a transaction to the network.
  *
- * - Docs: https://viem.sh/docs/actions/public/call.html
+ * - Docs: https://viem.sh/docs/actions/public/call
  * - JSON-RPC Methods: [`eth_call`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_call)
  *
  * @param client - Client to use
@@ -1335,13 +1335,13 @@ function getRevertErrorData(err) {
 
 
 /**
- * Creates a Filter to retrieve event logs that can be used with [`getFilterChanges`](https://viem.sh/docs/actions/public/getFilterChanges.html) or [`getFilterLogs`](https://viem.sh/docs/actions/public/getFilterLogs.html).
+ * Creates a Filter to retrieve event logs that can be used with [`getFilterChanges`](https://viem.sh/docs/actions/public/getFilterChanges) or [`getFilterLogs`](https://viem.sh/docs/actions/public/getFilterLogs).
  *
- * - Docs: https://viem.sh/docs/contract/createContractEventFilter.html
+ * - Docs: https://viem.sh/docs/contract/createContractEventFilter
  *
  * @param client - Client to use
  * @param parameters - {@link CreateContractEventFilterParameters}
- * @returns [`Filter`](https://viem.sh/docs/glossary/types.html#filter). {@link CreateContractEventFilterReturnType}
+ * @returns [`Filter`](https://viem.sh/docs/glossary/types#filter). {@link CreateContractEventFilterReturnType}
  *
  * @example
  * import { createPublicClient, http, parseAbi } from 'viem'
@@ -1412,9 +1412,9 @@ async function createContractEventFilter(client, parameters) {
 /**
  * Estimates the gas required to successfully execute a contract write function call.
  *
- * - Docs: https://viem.sh/docs/contract/estimateContractGas.html
+ * - Docs: https://viem.sh/docs/contract/estimateContractGas
  *
- * Internally, uses a [Public Client](https://viem.sh/docs/clients/public.html) to call the [`estimateGas` action](https://viem.sh/docs/actions/public/estimateGas.html) with [ABI-encoded `data`](https://viem.sh/docs/contract/encodeFunctionData.html).
+ * Internally, uses a [Public Client](https://viem.sh/docs/clients/public) to call the [`estimateGas` action](https://viem.sh/docs/actions/public/estimateGas) with [ABI-encoded `data`](https://viem.sh/docs/contract/encodeFunctionData).
  *
  * @param client - Client to use
  * @param parameters - {@link EstimateContractGasParameters}
@@ -1487,9 +1487,9 @@ async function estimateContractGas(client, parameters) {
 /**
  * Returns an estimate for the fees per gas (in wei) for a
  * transaction to be likely included in the next block.
- * Defaults to [`chain.fees.estimateFeesPerGas`](/docs/clients/chains.html#fees-estimatefeespergas) if set.
+ * Defaults to [`chain.fees.estimateFeesPerGas`](/docs/clients/chains#fees-estimatefeespergas) if set.
  *
- * - Docs: https://viem.sh/docs/actions/public/estimateFeesPerGas.html
+ * - Docs: https://viem.sh/docs/actions/public/estimateFeesPerGas
  *
  * @param client - Client to use
  * @param parameters - {@link EstimateFeesPerGasParameters}
@@ -1541,7 +1541,7 @@ async function internal_estimateFeesPerGas(client, args) {
     if (type === 'eip1559') {
         if (typeof block.baseFeePerGas !== 'bigint')
             throw new _errors_fee_js__WEBPACK_IMPORTED_MODULE_0__/* .Eip1559FeesNotSupportedError */ .e5();
-        const maxPriorityFeePerGas = request?.maxPriorityFeePerGas
+        const maxPriorityFeePerGas = typeof request?.maxPriorityFeePerGas === 'bigint'
             ? request.maxPriorityFeePerGas
             : await (0,_estimateMaxPriorityFeePerGas_js__WEBPACK_IMPORTED_MODULE_3__/* .internal_estimateMaxPriorityFeePerGas */ .h)(client, {
                 block: block,
@@ -1672,7 +1672,7 @@ var prepareTransactionRequest = __webpack_require__(637);
 /**
  * Estimates the gas necessary to complete a transaction without submitting it to the network.
  *
- * - Docs: https://viem.sh/docs/actions/public/estimateGas.html
+ * - Docs: https://viem.sh/docs/actions/public/estimateGas
  * - JSON-RPC Methods: [`eth_estimateGas`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_estimategas)
  *
  * @param client - Client to use
@@ -1758,9 +1758,9 @@ async function estimateGas(client, args) {
 /**
  * Returns an estimate for the max priority fee per gas (in wei) for a
  * transaction to be likely included in the next block.
- * Defaults to [`chain.fees.defaultPriorityFee`](/docs/clients/chains.html#fees-defaultpriorityfee) if set.
+ * Defaults to [`chain.fees.defaultPriorityFee`](/docs/clients/chains#fees-defaultpriorityfee) if set.
  *
- * - Docs: https://viem.sh/docs/actions/public/estimateMaxPriorityFeePerGas.html
+ * - Docs: https://viem.sh/docs/actions/public/estimateMaxPriorityFeePerGas
  *
  * @param client - Client to use
  * @returns An estimate (in wei) for the max priority fee per gas. {@link EstimateMaxPriorityFeePerGasReturnType}
@@ -1835,7 +1835,7 @@ async function internal_estimateMaxPriorityFeePerGas(client, args) {
 /**
  * Returns information about a block at a block number, hash, or tag.
  *
- * - Docs: https://viem.sh/docs/actions/public/getBlock.html
+ * - Docs: https://viem.sh/docs/actions/public/getBlock
  * - Examples: https://stackblitz.com/github/wevm/viem/tree/main/examples/blocks/fetching-blocks
  * - JSON-RPC Methods:
  *   - Calls [`eth_getBlockByNumber`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getblockbynumber) for `blockNumber` & `blockTag`.
@@ -1958,7 +1958,7 @@ function getBlockNumberCache(id) {
 /**
  * Returns the number of the most recent block seen.
  *
- * - Docs: https://viem.sh/docs/actions/public/getBlockNumber.html
+ * - Docs: https://viem.sh/docs/actions/public/getBlockNumber
  * - Examples: https://stackblitz.com/github/wevm/viem/tree/main/examples/blocks/fetching-blocks
  * - JSON-RPC Methods: [`eth_blockNumber`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_blocknumber)
  *
@@ -1999,7 +1999,7 @@ async function getBlockNumber(client, { cacheTime = client.cacheTime } = {}) {
 /**
  * Returns the chain ID associated with the current network.
  *
- * - Docs: https://viem.sh/docs/actions/public/getChainId.html
+ * - Docs: https://viem.sh/docs/actions/public/getChainId
  * - JSON-RPC Methods: [`eth_chainId`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_chainid)
  *
  * @param client - Client to use
@@ -2042,7 +2042,7 @@ async function getChainId(client) {
 /**
  * Returns a list of event logs emitted by a contract.
  *
- * - Docs: https://viem.sh/docs/actions/public/getContractEvents.html
+ * - Docs: https://viem.sh/docs/actions/public/getContractEvents
  * - JSON-RPC Methods: [`eth_getLogs`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getlogs)
  *
  * @param client - Client to use
@@ -2102,15 +2102,15 @@ async function getContractEvents(client, parameters) {
 /**
  * Returns a list of logs or hashes based on a [Filter](/docs/glossary/terms#filter) since the last time it was called.
  *
- * - Docs: https://viem.sh/docs/actions/public/getFilterChanges.html
+ * - Docs: https://viem.sh/docs/actions/public/getFilterChanges
  * - JSON-RPC Methods: [`eth_getFilterChanges`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getfilterchanges)
  *
  * A Filter can be created from the following actions:
  *
- * - [`createBlockFilter`](https://viem.sh/docs/actions/public/createBlockFilter.html)
- * - [`createContractEventFilter`](https://viem.sh/docs/contract/createContractEventFilter.html)
- * - [`createEventFilter`](https://viem.sh/docs/actions/public/createEventFilter.html)
- * - [`createPendingTransactionFilter`](https://viem.sh/docs/actions/public/createPendingTransactionFilter.html)
+ * - [`createBlockFilter`](https://viem.sh/docs/actions/public/createBlockFilter)
+ * - [`createContractEventFilter`](https://viem.sh/docs/contract/createContractEventFilter)
+ * - [`createEventFilter`](https://viem.sh/docs/actions/public/createEventFilter)
+ * - [`createPendingTransactionFilter`](https://viem.sh/docs/actions/public/createPendingTransactionFilter)
  *
  * Depending on the type of filter, the return value will be different:
  *
@@ -2211,7 +2211,7 @@ async function getFilterChanges(_client, { filter, }) {
 /**
  * Returns the current price of gas (in wei).
  *
- * - Docs: https://viem.sh/docs/actions/public/getGasPrice.html
+ * - Docs: https://viem.sh/docs/actions/public/getGasPrice
  * - JSON-RPC Methods: [`eth_gasPrice`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_gasprice)
  *
  * @param client - Client to use
@@ -2256,7 +2256,7 @@ async function getGasPrice(client) {
 /**
  * Returns a list of event logs matching the provided parameters.
  *
- * - Docs: https://viem.sh/docs/actions/public/getLogs.html
+ * - Docs: https://viem.sh/docs/actions/public/getLogs
  * - Examples: https://stackblitz.com/github/wevm/viem/tree/main/examples/filters-and-logs/event-logs
  * - JSON-RPC Methods: [`eth_getLogs`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getlogs)
  *
@@ -2334,9 +2334,9 @@ async function getLogs(client, { address, blockHash, fromBlock, toBlock, event, 
 
 
 /**
- * Returns the number of [Transactions](https://viem.sh/docs/glossary/terms.html#transaction) an Account has broadcast / sent.
+ * Returns the number of [Transactions](https://viem.sh/docs/glossary/terms#transaction) an Account has broadcast / sent.
  *
- * - Docs: https://viem.sh/docs/actions/public/getTransactionCount.html
+ * - Docs: https://viem.sh/docs/actions/public/getTransactionCount
  * - JSON-RPC Methods: [`eth_getTransactionCount`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_gettransactioncount)
  *
  * @param client - Client to use
@@ -2386,12 +2386,12 @@ async function getTransactionCount(client, { address, blockTag = 'latest', block
 /**
  * Calls a read-only function on a contract, and returns the response.
  *
- * - Docs: https://viem.sh/docs/contract/readContract.html
+ * - Docs: https://viem.sh/docs/contract/readContract
  * - Examples: https://stackblitz.com/github/wevm/viem/tree/main/examples/contracts/reading-contracts
  *
  * A "read-only" function (constant function) on a Solidity contract is denoted by a `view` or `pure` keyword. They can only read the state of the contract, and cannot make any changes to it. Since read-only methods do not change the state of the contract, they do not require any gas to be executed, and can be called by any user without the need to pay for gas.
  *
- * Internally, uses a [Public Client](https://viem.sh/docs/clients/public.html) to call the [`call` action](https://viem.sh/docs/actions/public/call.html) with [ABI-encoded `data`](https://viem.sh/docs/contract/encodeFunctionData.html).
+ * Internally, uses a [Public Client](https://viem.sh/docs/clients/public) to call the [`call` action](https://viem.sh/docs/actions/public/call) with [ABI-encoded `data`](https://viem.sh/docs/contract/encodeFunctionData).
  *
  * @param client - Client to use
  * @param parameters - {@link ReadContractParameters}
@@ -2469,12 +2469,12 @@ async function readContract(client, parameters) {
 /**
  * Simulates/validates a contract interaction. This is useful for retrieving **return data** and **revert reasons** of contract write functions.
  *
- * - Docs: https://viem.sh/docs/contract/simulateContract.html
+ * - Docs: https://viem.sh/docs/contract/simulateContract
  * - Examples: https://stackblitz.com/github/wevm/viem/tree/main/examples/contracts/writing-to-contracts
  *
- * This function does not require gas to execute and _**does not**_ change the state of the blockchain. It is almost identical to [`readContract`](https://viem.sh/docs/contract/readContract.html), but also supports contract write functions.
+ * This function does not require gas to execute and _**does not**_ change the state of the blockchain. It is almost identical to [`readContract`](https://viem.sh/docs/contract/readContract), but also supports contract write functions.
  *
- * Internally, uses a [Public Client](https://viem.sh/docs/clients/public.html) to call the [`call` action](https://viem.sh/docs/actions/public/call.html) with [ABI-encoded `data`](https://viem.sh/docs/contract/encodeFunctionData.html).
+ * Internally, uses a [Public Client](https://viem.sh/docs/clients/public) to call the [`call` action](https://viem.sh/docs/actions/public/call) with [ABI-encoded `data`](https://viem.sh/docs/contract/encodeFunctionData).
  *
  * @param client - Client to use
  * @param parameters - {@link SimulateContractParameters}
@@ -2553,15 +2553,15 @@ async function simulateContract(client, parameters) {
 /* harmony export */   W: () => (/* binding */ uninstallFilter)
 /* harmony export */ });
 /**
- * Destroys a [`Filter`](https://viem.sh/docs/glossary/types.html#filter).
+ * Destroys a [`Filter`](https://viem.sh/docs/glossary/types#filter).
  *
- * - Docs: https://viem.sh/docs/actions/public/uninstallFilter.html
+ * - Docs: https://viem.sh/docs/actions/public/uninstallFilter
  * - JSON-RPC Methods: [`eth_uninstallFilter`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_uninstallFilter)
  *
  * Destroys a Filter that was created from one of the following Actions:
- * - [`createBlockFilter`](https://viem.sh/docs/actions/public/createBlockFilter.html)
- * - [`createEventFilter`](https://viem.sh/docs/actions/public/createEventFilter.html)
- * - [`createPendingTransactionFilter`](https://viem.sh/docs/actions/public/createPendingTransactionFilter.html)
+ * - [`createBlockFilter`](https://viem.sh/docs/actions/public/createBlockFilter)
+ * - [`createEventFilter`](https://viem.sh/docs/actions/public/createEventFilter)
+ * - [`createPendingTransactionFilter`](https://viem.sh/docs/actions/public/createPendingTransactionFilter)
  *
  * @param client - Client to use
  * @param parameters - {@link UninstallFilterParameters}
@@ -2623,11 +2623,11 @@ async function uninstallFilter(_client, { filter }) {
 /**
  * Watches and returns emitted contract event logs.
  *
- * - Docs: https://viem.sh/docs/contract/watchContractEvent.html
+ * - Docs: https://viem.sh/docs/contract/watchContractEvent
  *
- * This Action will batch up all the event logs found within the [`pollingInterval`](https://viem.sh/docs/contract/watchContractEvent.html#pollinginterval-optional), and invoke them via [`onLogs`](https://viem.sh/docs/contract/watchContractEvent.html#onLogs).
+ * This Action will batch up all the event logs found within the [`pollingInterval`](https://viem.sh/docs/contract/watchContractEvent#pollinginterval-optional), and invoke them via [`onLogs`](https://viem.sh/docs/contract/watchContractEvent#onLogs).
  *
- * `watchContractEvent` will attempt to create an [Event Filter](https://viem.sh/docs/contract/createContractEventFilter.html) and listen to changes to the Filter per polling interval, however, if the RPC Provider does not support Filters (e.g. `eth_newFilter`), then `watchContractEvent` will fall back to using [`getLogs`](https://viem.sh/docs/actions/public/getLogs) instead.
+ * `watchContractEvent` will attempt to create an [Event Filter](https://viem.sh/docs/contract/createContractEventFilter) and listen to changes to the Filter per polling interval, however, if the RPC Provider does not support Filters (e.g. `eth_newFilter`), then `watchContractEvent` will fall back to using [`getLogs`](https://viem.sh/docs/actions/public/getLogs) instead.
  *
  * @param client - Client to use
  * @param parameters - {@link WatchContractEventParameters}
@@ -2865,7 +2865,7 @@ function getTransactionType(transaction) {
 /**
  * Prepares a transaction request for signing.
  *
- * - Docs: https://viem.sh/docs/actions/wallet/prepareTransactionRequest.html
+ * - Docs: https://viem.sh/docs/actions/wallet/prepareTransactionRequest
  *
  * @param args - {@link PrepareTransactionRequestParameters}
  * @returns The transaction request. {@link PrepareTransactionRequestReturnType}
@@ -2978,7 +2978,7 @@ async function prepareTransactionRequest(client, args) {
 /**
  * Sends a **signed** transaction to the network
  *
- * - Docs: https://viem.sh/docs/actions/wallet/sendRawTransaction.html
+ * - Docs: https://viem.sh/docs/actions/wallet/sendRawTransaction
  * - JSON-RPC Method: [`eth_sendRawTransaction`](https://ethereum.github.io/execution-apis/api-documentation/)
  *
  * @param client - Client to use
@@ -3076,7 +3076,7 @@ var sendRawTransaction = __webpack_require__(9238);
 /**
  * Creates, signs, and sends a new transaction to the network.
  *
- * - Docs: https://viem.sh/docs/actions/wallet/sendTransaction.html
+ * - Docs: https://viem.sh/docs/actions/wallet/sendTransaction
  * - Examples: https://stackblitz.com/github/wevm/viem/tree/main/examples/transactions/sending-transactions
  * - JSON-RPC Methods:
  *   - JSON-RPC Accounts: [`eth_sendTransaction`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_sendtransaction)
@@ -3084,7 +3084,7 @@ var sendRawTransaction = __webpack_require__(9238);
  *
  * @param client - Client to use
  * @param parameters - {@link SendTransactionParameters}
- * @returns The [Transaction](https://viem.sh/docs/glossary/terms.html#transaction) hash. {@link SendTransactionReturnType}
+ * @returns The [Transaction](https://viem.sh/docs/glossary/terms#transaction) hash. {@link SendTransactionReturnType}
  *
  * @example
  * import { createWalletClient, custom } from 'viem'
@@ -3210,18 +3210,18 @@ async function sendTransaction(client, args) {
 /**
  * Executes a write function on a contract.
  *
- * - Docs: https://viem.sh/docs/contract/writeContract.html
+ * - Docs: https://viem.sh/docs/contract/writeContract
  * - Examples: https://stackblitz.com/github/wevm/viem/tree/main/examples/contracts/writing-to-contracts
  *
- * A "write" function on a Solidity contract modifies the state of the blockchain. These types of functions require gas to be executed, and hence a [Transaction](https://viem.sh/docs/glossary/terms.html) is needed to be broadcast in order to change the state.
+ * A "write" function on a Solidity contract modifies the state of the blockchain. These types of functions require gas to be executed, and hence a [Transaction](https://viem.sh/docs/glossary/terms) is needed to be broadcast in order to change the state.
  *
- * Internally, uses a [Wallet Client](https://viem.sh/docs/clients/wallet.html) to call the [`sendTransaction` action](https://viem.sh/docs/actions/wallet/sendTransaction.html) with [ABI-encoded `data`](https://viem.sh/docs/contract/encodeFunctionData.html).
+ * Internally, uses a [Wallet Client](https://viem.sh/docs/clients/wallet) to call the [`sendTransaction` action](https://viem.sh/docs/actions/wallet/sendTransaction) with [ABI-encoded `data`](https://viem.sh/docs/contract/encodeFunctionData).
  *
- * __Warning: The `write` internally sends a transaction – it does not validate if the contract write will succeed (the contract may throw an error). It is highly recommended to [simulate the contract write with `contract.simulate`](https://viem.sh/docs/contract/writeContract.html#usage) before you execute it.__
+ * __Warning: The `write` internally sends a transaction – it does not validate if the contract write will succeed (the contract may throw an error). It is highly recommended to [simulate the contract write with `contract.simulate`](https://viem.sh/docs/contract/writeContract#usage) before you execute it.__
  *
  * @param client - Client to use
  * @param parameters - {@link WriteContractParameters}
- * @returns A [Transaction Hash](https://viem.sh/docs/glossary/terms.html#hash). {@link WriteContractReturnType}
+ * @returns A [Transaction Hash](https://viem.sh/docs/glossary/terms#hash). {@link WriteContractReturnType}
  *
  * @example
  * import { createWalletClient, custom, parseAbi } from 'viem'
@@ -3308,6 +3308,7 @@ const sepolia = /*#__PURE__*/ defineChain({
         default: {
             name: 'Etherscan',
             url: 'https://sepolia.etherscan.io',
+            apiUrl: 'https://api-sepolia.etherscan.io/api',
         },
     },
     contracts: {
@@ -3317,8 +3318,8 @@ const sepolia = /*#__PURE__*/ defineChain({
         },
         ensRegistry: { address: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e' },
         ensUniversalResolver: {
-            address: '0x21B000Fd62a880b2125A61e36a284BB757b76025',
-            blockCreated: 3914906,
+            address: '0xBaBC7678D7A63104f1658c11D6AE9A21cdA09725',
+            blockCreated: 5043334,
         },
     },
     testnet: true,
@@ -3441,6 +3442,12 @@ function isNullUniversalResolverError(err, callType) {
         return true;
     if (cause.data?.errorName === 'ResolverWildcardNotSupported')
         return true;
+    if (cause.data?.errorName === 'ResolverNotContract')
+        return true;
+    if (cause.data?.errorName === 'ResolverError')
+        return true;
+    if (cause.data?.errorName === 'HttpError')
+        return true;
     // Backwards compatibility for older UniversalResolver contracts
     if (cause.reason?.includes('Wildcard on non-extended resolvers is not supported'))
         return true;
@@ -3482,7 +3489,7 @@ function encodedLabelToLabelhash(label) {
 /**
  * @description Hashes ENS name
  *
- * - Since ENS names prohibit certain forbidden characters (e.g. underscore) and have other validation rules, you likely want to [normalize ENS names](https://docs.ens.domains/contract-api-reference/name-processing#normalising-names) with [UTS-46 normalization](https://unicode.org/reports/tr46) before passing them to `namehash`. You can use the built-in [`normalize`](https://viem.sh/docs/ens/utilities/normalize.html) function for this.
+ * - Since ENS names prohibit certain forbidden characters (e.g. underscore) and have other validation rules, you likely want to [normalize ENS names](https://docs.ens.domains/contract-api-reference/name-processing#normalising-names) with [UTS-46 normalization](https://unicode.org/reports/tr46) before passing them to `namehash`. You can use the built-in [`normalize`](https://viem.sh/docs/ens/utilities/normalize) function for this.
  *
  * @example
  * namehash('wevm.eth')
@@ -3519,7 +3526,7 @@ function encodeLabelhash(hash) {
 /**
  * @description Hashes ENS label
  *
- * - Since ENS labels prohibit certain forbidden characters (e.g. underscore) and have other validation rules, you likely want to [normalize ENS labels](https://docs.ens.domains/contract-api-reference/name-processing#normalising-names) with [UTS-46 normalization](https://unicode.org/reports/tr46) before passing them to `labelhash`. You can use the built-in [`normalize`](https://viem.sh/docs/ens/utilities/normalize.html) function for this.
+ * - Since ENS labels prohibit certain forbidden characters (e.g. underscore) and have other validation rules, you likely want to [normalize ENS labels](https://docs.ens.domains/contract-api-reference/name-processing#normalising-names) with [UTS-46 normalization](https://unicode.org/reports/tr46) before passing them to `labelhash`. You can use the built-in [`normalize`](https://viem.sh/docs/ens/utilities/normalize) function for this.
  *
  * @example
  * labelhash('eth')
@@ -3581,12 +3588,12 @@ var readContract = __webpack_require__(8819);
 /**
  * Gets address for ENS name.
  *
- * - Docs: https://viem.sh/docs/ens/actions/getEnsAddress.html
+ * - Docs: https://viem.sh/docs/ens/actions/getEnsAddress
  * - Examples: https://stackblitz.com/github/wevm/viem/tree/main/examples/ens
  *
  * Calls `resolve(bytes, bytes)` on ENS Universal Resolver Contract.
  *
- * Since ENS names prohibit certain forbidden characters (e.g. underscore) and have other validation rules, you likely want to [normalize ENS names](https://docs.ens.domains/contract-api-reference/name-processing#normalising-names) with [UTS-46 normalization](https://unicode.org/reports/tr46) before passing them to `getEnsAddress`. You can use the built-in [`normalize`](https://viem.sh/docs/ens/utilities/normalize.html) function for this.
+ * Since ENS names prohibit certain forbidden characters (e.g. underscore) and have other validation rules, you likely want to [normalize ENS names](https://docs.ens.domains/contract-api-reference/name-processing#normalising-names) with [UTS-46 normalization](https://unicode.org/reports/tr46) before passing them to `getEnsAddress`. You can use the built-in [`normalize`](https://viem.sh/docs/ens/utilities/normalize) function for this.
  *
  * @param client - Client to use
  * @param parameters - {@link GetEnsAddressParameters}
@@ -3606,7 +3613,7 @@ var readContract = __webpack_require__(8819);
  * })
  * // '0xd2135CfB216b74109775236E36d4b433F1DF507B'
  */
-async function getEnsAddress(client, { blockNumber, blockTag, coinType, name, universalResolverAddress: universalResolverAddress_, }) {
+async function getEnsAddress(client, { blockNumber, blockTag, coinType, name, gatewayUrls, strict, universalResolverAddress: universalResolverAddress_, }) {
     let universalResolverAddress = universalResolverAddress_;
     if (!universalResolverAddress) {
         if (!client.chain)
@@ -3625,14 +3632,21 @@ async function getEnsAddress(client, { blockNumber, blockTag, coinType, name, un
                 ? { args: [namehash(name), BigInt(coinType)] }
                 : { args: [namehash(name)] }),
         });
-        const res = await (0,getAction/* getAction */.s)(client, readContract/* readContract */.L, 'readContract')({
+        const readContractParameters = {
             address: universalResolverAddress,
             abi: abis/* universalResolverResolveAbi */.k3,
             functionName: 'resolve',
             args: [(0,toHex/* toHex */.NC)(packetToBytes(name)), functionData],
             blockNumber,
             blockTag,
-        });
+        };
+        const readContractAction = (0,getAction/* getAction */.s)(client, readContract/* readContract */.L, 'readContract');
+        const res = gatewayUrls
+            ? await readContractAction({
+                ...readContractParameters,
+                args: [...readContractParameters.args, gatewayUrls],
+            })
+            : await readContractAction(readContractParameters);
         if (res[0] === '0x')
             return null;
         const address = (0,decodeFunctionResult/* decodeFunctionResult */.k)({
@@ -3648,6 +3662,8 @@ async function getEnsAddress(client, { blockNumber, blockTag, coinType, name, un
         return address;
     }
     catch (err) {
+        if (strict)
+            throw err;
         if (isNullUniversalResolverError(err, 'resolve'))
             return null;
         throw err;
@@ -3943,12 +3959,12 @@ async function parseNftAvatarUri(client, { gatewayUrls, record, }) {
 /**
  * Gets a text record for specified ENS name.
  *
- * - Docs: https://viem.sh/docs/ens/actions/getEnsResolver.html
+ * - Docs: https://viem.sh/docs/ens/actions/getEnsResolver
  * - Examples: https://stackblitz.com/github/wevm/viem/tree/main/examples/ens
  *
  * Calls `resolve(bytes, bytes)` on ENS Universal Resolver Contract.
  *
- * Since ENS names prohibit certain forbidden characters (e.g. underscore) and have other validation rules, you likely want to [normalize ENS names](https://docs.ens.domains/contract-api-reference/name-processing#normalising-names) with [UTS-46 normalization](https://unicode.org/reports/tr46) before passing them to `getEnsAddress`. You can use the built-in [`normalize`](https://viem.sh/docs/ens/utilities/normalize.html) function for this.
+ * Since ENS names prohibit certain forbidden characters (e.g. underscore) and have other validation rules, you likely want to [normalize ENS names](https://docs.ens.domains/contract-api-reference/name-processing#normalising-names) with [UTS-46 normalization](https://unicode.org/reports/tr46) before passing them to `getEnsAddress`. You can use the built-in [`normalize`](https://viem.sh/docs/ens/utilities/normalize) function for this.
  *
  * @param client - Client to use
  * @param parameters - {@link GetEnsTextParameters}
@@ -3969,7 +3985,7 @@ async function parseNftAvatarUri(client, { gatewayUrls, record, }) {
  * })
  * // 'wagmi_sh'
  */
-async function getEnsText(client, { blockNumber, blockTag, name, key, universalResolverAddress: universalResolverAddress_, }) {
+async function getEnsText(client, { blockNumber, blockTag, name, key, gatewayUrls, strict, universalResolverAddress: universalResolverAddress_, }) {
     let universalResolverAddress = universalResolverAddress_;
     if (!universalResolverAddress) {
         if (!client.chain)
@@ -3981,7 +3997,7 @@ async function getEnsText(client, { blockNumber, blockTag, name, key, universalR
         });
     }
     try {
-        const res = await (0,getAction/* getAction */.s)(client, readContract/* readContract */.L, 'readContract')({
+        const readContractParameters = {
             address: universalResolverAddress,
             abi: abis/* universalResolverResolveAbi */.k3,
             functionName: 'resolve',
@@ -3995,7 +4011,14 @@ async function getEnsText(client, { blockNumber, blockTag, name, key, universalR
             ],
             blockNumber,
             blockTag,
-        });
+        };
+        const readContractAction = (0,getAction/* getAction */.s)(client, readContract/* readContract */.L, 'readContract');
+        const res = gatewayUrls
+            ? await readContractAction({
+                ...readContractParameters,
+                args: [...readContractParameters.args, gatewayUrls],
+            })
+            : await readContractAction(readContractParameters);
         if (res[0] === '0x')
             return null;
         const record = (0,decodeFunctionResult/* decodeFunctionResult */.k)({
@@ -4006,6 +4029,8 @@ async function getEnsText(client, { blockNumber, blockTag, name, key, universalR
         return record === '' ? null : record;
     }
     catch (err) {
+        if (strict)
+            throw err;
         if (isNullUniversalResolverError(err, 'resolve'))
             return null;
         throw err;
@@ -4019,12 +4044,12 @@ async function getEnsText(client, { blockNumber, blockTag, name, key, universalR
 /**
  * Gets the avatar of an ENS name.
  *
- * - Docs: https://viem.sh/docs/ens/actions/getEnsAvatar.html
+ * - Docs: https://viem.sh/docs/ens/actions/getEnsAvatar
  * - Examples: https://stackblitz.com/github/wevm/viem/tree/main/examples/ens
  *
- * Calls [`getEnsText`](https://viem.sh/docs/ens/actions/getEnsText.html) with `key` set to `'avatar'`.
+ * Calls [`getEnsText`](https://viem.sh/docs/ens/actions/getEnsText) with `key` set to `'avatar'`.
  *
- * Since ENS names prohibit certain forbidden characters (e.g. underscore) and have other validation rules, you likely want to [normalize ENS names](https://docs.ens.domains/contract-api-reference/name-processing#normalising-names) with [UTS-46 normalization](https://unicode.org/reports/tr46) before passing them to `getEnsAddress`. You can use the built-in [`normalize`](https://viem.sh/docs/ens/utilities/normalize.html) function for this.
+ * Since ENS names prohibit certain forbidden characters (e.g. underscore) and have other validation rules, you likely want to [normalize ENS names](https://docs.ens.domains/contract-api-reference/name-processing#normalising-names) with [UTS-46 normalization](https://unicode.org/reports/tr46) before passing them to `getEnsAddress`. You can use the built-in [`normalize`](https://viem.sh/docs/ens/utilities/normalize) function for this.
  *
  * @param client - Client to use
  * @param parameters - {@link GetEnsAvatarParameters}
@@ -4044,18 +4069,23 @@ async function getEnsText(client, { blockNumber, blockTag, name, key, universalR
  * })
  * // 'https://ipfs.io/ipfs/Qma8mnp6xV3J2cRNf3mTth5C8nV11CAnceVinc3y8jSbio'
  */
-async function getEnsAvatar(client, { blockNumber, blockTag, gatewayUrls, name, universalResolverAddress, }) {
+async function getEnsAvatar(client, { blockNumber, blockTag, assetGatewayUrls, name, gatewayUrls, strict, universalResolverAddress, }) {
     const record = await (0,getAction/* getAction */.s)(client, getEnsText, 'getEnsText')({
         blockNumber,
         blockTag,
         key: 'avatar',
         name,
         universalResolverAddress,
+        gatewayUrls,
+        strict,
     });
     if (!record)
         return null;
     try {
-        return await parseAvatarRecord(client, { record, gatewayUrls });
+        return await parseAvatarRecord(client, {
+            record,
+            gatewayUrls: assetGatewayUrls,
+        });
     }
     catch {
         return null;
@@ -4073,7 +4103,7 @@ async function getEnsAvatar(client, { blockNumber, blockTag, gatewayUrls, name, 
 /**
  * Gets primary name for specified address.
  *
- * - Docs: https://viem.sh/docs/ens/actions/getEnsName.html
+ * - Docs: https://viem.sh/docs/ens/actions/getEnsName
  * - Examples: https://stackblitz.com/github/wevm/viem/tree/main/examples/ens
  *
  * Calls `reverse(bytes)` on ENS Universal Resolver Contract to "reverse resolve" the address to the primary ENS name.
@@ -4096,7 +4126,7 @@ async function getEnsAvatar(client, { blockNumber, blockTag, gatewayUrls, name, 
  * })
  * // 'wevm.eth'
  */
-async function getEnsName(client, { address, blockNumber, blockTag, universalResolverAddress: universalResolverAddress_, }) {
+async function getEnsName(client, { address, blockNumber, blockTag, gatewayUrls, strict, universalResolverAddress: universalResolverAddress_, }) {
     let universalResolverAddress = universalResolverAddress_;
     if (!universalResolverAddress) {
         if (!client.chain)
@@ -4109,19 +4139,28 @@ async function getEnsName(client, { address, blockNumber, blockTag, universalRes
     }
     const reverseNode = `${address.toLowerCase().substring(2)}.addr.reverse`;
     try {
-        const [name, resolvedAddress] = await (0,getAction/* getAction */.s)(client, readContract/* readContract */.L, 'readContract')({
+        const readContractParameters = {
             address: universalResolverAddress,
             abi: abis/* universalResolverReverseAbi */.du,
             functionName: 'reverse',
             args: [(0,toHex/* toHex */.NC)(packetToBytes(reverseNode))],
             blockNumber,
             blockTag,
-        });
+        };
+        const readContractAction = (0,getAction/* getAction */.s)(client, readContract/* readContract */.L, 'readContract');
+        const [name, resolvedAddress] = gatewayUrls
+            ? await readContractAction({
+                ...readContractParameters,
+                args: [...readContractParameters.args, gatewayUrls],
+            })
+            : await readContractAction(readContractParameters);
         if (address.toLowerCase() !== resolvedAddress.toLowerCase())
             return null;
         return name;
     }
     catch (err) {
+        if (strict)
+            throw err;
         if (isNullUniversalResolverError(err, 'reverse'))
             return null;
         throw err;
@@ -4137,12 +4176,12 @@ async function getEnsName(client, { address, blockNumber, blockTag, universalRes
 /**
  * Gets resolver for ENS name.
  *
- * - Docs: https://viem.sh/docs/ens/actions/getEnsResolver.html
+ * - Docs: https://viem.sh/docs/ens/actions/getEnsResolver
  * - Examples: https://stackblitz.com/github/wevm/viem/tree/main/examples/ens
  *
  * Calls `findResolver(bytes)` on ENS Universal Resolver Contract to retrieve the resolver of an ENS name.
  *
- * Since ENS names prohibit certain forbidden characters (e.g. underscore) and have other validation rules, you likely want to [normalize ENS names](https://docs.ens.domains/contract-api-reference/name-processing#normalising-names) with [UTS-46 normalization](https://unicode.org/reports/tr46) before passing them to `getEnsAddress`. You can use the built-in [`normalize`](https://viem.sh/docs/ens/utilities/normalize.html) function for this.
+ * Since ENS names prohibit certain forbidden characters (e.g. underscore) and have other validation rules, you likely want to [normalize ENS names](https://docs.ens.domains/contract-api-reference/name-processing#normalising-names) with [UTS-46 normalization](https://unicode.org/reports/tr46) before passing them to `getEnsAddress`. You can use the built-in [`normalize`](https://viem.sh/docs/ens/utilities/normalize) function for this.
  *
  * @param client - Client to use
  * @param parameters - {@link GetEnsResolverParameters}
@@ -4199,13 +4238,13 @@ var createFilterRequestScope = __webpack_require__(7211);
 ;// CONCATENATED MODULE: ./node_modules/viem/_esm/actions/public/createBlockFilter.js
 
 /**
- * Creates a [`Filter`](https://viem.sh/docs/glossary/types.html#filter) to listen for new block hashes that can be used with [`getFilterChanges`](https://viem.sh/docs/actions/public/getFilterChanges.html).
+ * Creates a [`Filter`](https://viem.sh/docs/glossary/types#filter) to listen for new block hashes that can be used with [`getFilterChanges`](https://viem.sh/docs/actions/public/getFilterChanges).
  *
- * - Docs: https://viem.sh/docs/actions/public/createBlockFilter.html
+ * - Docs: https://viem.sh/docs/actions/public/createBlockFilter
  * - JSON-RPC Methods: [`eth_newBlockFilter`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_newBlockFilter)
  *
  * @param client - Client to use
- * @returns [`Filter`](https://viem.sh/docs/glossary/types.html#filter). {@link CreateBlockFilterReturnType}
+ * @returns [`Filter`](https://viem.sh/docs/glossary/types#filter). {@link CreateBlockFilterReturnType}
  *
  * @example
  * import { createPublicClient, http } from 'viem'
@@ -4238,14 +4277,14 @@ var encodeEventTopics = __webpack_require__(6404);
 
 
 /**
- * Creates a [`Filter`](https://viem.sh/docs/glossary/types.html#filter) to listen for new events that can be used with [`getFilterChanges`](https://viem.sh/docs/actions/public/getFilterChanges.html).
+ * Creates a [`Filter`](https://viem.sh/docs/glossary/types#filter) to listen for new events that can be used with [`getFilterChanges`](https://viem.sh/docs/actions/public/getFilterChanges).
  *
- * - Docs: https://viem.sh/docs/actions/public/createEventFilter.html
+ * - Docs: https://viem.sh/docs/actions/public/createEventFilter
  * - JSON-RPC Methods: [`eth_newFilter`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_newfilter)
  *
  * @param client - Client to use
  * @param parameters - {@link CreateEventFilterParameters}
- * @returns [`Filter`](https://viem.sh/docs/glossary/types.html#filter). {@link CreateEventFilterReturnType}
+ * @returns [`Filter`](https://viem.sh/docs/glossary/types#filter). {@link CreateEventFilterReturnType}
  *
  * @example
  * import { createPublicClient, http } from 'viem'
@@ -4304,13 +4343,13 @@ async function createEventFilter(client, { address, args, event, events: events_
 ;// CONCATENATED MODULE: ./node_modules/viem/_esm/actions/public/createPendingTransactionFilter.js
 
 /**
- * Creates a Filter to listen for new pending transaction hashes that can be used with [`getFilterChanges`](https://viem.sh/docs/actions/public/getFilterChanges.html).
+ * Creates a Filter to listen for new pending transaction hashes that can be used with [`getFilterChanges`](https://viem.sh/docs/actions/public/getFilterChanges).
  *
- * - Docs: https://viem.sh/docs/actions/public/createPendingTransactionFilter.html
+ * - Docs: https://viem.sh/docs/actions/public/createPendingTransactionFilter
  * - JSON-RPC Methods: [`eth_newPendingTransactionFilter`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_newpendingtransactionfilter)
  *
  * @param client - Client to use
- * @returns [`Filter`](https://viem.sh/docs/glossary/types.html#filter). {@link CreateBlockFilterReturnType}
+ * @returns [`Filter`](https://viem.sh/docs/glossary/types#filter). {@link CreateBlockFilterReturnType}
  *
  * @example
  * import { createPublicClient, http } from 'viem'
@@ -4347,10 +4386,10 @@ var estimateMaxPriorityFeePerGas = __webpack_require__(9379);
 /**
  * Returns the balance of an address in wei.
  *
- * - Docs: https://viem.sh/docs/actions/public/getBalance.html
+ * - Docs: https://viem.sh/docs/actions/public/getBalance
  * - JSON-RPC Methods: [`eth_getBalance`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getbalance)
  *
- * You can convert the balance to ether units with [`formatEther`](https://viem.sh/docs/utilities/formatEther.html).
+ * You can convert the balance to ether units with [`formatEther`](https://viem.sh/docs/utilities/formatEther).
  *
  * ```ts
  * const balance = await getBalance(client, {
@@ -4400,7 +4439,7 @@ var fromHex = __webpack_require__(5946);
 /**
  * Returns the number of Transactions at a block number, hash, or tag.
  *
- * - Docs: https://viem.sh/docs/actions/public/getBlockTransactionCount.html
+ * - Docs: https://viem.sh/docs/actions/public/getBlockTransactionCount
  * - JSON-RPC Methods:
  *   - Calls [`eth_getBlockTransactionCountByNumber`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getblocktransactioncountbynumber) for `blockNumber` & `blockTag`.
  *   - Calls [`eth_getBlockTransactionCountByHash`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getblocktransactioncountbyhash) for `blockHash`.
@@ -4443,7 +4482,7 @@ async function getBlockTransactionCount(client, { blockHash, blockNumber, blockT
 /**
  * Retrieves the bytecode at an address.
  *
- * - Docs: https://viem.sh/docs/contract/getBytecode.html
+ * - Docs: https://viem.sh/docs/contract/getBytecode
  * - JSON-RPC Methods: [`eth_getCode`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getcode)
  *
  * @param client - Client to use
@@ -4494,7 +4533,7 @@ function formatFeeHistory(feeHistory) {
 /**
  * Returns a collection of historical gas information.
  *
- * - Docs: https://viem.sh/docs/actions/public/getFeeHistory.html
+ * - Docs: https://viem.sh/docs/actions/public/getFeeHistory
  * - JSON-RPC Methods: [`eth_feeHistory`](https://docs.alchemy.com/reference/eth-feehistory)
  *
  * @param client - Client to use
@@ -4541,7 +4580,7 @@ var formatters_log = __webpack_require__(3992);
 /**
  * Returns a list of event logs since the filter was created.
  *
- * - Docs: https://viem.sh/docs/actions/public/getFilterLogs.html
+ * - Docs: https://viem.sh/docs/actions/public/getFilterLogs
  * - JSON-RPC Methods: [`eth_getFilterLogs`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getfilterlogs)
  *
  * `getFilterLogs` is only compatible with **event filters**.
@@ -4610,7 +4649,7 @@ function formatProof(proof) {
 /**
  * Returns the account and storage values of the specified account including the Merkle-proof.
  *
- * - Docs: https://viem.sh/docs/actions/public/getProof.html
+ * - Docs: https://viem.sh/docs/actions/public/getProof
  * - JSON-RPC Methods:
  *   - Calls [`eth_getProof`](https://eips.ethereum.org/EIPS/eip-1186)
  *
@@ -4647,7 +4686,7 @@ async function getProof(client, { address, blockNumber, blockTag: blockTag_, sto
 /**
  * Returns the value from a storage slot at a given address.
  *
- * - Docs: https://viem.sh/docs/contract/getStorageAt.html
+ * - Docs: https://viem.sh/docs/contract/getStorageAt
  * - JSON-RPC Methods: [`eth_getStorageAt`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getstorageat)
  *
  * @param client - Client to use
@@ -4686,9 +4725,9 @@ var formatters_transaction = __webpack_require__(6073);
 
 
 /**
- * Returns information about a [Transaction](https://viem.sh/docs/glossary/terms.html#transaction) given a hash or block identifier.
+ * Returns information about a [Transaction](https://viem.sh/docs/glossary/terms#transaction) given a hash or block identifier.
  *
- * - Docs: https://viem.sh/docs/actions/public/getTransaction.html
+ * - Docs: https://viem.sh/docs/actions/public/getTransaction
  * - Example: https://stackblitz.com/github/wevm/viem/tree/main/examples/transactions/fetching-transactions
  * - JSON-RPC Methods: [`eth_getTransactionByHash`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getTransactionByHash)
  *
@@ -4750,7 +4789,7 @@ async function getTransaction(client, { blockHash, blockNumber, blockTag: blockT
 /**
  * Returns the number of blocks passed (confirmations) since the transaction was processed on a block.
  *
- * - Docs: https://viem.sh/docs/actions/public/getTransactionConfirmations.html
+ * - Docs: https://viem.sh/docs/actions/public/getTransactionConfirmations
  * - Example: https://stackblitz.com/github/wevm/viem/tree/main/examples/transactions/fetching-transactions
  * - JSON-RPC Methods: [`eth_getTransactionConfirmations`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getTransactionConfirmations)
  *
@@ -4834,9 +4873,9 @@ const defineTransactionReceipt = /*#__PURE__*/ (/* unused pure expression or sup
 
 
 /**
- * Returns the [Transaction Receipt](https://viem.sh/docs/glossary/terms.html#transaction-receipt) given a [Transaction](https://viem.sh/docs/glossary/terms.html#transaction) hash.
+ * Returns the [Transaction Receipt](https://viem.sh/docs/glossary/terms#transaction-receipt) given a [Transaction](https://viem.sh/docs/glossary/terms#transaction) hash.
  *
- * - Docs: https://viem.sh/docs/actions/public/getTransactionReceipt.html
+ * - Docs: https://viem.sh/docs/actions/public/getTransactionReceipt
  * - Example: https://stackblitz.com/github/wevm/viem/tree/main/examples/transactions/fetching-transactions
  * - JSON-RPC Methods: [`eth_getTransactionReceipt`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_gettransactionreceipt)
  *
@@ -4885,9 +4924,9 @@ var getContractError = __webpack_require__(2365);
 
 
 /**
- * Similar to [`readContract`](https://viem.sh/docs/contract/readContract.html), but batches up multiple functions on a contract in a single RPC call via the [`multicall3` contract](https://github.com/mds1/multicall).
+ * Similar to [`readContract`](https://viem.sh/docs/contract/readContract), but batches up multiple functions on a contract in a single RPC call via the [`multicall3` contract](https://github.com/mds1/multicall).
  *
- * - Docs: https://viem.sh/docs/contract/multicall.html
+ * - Docs: https://viem.sh/docs/contract/multicall
  *
  * @param client - Client to use
  * @param parameters - {@link MulticallParameters}
@@ -5409,7 +5448,7 @@ async function verifyHash(client, { address, hash, signature, ...callRequest }) 
  *
  * Compatible with Smart Contract Accounts & Externally Owned Accounts via [ERC-6492](https://eips.ethereum.org/EIPS/eip-6492).
  *
- * - Docs {@link https://viem.sh/docs/actions/public/verifyMessage.html}
+ * - Docs {@link https://viem.sh/docs/actions/public/verifyMessage}
  *
  * @param client - Client to use.
  * @param parameters - {@link VerifyMessageParameters}
@@ -5558,7 +5597,7 @@ function encodeField({ types, name, type, value, }) {
 /**
  * Verify that typed data was signed by the provided address.
  *
- * - Docs {@link https://viem.sh/docs/actions/public/verifyTypedData.html}
+ * - Docs {@link https://viem.sh/docs/actions/public/verifyTypedData}
  *
  * @param client - Client to use.
  * @param parameters - {@link VerifyTypedDataParameters}
@@ -5595,7 +5634,7 @@ var poll = __webpack_require__(23);
 /**
  * Watches and returns incoming block numbers.
  *
- * - Docs: https://viem.sh/docs/actions/public/watchBlockNumber.html
+ * - Docs: https://viem.sh/docs/actions/public/watchBlockNumber
  * - Examples: https://stackblitz.com/github/wevm/viem/tree/main/examples/blocks/watching-blocks
  * - JSON-RPC Methods:
  *   - When `poll: true`, calls [`eth_blockNumber`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_blocknumber) on a polling interval.
@@ -5703,9 +5742,9 @@ function watchBlockNumber(client, { emitOnBegin = false, emitMissed = false, onB
 
 
 /**
- * Waits for the [Transaction](https://viem.sh/docs/glossary/terms.html#transaction) to be included on a [Block](https://viem.sh/docs/glossary/terms.html#block) (one confirmation), and then returns the [Transaction Receipt](https://viem.sh/docs/glossary/terms.html#transaction-receipt). If the Transaction reverts, then the action will throw an error.
+ * Waits for the [Transaction](https://viem.sh/docs/glossary/terms#transaction) to be included on a [Block](https://viem.sh/docs/glossary/terms#block) (one confirmation), and then returns the [Transaction Receipt](https://viem.sh/docs/glossary/terms#transaction-receipt). If the Transaction reverts, then the action will throw an error.
  *
- * - Docs: https://viem.sh/docs/actions/public/waitForTransactionReceipt.html
+ * - Docs: https://viem.sh/docs/actions/public/waitForTransactionReceipt
  * - Example: https://stackblitz.com/github/wevm/viem/tree/main/examples/transactions/sending-transactions
  * - JSON-RPC Methods:
  *   - Polls [`eth_getTransactionReceipt`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getTransactionReceipt) on each block until it has been processed.
@@ -5884,7 +5923,7 @@ var formatters_block = __webpack_require__(3310);
 /**
  * Watches and returns information for incoming blocks.
  *
- * - Docs: https://viem.sh/docs/actions/public/watchBlocks.html
+ * - Docs: https://viem.sh/docs/actions/public/watchBlocks
  * - Examples: https://stackblitz.com/github/wevm/viem/tree/main/examples/blocks/watching-blocks
  * - JSON-RPC Methods:
  *   - When `poll: true`, calls [`eth_getBlockByNumber`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getBlockByNumber) on a polling interval.
@@ -6015,9 +6054,9 @@ var decodeEventLog = __webpack_require__(5950);
 
 
 /**
- * Watches and returns emitted [Event Logs](https://viem.sh/docs/glossary/terms.html#event-log).
+ * Watches and returns emitted [Event Logs](https://viem.sh/docs/glossary/terms#event-log).
  *
- * - Docs: https://viem.sh/docs/actions/public/watchEvent.html
+ * - Docs: https://viem.sh/docs/actions/public/watchEvent
  * - JSON-RPC Methods:
  *   - **RPC Provider supports `eth_newFilter`:**
  *     - Calls [`eth_newFilter`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_newfilter) to create a filter (called on initialize).
@@ -6025,9 +6064,9 @@ var decodeEventLog = __webpack_require__(5950);
  *   - **RPC Provider does not support `eth_newFilter`:**
  *     - Calls [`eth_getLogs`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getlogs) for each block between the polling interval.
  *
- * This Action will batch up all the Event Logs found within the [`pollingInterval`](https://viem.sh/docs/actions/public/watchEvent.html#pollinginterval-optional), and invoke them via [`onLogs`](https://viem.sh/docs/actions/public/watchEvent.html#onLogs).
+ * This Action will batch up all the Event Logs found within the [`pollingInterval`](https://viem.sh/docs/actions/public/watchEvent#pollinginterval-optional), and invoke them via [`onLogs`](https://viem.sh/docs/actions/public/watchEvent#onLogs).
  *
- * `watchEvent` will attempt to create an [Event Filter](https://viem.sh/docs/actions/public/createEventFilter.html) and listen to changes to the Filter per polling interval, however, if the RPC Provider does not support Filters (e.g. `eth_newFilter`), then `watchEvent` will fall back to using [`getLogs`](https://viem.sh/docs/actions/public/getLogs.html) instead.
+ * `watchEvent` will attempt to create an [Event Filter](https://viem.sh/docs/actions/public/createEventFilter) and listen to changes to the Filter per polling interval, however, if the RPC Provider does not support Filters (e.g. `eth_newFilter`), then `watchEvent` will fall back to using [`getLogs`](https://viem.sh/docs/actions/public/getLogs) instead.
  *
  * @param client - Client to use
  * @param parameters - {@link WatchEventParameters}
@@ -6213,14 +6252,14 @@ function watchEvent(client, { address, args, batch = true, event, events, onErro
 /**
  * Watches and returns pending transaction hashes.
  *
- * - Docs: https://viem.sh/docs/actions/public/watchPendingTransactions.html
+ * - Docs: https://viem.sh/docs/actions/public/watchPendingTransactions
  * - JSON-RPC Methods:
  *   - When `poll: true`
  *     - Calls [`eth_newPendingTransactionFilter`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_newpendingtransactionfilter) to initialize the filter.
  *     - Calls [`eth_getFilterChanges`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getFilterChanges) on a polling interval.
  *   - When `poll: false` & WebSocket Transport, uses a WebSocket subscription via [`eth_subscribe`](https://docs.alchemy.com/reference/eth-subscribe-polygon) and the `"newPendingTransactions"` event.
  *
- * This Action will batch up all the pending transactions found within the [`pollingInterval`](https://viem.sh/docs/actions/public/watchPendingTransactions.html#pollinginterval-optional), and invoke them via [`onTransactions`](https://viem.sh/docs/actions/public/watchPendingTransactions.html#ontransactions).
+ * This Action will batch up all the pending transactions found within the [`pollingInterval`](https://viem.sh/docs/actions/public/watchPendingTransactions#pollinginterval-optional), and invoke them via [`onTransactions`](https://viem.sh/docs/actions/public/watchPendingTransactions#ontransactions).
  *
  * @param client - Client to use
  * @param parameters - {@link WatchPendingTransactionsParameters}
@@ -6456,7 +6495,7 @@ var toHex = __webpack_require__(2106);
 /**
  * Adds an EVM chain to the wallet.
  *
- * - Docs: https://viem.sh/docs/actions/wallet/addChain.html
+ * - Docs: https://viem.sh/docs/actions/wallet/addChain
  * - JSON-RPC Methods: [`eth_addEthereumChain`](https://eips.ethereum.org/EIPS/eip-3085)
  *
  * @param client - Client to use
@@ -6500,12 +6539,12 @@ var sendTransaction = __webpack_require__(2736);
 /**
  * Deploys a contract to the network, given bytecode and constructor arguments.
  *
- * - Docs: https://viem.sh/docs/contract/deployContract.html
+ * - Docs: https://viem.sh/docs/contract/deployContract
  * - Examples: https://stackblitz.com/github/wevm/viem/tree/main/examples/contracts/deploying-contracts
  *
  * @param client - Client to use
  * @param parameters - {@link DeployContractParameters}
- * @returns The [Transaction](https://viem.sh/docs/glossary/terms.html#transaction) hash. {@link DeployContractReturnType}
+ * @returns The [Transaction](https://viem.sh/docs/glossary/terms#transaction) hash. {@link DeployContractReturnType}
  *
  * @example
  * import { createWalletClient, http } from 'viem'
@@ -6540,7 +6579,7 @@ var getAddress = __webpack_require__(5775);
 /**
  * Returns a list of account addresses owned by the wallet or client.
  *
- * - Docs: https://viem.sh/docs/actions/wallet/getAddresses.html
+ * - Docs: https://viem.sh/docs/actions/wallet/getAddresses
  * - JSON-RPC Methods: [`eth_accounts`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_accounts)
  *
  * @param client - Client to use
@@ -6568,7 +6607,7 @@ async function getAddresses(client) {
 /**
  * Gets the wallets current permissions.
  *
- * - Docs: https://viem.sh/docs/actions/wallet/getPermissions.html
+ * - Docs: https://viem.sh/docs/actions/wallet/getPermissions
  * - JSON-RPC Methods: [`wallet_getPermissions`](https://eips.ethereum.org/EIPS/eip-2255)
  *
  * @param client - Client to use
@@ -6597,7 +6636,7 @@ var prepareTransactionRequest = __webpack_require__(637);
 /**
  * Requests a list of accounts managed by a wallet.
  *
- * - Docs: https://viem.sh/docs/actions/wallet/requestAddresses.html
+ * - Docs: https://viem.sh/docs/actions/wallet/requestAddresses
  * - JSON-RPC Methods: [`eth_requestAccounts`](https://eips.ethereum.org/EIPS/eip-1102)
  *
  * Sends a request to the wallet, asking for permission to access the user's accounts. After the user accepts the request, it will return a list of accounts (addresses).
@@ -6627,7 +6666,7 @@ async function requestAddresses(client) {
 /**
  * Requests permissions for a wallet.
  *
- * - Docs: https://viem.sh/docs/actions/wallet/requestPermissions.html
+ * - Docs: https://viem.sh/docs/actions/wallet/requestPermissions
  * - JSON-RPC Methods: [`wallet_requestPermissions`](https://eips.ethereum.org/EIPS/eip-2255)
  *
  * @param client - Client to use
@@ -6667,14 +6706,14 @@ var errors_account = __webpack_require__(8998);
 /**
  * Calculates an Ethereum-specific signature in [EIP-191 format](https://eips.ethereum.org/EIPS/eip-191): `keccak256("\x19Ethereum Signed Message:\n" + len(message) + message))`.
  *
- * - Docs: https://viem.sh/docs/actions/wallet/signMessage.html
+ * - Docs: https://viem.sh/docs/actions/wallet/signMessage
  * - JSON-RPC Methods:
- *   - JSON-RPC Accounts: [`personal_sign`](https://docs.metamask.io/guide/signing-data.html#personal-sign)
+ *   - JSON-RPC Accounts: [`personal_sign`](https://docs.metamask.io/guide/signing-data#personal-sign)
  *   - Local Accounts: Signs locally. No JSON-RPC request.
  *
  * With the calculated signature, you can:
- * - use [`verifyMessage`](https://viem.sh/docs/utilities/verifyMessage.html) to verify the signature,
- * - use [`recoverMessageAddress`](https://viem.sh/docs/utilities/recoverMessageAddress.html) to recover the signing address from a signature.
+ * - use [`verifyMessage`](https://viem.sh/docs/utilities/verifyMessage) to verify the signature,
+ * - use [`recoverMessageAddress`](https://viem.sh/docs/utilities/recoverMessageAddress) to recover the signing address from a signature.
  *
  * @param client - Client to use
  * @param parameters - {@link SignMessageParameters}
@@ -6752,7 +6791,7 @@ var assertRequest = __webpack_require__(7531);
 /**
  * Signs a transaction.
  *
- * - Docs: https://viem.sh/docs/actions/wallet/signTransaction.html
+ * - Docs: https://viem.sh/docs/actions/wallet/signTransaction
  * - JSON-RPC Methods:
  *   - JSON-RPC Accounts: [`eth_signTransaction`](https://ethereum.github.io/execution-apis/api-documentation/)
  *   - Local Accounts: Signs locally. No JSON-RPC request.
@@ -6843,9 +6882,9 @@ var utils_typedData = __webpack_require__(7829);
 /**
  * Signs typed data and calculates an Ethereum-specific signature in [https://eips.ethereum.org/EIPS/eip-712](https://eips.ethereum.org/EIPS/eip-712): `sign(keccak256("\x19\x01" ‖ domainSeparator ‖ hashStruct(message)))`
  *
- * - Docs: https://viem.sh/docs/actions/wallet/signTypedData.html
+ * - Docs: https://viem.sh/docs/actions/wallet/signTypedData
  * - JSON-RPC Methods:
- *   - JSON-RPC Accounts: [`eth_signTypedData_v4`](https://docs.metamask.io/guide/signing-data.html#signtypeddata-v4)
+ *   - JSON-RPC Accounts: [`eth_signTypedData_v4`](https://docs.metamask.io/guide/signing-data#signtypeddata-v4)
  *   - Local Accounts: Signs locally. No JSON-RPC request.
  *
  * @param client - Client to use
@@ -6966,7 +7005,7 @@ async function signTypedData(client, parameters) {
 /**
  * Switch the target chain in a wallet.
  *
- * - Docs: https://viem.sh/docs/actions/wallet/switchChain.html
+ * - Docs: https://viem.sh/docs/actions/wallet/switchChain
  * - JSON-RPC Methods: [`eth_switchEthereumChain`](https://eips.ethereum.org/EIPS/eip-3326)
  *
  * @param client - Client to use
@@ -6998,7 +7037,7 @@ async function switchChain(client, { id }) {
 /**
  * Adds an EVM chain to the wallet.
  *
- * - Docs: https://viem.sh/docs/actions/wallet/watchAsset.html
+ * - Docs: https://viem.sh/docs/actions/wallet/watchAsset
  * - JSON-RPC Methods: [`eth_switchEthereumChain`](https://eips.ethereum.org/EIPS/eip-747)
  *
  * @param client - Client to use
@@ -7640,6 +7679,41 @@ const universalResolverErrors = [
         name: 'ResolverWildcardNotSupported',
         type: 'error',
     },
+    {
+        inputs: [],
+        name: 'ResolverNotContract',
+        type: 'error',
+    },
+    {
+        inputs: [
+            {
+                name: 'returnData',
+                type: 'bytes',
+            },
+        ],
+        name: 'ResolverError',
+        type: 'error',
+    },
+    {
+        inputs: [
+            {
+                components: [
+                    {
+                        name: 'status',
+                        type: 'uint16',
+                    },
+                    {
+                        name: 'message',
+                        type: 'string',
+                    },
+                ],
+                name: 'errors',
+                type: 'tuple[]',
+            },
+        ],
+        name: 'HttpError',
+        type: 'error',
+    },
 ];
 const universalResolverResolveAbi = [
     ...universalResolverErrors,
@@ -7656,6 +7730,20 @@ const universalResolverResolveAbi = [
             { name: 'address', type: 'address' },
         ],
     },
+    {
+        name: 'resolve',
+        type: 'function',
+        stateMutability: 'view',
+        inputs: [
+            { name: 'name', type: 'bytes' },
+            { name: 'data', type: 'bytes' },
+            { name: 'gateways', type: 'string[]' },
+        ],
+        outputs: [
+            { name: '', type: 'bytes' },
+            { name: 'address', type: 'address' },
+        ],
+    },
 ];
 const universalResolverReverseAbi = [
     ...universalResolverErrors,
@@ -7664,6 +7752,21 @@ const universalResolverReverseAbi = [
         type: 'function',
         stateMutability: 'view',
         inputs: [{ type: 'bytes', name: 'reverseName' }],
+        outputs: [
+            { type: 'string', name: 'resolvedName' },
+            { type: 'address', name: 'resolvedAddress' },
+            { type: 'address', name: 'reverseResolver' },
+            { type: 'address', name: 'resolver' },
+        ],
+    },
+    {
+        name: 'reverse',
+        type: 'function',
+        stateMutability: 'view',
+        inputs: [
+            { type: 'bytes', name: 'reverseName' },
+            { type: 'string[]', name: 'gateways' },
+        ],
         outputs: [
             { type: 'string', name: 'resolvedName' },
             { type: 'address', name: 'resolvedAddress' },
@@ -9021,7 +9124,6 @@ const weiUnits = {
 
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   CI: () => (/* binding */ InvalidAbiDecodingTypeError),
-/* harmony export */   El: () => (/* binding */ AbiDecodingOffsetOutOfBoundsError),
 /* harmony export */   FM: () => (/* binding */ AbiEventSignatureEmptyTopicsError),
 /* harmony export */   Gy: () => (/* binding */ DecodeLogTopicsMismatch),
 /* harmony export */   KY: () => (/* binding */ BytesSizeMismatchError),
@@ -9043,7 +9145,7 @@ const weiUnits = {
 /* harmony export */   xL: () => (/* binding */ AbiFunctionNotFoundError),
 /* harmony export */   yP: () => (/* binding */ AbiErrorSignatureNotFoundError)
 /* harmony export */ });
-/* unused harmony exports AbiDecodingDataSizeInvalidError, AbiErrorInputsNotFoundError, AbiErrorNotFoundError, AbiFunctionSignatureNotFoundError, UnsupportedPackedAbiType */
+/* unused harmony exports AbiDecodingDataSizeInvalidError, AbiDecodingOffsetOutOfBoundsError, AbiErrorInputsNotFoundError, AbiErrorNotFoundError, AbiFunctionSignatureNotFoundError, UnsupportedPackedAbiType */
 /* harmony import */ var _utils_abi_formatAbiItem_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(522);
 /* harmony import */ var _utils_data_size_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(9135);
 /* harmony import */ var _base_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2027);
@@ -9133,7 +9235,7 @@ class AbiDecodingDataSizeTooSmallError extends _base_js__WEBPACK_IMPORTED_MODULE
         this.size = size;
     }
 }
-class AbiDecodingOffsetOutOfBoundsError extends _base_js__WEBPACK_IMPORTED_MODULE_0__/* .BaseError */ .G {
+class AbiDecodingOffsetOutOfBoundsError extends (/* unused pure expression or super */ null && (BaseError)) {
     constructor({ offset, position }) {
         super(`Offset at "${offset}" is out-of-bounds (current position: "${position}").`);
         Object.defineProperty(this, "name", {
@@ -9626,7 +9728,7 @@ class BaseError extends Error {
             ...(args.metaMessages ? [...args.metaMessages, ''] : []),
             ...(docsPath
                 ? [
-                    `Docs: https://viem.sh${docsPath}.html${args.docsSlug ? `#${args.docsSlug}` : ''}`,
+                    `Docs: https://viem.sh${docsPath}${args.docsSlug ? `#${args.docsSlug}` : ''}`,
                 ]
                 : []),
             ...(details ? [`Details: ${details}`] : []),
@@ -10107,6 +10209,53 @@ class RawContractError extends base/* BaseError */.G {
 
 /***/ }),
 
+/***/ 6238:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   KD: () => (/* binding */ RecursiveReadLimitExceededError),
+/* harmony export */   T_: () => (/* binding */ NegativeOffsetError),
+/* harmony export */   lQ: () => (/* binding */ PositionOutOfBoundsError)
+/* harmony export */ });
+/* harmony import */ var _base_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2027);
+
+class NegativeOffsetError extends _base_js__WEBPACK_IMPORTED_MODULE_0__/* .BaseError */ .G {
+    constructor({ offset }) {
+        super(`Offset \`${offset}\` cannot be negative.`);
+        Object.defineProperty(this, "name", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: 'NegativeOffsetError'
+        });
+    }
+}
+class PositionOutOfBoundsError extends _base_js__WEBPACK_IMPORTED_MODULE_0__/* .BaseError */ .G {
+    constructor({ length, position }) {
+        super(`Position \`${position}\` is out of bounds (\`0 < position < ${length}\`).`);
+        Object.defineProperty(this, "name", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: 'PositionOutOfBoundsError'
+        });
+    }
+}
+class RecursiveReadLimitExceededError extends _base_js__WEBPACK_IMPORTED_MODULE_0__/* .BaseError */ .G {
+    constructor({ count, limit }) {
+        super(`Recursive read limit of \`${limit}\` exceeded (recursive read count: \`${count}\`).`);
+        Object.defineProperty(this, "name", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: 'RecursiveReadLimitExceededError'
+        });
+    }
+}
+//# sourceMappingURL=cursor.js.map
+
+/***/ }),
+
 /***/ 9760:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
@@ -10148,11 +10297,11 @@ class SizeExceedsPaddingSizeError extends _base_js__WEBPACK_IMPORTED_MODULE_0__/
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Cd: () => (/* binding */ InvalidHexBooleanError),
 /* harmony export */   J5: () => (/* binding */ IntegerOutOfRangeError),
-/* harmony export */   M6: () => (/* binding */ SizeOverflowError)
+/* harmony export */   M6: () => (/* binding */ SizeOverflowError),
+/* harmony export */   yr: () => (/* binding */ InvalidBytesBooleanError)
 /* harmony export */ });
-/* unused harmony exports InvalidBytesBooleanError, InvalidHexValueError */
+/* unused harmony exports InvalidHexBooleanError, InvalidHexValueError */
 /* harmony import */ var _base_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2027);
 
 class IntegerOutOfRangeError extends _base_js__WEBPACK_IMPORTED_MODULE_0__/* .BaseError */ .G {
@@ -10166,7 +10315,7 @@ class IntegerOutOfRangeError extends _base_js__WEBPACK_IMPORTED_MODULE_0__/* .Ba
         });
     }
 }
-class InvalidBytesBooleanError extends (/* unused pure expression or super */ null && (BaseError)) {
+class InvalidBytesBooleanError extends _base_js__WEBPACK_IMPORTED_MODULE_0__/* .BaseError */ .G {
     constructor(bytes) {
         super(`Bytes value "${bytes}" is not a valid boolean. The bytes array must contain a single byte of either a 0 or 1 value.`);
         Object.defineProperty(this, "name", {
@@ -10177,7 +10326,7 @@ class InvalidBytesBooleanError extends (/* unused pure expression or super */ nu
         });
     }
 }
-class InvalidHexBooleanError extends _base_js__WEBPACK_IMPORTED_MODULE_0__/* .BaseError */ .G {
+class InvalidHexBooleanError extends (/* unused pure expression or super */ null && (BaseError)) {
     constructor(hex) {
         super(`Hex value "${hex}" is not a valid boolean. The hex value must be "0x0" (false) or "0x1" (true).`);
         Object.defineProperty(this, "name", {
@@ -11343,7 +11492,7 @@ __webpack_require__.d(__webpack_exports__, {
 });
 
 ;// CONCATENATED MODULE: ./node_modules/viem/_esm/errors/version.js
-const version = '2.0.6';
+const version = '2.3.1';
 //# sourceMappingURL=version.js.map
 ;// CONCATENATED MODULE: ./node_modules/viem/_esm/errors/utils.js
 
@@ -11354,19 +11503,337 @@ const getVersion = () => `viem@${version}`;
 
 /***/ }),
 
-/***/ 4450:
+/***/ 5821:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   r: () => (/* binding */ decodeAbiParameters)
-/* harmony export */ });
-/* harmony import */ var _errors_abi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7412);
-/* harmony import */ var _address_getAddress_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(5775);
-/* harmony import */ var _data_size_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9135);
-/* harmony import */ var _data_slice_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3972);
-/* harmony import */ var _data_trim_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(1836);
-/* harmony import */ var _encoding_fromHex_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(5946);
-/* harmony import */ var _encodeAbiParameters_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5444);
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, {
+  r: () => (/* binding */ decodeAbiParameters)
+});
+
+// EXTERNAL MODULE: ./node_modules/viem/_esm/errors/abi.js
+var abi = __webpack_require__(7412);
+// EXTERNAL MODULE: ./node_modules/viem/_esm/utils/address/getAddress.js
+var getAddress = __webpack_require__(5775);
+// EXTERNAL MODULE: ./node_modules/viem/_esm/errors/cursor.js
+var cursor = __webpack_require__(6238);
+;// CONCATENATED MODULE: ./node_modules/viem/_esm/utils/cursor.js
+
+const staticCursor = {
+    bytes: new Uint8Array(),
+    dataView: new DataView(new ArrayBuffer(0)),
+    position: 0,
+    positionReadCount: new Map(),
+    recursiveReadCount: 0,
+    recursiveReadLimit: Infinity,
+    assertReadLimit() {
+        if (this.recursiveReadCount >= this.recursiveReadLimit)
+            throw new cursor/* RecursiveReadLimitExceededError */.KD({
+                count: this.recursiveReadCount + 1,
+                limit: this.recursiveReadLimit,
+            });
+    },
+    assertPosition(position) {
+        if (position < 0 || position > this.bytes.length - 1)
+            throw new cursor/* PositionOutOfBoundsError */.lQ({
+                length: this.bytes.length,
+                position,
+            });
+    },
+    decrementPosition(offset) {
+        if (offset < 0)
+            throw new cursor/* NegativeOffsetError */.T_({ offset });
+        const position = this.position - offset;
+        this.assertPosition(position);
+        this.position = position;
+    },
+    getReadCount(position) {
+        return this.positionReadCount.get(position || this.position) || 0;
+    },
+    incrementPosition(offset) {
+        if (offset < 0)
+            throw new cursor/* NegativeOffsetError */.T_({ offset });
+        const position = this.position + offset;
+        this.assertPosition(position);
+        this.position = position;
+    },
+    inspectByte(position_) {
+        const position = position_ ?? this.position;
+        this.assertPosition(position);
+        return this.bytes[position];
+    },
+    inspectBytes(length, position_) {
+        const position = position_ ?? this.position;
+        this.assertPosition(position + length - 1);
+        return this.bytes.subarray(position, position + length);
+    },
+    inspectUint8(position_) {
+        const position = position_ ?? this.position;
+        this.assertPosition(position);
+        return this.bytes[position];
+    },
+    inspectUint16(position_) {
+        const position = position_ ?? this.position;
+        this.assertPosition(position + 1);
+        return this.dataView.getUint16(position);
+    },
+    inspectUint24(position_) {
+        const position = position_ ?? this.position;
+        this.assertPosition(position + 2);
+        return ((this.dataView.getUint16(position) << 8) +
+            this.dataView.getUint8(position + 2));
+    },
+    inspectUint32(position_) {
+        const position = position_ ?? this.position;
+        this.assertPosition(position + 3);
+        return this.dataView.getUint32(position);
+    },
+    pushByte(byte) {
+        this.assertPosition(this.position);
+        this.bytes[this.position] = byte;
+        this.position++;
+    },
+    pushBytes(bytes) {
+        this.assertPosition(this.position + bytes.length - 1);
+        this.bytes.set(bytes, this.position);
+        this.position += bytes.length;
+    },
+    pushUint8(value) {
+        this.assertPosition(this.position);
+        this.bytes[this.position] = value;
+        this.position++;
+    },
+    pushUint16(value) {
+        this.assertPosition(this.position + 1);
+        this.dataView.setUint16(this.position, value);
+        this.position += 2;
+    },
+    pushUint24(value) {
+        this.assertPosition(this.position + 2);
+        this.dataView.setUint16(this.position, value >> 8);
+        this.dataView.setUint8(this.position + 2, value & ~4294967040);
+        this.position += 3;
+    },
+    pushUint32(value) {
+        this.assertPosition(this.position + 3);
+        this.dataView.setUint32(this.position, value);
+        this.position += 4;
+    },
+    readByte() {
+        this.assertReadLimit();
+        this._touch();
+        const value = this.inspectByte();
+        this.position++;
+        return value;
+    },
+    readBytes(length, size) {
+        this.assertReadLimit();
+        this._touch();
+        const value = this.inspectBytes(length);
+        this.position += size ?? length;
+        return value;
+    },
+    readUint8() {
+        this.assertReadLimit();
+        this._touch();
+        const value = this.inspectUint8();
+        this.position += 1;
+        return value;
+    },
+    readUint16() {
+        this.assertReadLimit();
+        this._touch();
+        const value = this.inspectUint16();
+        this.position += 2;
+        return value;
+    },
+    readUint24() {
+        this.assertReadLimit();
+        this._touch();
+        const value = this.inspectUint24();
+        this.position += 3;
+        return value;
+    },
+    readUint32() {
+        this.assertReadLimit();
+        this._touch();
+        const value = this.inspectUint32();
+        this.position += 4;
+        return value;
+    },
+    setPosition(position) {
+        const oldPosition = this.position;
+        this.assertPosition(position);
+        this.position = position;
+        return () => (this.position = oldPosition);
+    },
+    _touch() {
+        if (this.recursiveReadLimit === Infinity)
+            return;
+        const count = this.getReadCount();
+        this.positionReadCount.set(this.position, count + 1);
+        if (count > 0)
+            this.recursiveReadCount++;
+    },
+};
+function createCursor(bytes, { recursiveReadLimit = 8192 } = {}) {
+    const cursor = Object.create(staticCursor);
+    cursor.bytes = bytes;
+    cursor.dataView = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+    cursor.positionReadCount = new Map();
+    cursor.recursiveReadLimit = recursiveReadLimit;
+    return cursor;
+}
+//# sourceMappingURL=cursor.js.map
+// EXTERNAL MODULE: ./node_modules/viem/_esm/utils/data/size.js
+var size = __webpack_require__(9135);
+// EXTERNAL MODULE: ./node_modules/viem/_esm/utils/data/slice.js
+var slice = __webpack_require__(3972);
+// EXTERNAL MODULE: ./node_modules/viem/_esm/utils/data/trim.js
+var trim = __webpack_require__(1836);
+// EXTERNAL MODULE: ./node_modules/viem/_esm/errors/encoding.js
+var encoding = __webpack_require__(7788);
+// EXTERNAL MODULE: ./node_modules/viem/_esm/utils/encoding/fromHex.js
+var fromHex = __webpack_require__(5946);
+// EXTERNAL MODULE: ./node_modules/viem/_esm/utils/encoding/toHex.js
+var toHex = __webpack_require__(2106);
+;// CONCATENATED MODULE: ./node_modules/viem/_esm/utils/encoding/fromBytes.js
+
+
+
+
+/**
+ * Decodes a byte array into a UTF-8 string, hex value, number, bigint or boolean.
+ *
+ * - Docs: https://viem.sh/docs/utilities/fromBytes
+ * - Example: https://viem.sh/docs/utilities/fromBytes#usage
+ *
+ * @param bytes Byte array to decode.
+ * @param toOrOpts Type to convert to or options.
+ * @returns Decoded value.
+ *
+ * @example
+ * import { fromBytes } from 'viem'
+ * const data = fromBytes(new Uint8Array([1, 164]), 'number')
+ * // 420
+ *
+ * @example
+ * import { fromBytes } from 'viem'
+ * const data = fromBytes(
+ *   new Uint8Array([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100, 33]),
+ *   'string'
+ * )
+ * // 'Hello world'
+ */
+function fromBytes(bytes, toOrOpts) {
+    const opts = typeof toOrOpts === 'string' ? { to: toOrOpts } : toOrOpts;
+    const to = opts.to;
+    if (to === 'number')
+        return bytesToNumber(bytes, opts);
+    if (to === 'bigint')
+        return bytesToBigInt(bytes, opts);
+    if (to === 'boolean')
+        return bytesToBool(bytes, opts);
+    if (to === 'string')
+        return bytesToString(bytes, opts);
+    return bytesToHex(bytes, opts);
+}
+/**
+ * Decodes a byte array into a bigint.
+ *
+ * - Docs: https://viem.sh/docs/utilities/fromBytes#bytestobigint
+ *
+ * @param bytes Byte array to decode.
+ * @param opts Options.
+ * @returns BigInt value.
+ *
+ * @example
+ * import { bytesToBigInt } from 'viem'
+ * const data = bytesToBigInt(new Uint8Array([1, 164]))
+ * // 420n
+ */
+function bytesToBigInt(bytes, opts = {}) {
+    if (typeof opts.size !== 'undefined')
+        (0,fromHex/* assertSize */.Yf)(bytes, { size: opts.size });
+    const hex = (0,toHex/* bytesToHex */.ci)(bytes, opts);
+    return (0,fromHex/* hexToBigInt */.y_)(hex, opts);
+}
+/**
+ * Decodes a byte array into a boolean.
+ *
+ * - Docs: https://viem.sh/docs/utilities/fromBytes#bytestobool
+ *
+ * @param bytes Byte array to decode.
+ * @param opts Options.
+ * @returns Boolean value.
+ *
+ * @example
+ * import { bytesToBool } from 'viem'
+ * const data = bytesToBool(new Uint8Array([1]))
+ * // true
+ */
+function bytesToBool(bytes_, opts = {}) {
+    let bytes = bytes_;
+    if (typeof opts.size !== 'undefined') {
+        (0,fromHex/* assertSize */.Yf)(bytes, { size: opts.size });
+        bytes = (0,trim/* trim */.f)(bytes);
+    }
+    if (bytes.length > 1 || bytes[0] > 1)
+        throw new encoding/* InvalidBytesBooleanError */.yr(bytes);
+    return Boolean(bytes[0]);
+}
+/**
+ * Decodes a byte array into a number.
+ *
+ * - Docs: https://viem.sh/docs/utilities/fromBytes#bytestonumber
+ *
+ * @param bytes Byte array to decode.
+ * @param opts Options.
+ * @returns Number value.
+ *
+ * @example
+ * import { bytesToNumber } from 'viem'
+ * const data = bytesToNumber(new Uint8Array([1, 164]))
+ * // 420
+ */
+function bytesToNumber(bytes, opts = {}) {
+    if (typeof opts.size !== 'undefined')
+        (0,fromHex/* assertSize */.Yf)(bytes, { size: opts.size });
+    const hex = (0,toHex/* bytesToHex */.ci)(bytes, opts);
+    return (0,fromHex/* hexToNumber */.ly)(hex, opts);
+}
+/**
+ * Decodes a byte array into a UTF-8 string.
+ *
+ * - Docs: https://viem.sh/docs/utilities/fromBytes#bytestostring
+ *
+ * @param bytes Byte array to decode.
+ * @param opts Options.
+ * @returns String value.
+ *
+ * @example
+ * import { bytesToString } from 'viem'
+ * const data = bytesToString(new Uint8Array([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100, 33]))
+ * // 'Hello world'
+ */
+function bytesToString(bytes_, opts = {}) {
+    let bytes = bytes_;
+    if (typeof opts.size !== 'undefined') {
+        (0,fromHex/* assertSize */.Yf)(bytes, { size: opts.size });
+        bytes = (0,trim/* trim */.f)(bytes, { dir: 'right' });
+    }
+    return new TextDecoder().decode(bytes);
+}
+//# sourceMappingURL=fromBytes.js.map
+// EXTERNAL MODULE: ./node_modules/viem/_esm/utils/encoding/toBytes.js
+var toBytes = __webpack_require__(1187);
+// EXTERNAL MODULE: ./node_modules/viem/_esm/utils/abi/encodeAbiParameters.js
+var encodeAbiParameters = __webpack_require__(5444);
+;// CONCATENATED MODULE: ./node_modules/viem/_esm/utils/abi/decodeAbiParameters.js
+
+
+
 
 
 
@@ -11375,177 +11842,160 @@ const getVersion = () => `viem@${version}`;
 
 
 function decodeAbiParameters(params, data) {
-    if (data === '0x' && params.length > 0)
-        throw new _errors_abi_js__WEBPACK_IMPORTED_MODULE_0__/* .AbiDecodingZeroDataError */ .wb();
-    if ((0,_data_size_js__WEBPACK_IMPORTED_MODULE_1__/* .size */ .d)(data) && (0,_data_size_js__WEBPACK_IMPORTED_MODULE_1__/* .size */ .d)(data) < 32)
-        throw new _errors_abi_js__WEBPACK_IMPORTED_MODULE_0__/* .AbiDecodingDataSizeTooSmallError */ .xB({
-            data,
+    const bytes = typeof data === 'string' ? (0,toBytes/* hexToBytes */.nr)(data) : data;
+    const cursor = createCursor(bytes);
+    if ((0,size/* size */.d)(bytes) === 0 && params.length > 0)
+        throw new abi/* AbiDecodingZeroDataError */.wb();
+    if ((0,size/* size */.d)(data) && (0,size/* size */.d)(data) < 32)
+        throw new abi/* AbiDecodingDataSizeTooSmallError */.xB({
+            data: typeof data === 'string' ? data : (0,toHex/* bytesToHex */.ci)(data),
             params: params,
-            size: (0,_data_size_js__WEBPACK_IMPORTED_MODULE_1__/* .size */ .d)(data),
+            size: (0,size/* size */.d)(data),
         });
-    return decodeParams({
-        data,
-        params: params,
-    });
-}
-function decodeParams({ data, params, }) {
-    const decodedValues = [];
-    let position = 0;
-    for (let i = 0; i < params.length; i++) {
-        if (position >= (0,_data_size_js__WEBPACK_IMPORTED_MODULE_1__/* .size */ .d)(data))
-            throw new _errors_abi_js__WEBPACK_IMPORTED_MODULE_0__/* .AbiDecodingDataSizeTooSmallError */ .xB({
-                data,
-                params,
-                size: (0,_data_size_js__WEBPACK_IMPORTED_MODULE_1__/* .size */ .d)(data),
-            });
+    let consumed = 0;
+    const values = [];
+    for (let i = 0; i < params.length; ++i) {
         const param = params[i];
-        const { consumed, value } = decodeParam({ data, param, position });
-        decodedValues.push(value);
-        // Step across the data by the amount of data consumed by this parameter.
-        position += consumed;
+        cursor.setPosition(consumed);
+        const [data, consumed_] = decodeParameter(cursor, param, {
+            staticPosition: 0,
+        });
+        consumed += consumed_;
+        values.push(data);
     }
-    return decodedValues;
+    return values;
 }
-function decodeParam({ data, param, position, }) {
-    const arrayComponents = (0,_encodeAbiParameters_js__WEBPACK_IMPORTED_MODULE_2__/* .getArrayComponents */ .S)(param.type);
+function decodeParameter(cursor, param, { staticPosition }) {
+    const arrayComponents = (0,encodeAbiParameters/* getArrayComponents */.S)(param.type);
     if (arrayComponents) {
         const [length, type] = arrayComponents;
-        return decodeArray(data, {
-            length,
-            param: { ...param, type: type },
-            position,
-        });
+        return decodeArray(cursor, { ...param, type }, { length, staticPosition });
     }
-    if (param.type === 'tuple') {
-        return decodeTuple(data, { param: param, position });
-    }
-    if (param.type === 'string') {
-        return decodeString(data, { position });
-    }
-    if (param.type.startsWith('bytes')) {
-        return decodeBytes(data, { param, position });
-    }
-    const value = (0,_data_slice_js__WEBPACK_IMPORTED_MODULE_3__/* .slice */ .tP)(data, position, position + 32, { strict: true });
-    if (param.type.startsWith('uint') || param.type.startsWith('int')) {
-        return decodeNumber(value, { param });
-    }
-    if (param.type === 'address') {
-        return decodeAddress(value);
-    }
-    if (param.type === 'bool') {
-        return decodeBool(value);
-    }
-    throw new _errors_abi_js__WEBPACK_IMPORTED_MODULE_0__/* .InvalidAbiDecodingTypeError */ .CI(param.type, {
+    if (param.type === 'tuple')
+        return decodeTuple(cursor, param, { staticPosition });
+    if (param.type === 'address')
+        return decodeAddress(cursor);
+    if (param.type === 'bool')
+        return decodeBool(cursor);
+    if (param.type.startsWith('bytes'))
+        return decodeBytes(cursor, param, { staticPosition });
+    if (param.type.startsWith('uint') || param.type.startsWith('int'))
+        return decodeNumber(cursor, param);
+    if (param.type === 'string')
+        return decodeString(cursor, { staticPosition });
+    throw new abi/* InvalidAbiDecodingTypeError */.CI(param.type, {
         docsPath: '/docs/contract/decodeAbiParameters',
     });
 }
-function decodeAddress(value) {
-    return { consumed: 32, value: (0,_address_getAddress_js__WEBPACK_IMPORTED_MODULE_4__/* .checksumAddress */ .x)((0,_data_slice_js__WEBPACK_IMPORTED_MODULE_3__/* .slice */ .tP)(value, -20)) };
+////////////////////////////////////////////////////////////////////
+// Type Decoders
+const sizeOfLength = 32;
+const sizeOfOffset = 32;
+function decodeAddress(cursor) {
+    const value = cursor.readBytes(32);
+    return [(0,getAddress/* checksumAddress */.x)((0,toHex/* bytesToHex */.ci)((0,slice/* sliceBytes */.T4)(value, -20))), 32];
 }
-function decodeArray(data, { param, length, position, }) {
+function decodeArray(cursor, param, { length, staticPosition }) {
     // If the length of the array is not known in advance (dynamic array),
-    // we will need to decode the offset of the array data.
+    // this means we will need to wonder off to the pointer and decode.
     if (!length) {
-        // Get the offset of the array data.
-        const offset = (0,_encoding_fromHex_js__WEBPACK_IMPORTED_MODULE_5__/* .hexToNumber */ .ly)((0,_data_slice_js__WEBPACK_IMPORTED_MODULE_3__/* .slice */ .tP)(data, position, position + 32, { strict: true }));
-        if (offset < position)
-            throw new _errors_abi_js__WEBPACK_IMPORTED_MODULE_0__/* .AbiDecodingOffsetOutOfBoundsError */ .El({ offset, position });
+        // Dealing with a dynamic type, so get the offset of the array data.
+        const offset = bytesToNumber(cursor.readBytes(sizeOfOffset));
+        // Start is the static position of current slot + offset.
+        const start = staticPosition + offset;
+        const startOfData = start + sizeOfLength;
         // Get the length of the array from the offset.
-        const length = (0,_encoding_fromHex_js__WEBPACK_IMPORTED_MODULE_5__/* .hexToNumber */ .ly)((0,_data_slice_js__WEBPACK_IMPORTED_MODULE_3__/* .slice */ .tP)(data, offset, offset + 32, { strict: true }));
+        cursor.setPosition(start);
+        const length = bytesToNumber(cursor.readBytes(sizeOfLength));
+        // Check if the array has any dynamic children.
+        const dynamicChild = hasDynamicChild(param);
         let consumed = 0;
         const value = [];
         for (let i = 0; i < length; ++i) {
-            const decodedChild = decodeParam({
-                data: (0,_data_slice_js__WEBPACK_IMPORTED_MODULE_3__/* .slice */ .tP)(data, offset + 32),
-                param,
-                position: consumed,
+            // If any of the children is dynamic, then all elements will be offset pointer, thus size of one slot (32 bytes).
+            // Otherwise, elements will be the size of their encoding (consumed bytes).
+            cursor.setPosition(startOfData + (dynamicChild ? i * 32 : consumed));
+            const [data, consumed_] = decodeParameter(cursor, param, {
+                staticPosition: startOfData,
             });
-            consumed += decodedChild.consumed;
-            value.push(decodedChild.value);
+            consumed += consumed_;
+            value.push(data);
         }
-        return { value, consumed: 32 };
+        // As we have gone wondering, restore to the original position + next slot.
+        cursor.setPosition(staticPosition + 32);
+        return [value, 32];
     }
     // If the length of the array is known in advance,
     // and the length of an element deeply nested in the array is not known,
     // we need to decode the offset of the array data.
     if (hasDynamicChild(param)) {
-        // Get the child type of the array.
-        const arrayComponents = (0,_encodeAbiParameters_js__WEBPACK_IMPORTED_MODULE_2__/* .getArrayComponents */ .S)(param.type);
-        // If the child type is not known, the array is dynamic.
-        const dynamicChild = !arrayComponents?.[0];
-        let consumed = 0;
+        // Dealing with dynamic types, so get the offset of the array data.
+        const offset = bytesToNumber(cursor.readBytes(sizeOfOffset));
+        // Start is the static position of current slot + offset.
+        const start = staticPosition + offset;
         const value = [];
         for (let i = 0; i < length; ++i) {
-            const offset = (0,_encoding_fromHex_js__WEBPACK_IMPORTED_MODULE_5__/* .hexToNumber */ .ly)((0,_data_slice_js__WEBPACK_IMPORTED_MODULE_3__/* .slice */ .tP)(data, position, position + 32, { strict: true }));
-            const decodedChild = decodeParam({
-                data: (0,_data_slice_js__WEBPACK_IMPORTED_MODULE_3__/* .slice */ .tP)(data, offset),
-                param,
-                position: dynamicChild ? consumed : i * 32,
+            // Move cursor along to the next slot (next offset pointer).
+            cursor.setPosition(start + i * 32);
+            const [data] = decodeParameter(cursor, param, {
+                staticPosition: start,
             });
-            consumed += decodedChild.consumed;
-            value.push(decodedChild.value);
+            value.push(data);
         }
-        return { value, consumed: 32 };
+        // As we have gone wondering, restore to the original position + next slot.
+        cursor.setPosition(staticPosition + 32);
+        return [value, 32];
     }
-    // If the length of the array is known in advance,
-    // and the length of each element in the array is known,
-    // the array data is encoded contiguously after the array.
+    // If the length of the array is known in advance and the array is deeply static,
+    // then we can just decode each element in sequence.
     let consumed = 0;
     const value = [];
     for (let i = 0; i < length; ++i) {
-        const decodedChild = decodeParam({
-            data,
-            param,
-            position: position + consumed,
+        const [data, consumed_] = decodeParameter(cursor, param, {
+            staticPosition: staticPosition + consumed,
         });
-        consumed += decodedChild.consumed;
-        value.push(decodedChild.value);
+        consumed += consumed_;
+        value.push(data);
     }
-    return { value, consumed };
+    return [value, consumed];
 }
-function decodeBool(value) {
-    return { consumed: 32, value: (0,_encoding_fromHex_js__WEBPACK_IMPORTED_MODULE_5__/* .hexToBool */ .XA)(value) };
+function decodeBool(cursor) {
+    return [bytesToBool(cursor.readBytes(32), { size: 32 }), 32];
 }
-function decodeBytes(data, { param, position }) {
+function decodeBytes(cursor, param, { staticPosition }) {
     const [_, size] = param.type.split('bytes');
     if (!size) {
-        // If we don't have a size, we're dealing with a dynamic-size array
-        // so we need to read the offset of the data part first.
-        const offset = (0,_encoding_fromHex_js__WEBPACK_IMPORTED_MODULE_5__/* .hexToNumber */ .ly)((0,_data_slice_js__WEBPACK_IMPORTED_MODULE_3__/* .slice */ .tP)(data, position, position + 32, { strict: true }));
-        const length = (0,_encoding_fromHex_js__WEBPACK_IMPORTED_MODULE_5__/* .hexToNumber */ .ly)((0,_data_slice_js__WEBPACK_IMPORTED_MODULE_3__/* .slice */ .tP)(data, offset, offset + 32, { strict: true }));
+        // Dealing with dynamic types, so get the offset of the bytes data.
+        const offset = bytesToNumber(cursor.readBytes(32));
+        // Set position of the cursor to start of bytes data.
+        cursor.setPosition(staticPosition + offset);
+        const length = bytesToNumber(cursor.readBytes(32));
         // If there is no length, we have zero data.
-        if (length === 0)
-            return { consumed: 32, value: '0x' };
-        const value = (0,_data_slice_js__WEBPACK_IMPORTED_MODULE_3__/* .slice */ .tP)(data, offset + 32, offset + 32 + length, {
-            strict: true,
-        });
-        return { consumed: 32, value };
+        if (length === 0) {
+            // As we have gone wondering, restore to the original position + next slot.
+            cursor.setPosition(staticPosition + 32);
+            return ['0x', 32];
+        }
+        const data = cursor.readBytes(length);
+        // As we have gone wondering, restore to the original position + next slot.
+        cursor.setPosition(staticPosition + 32);
+        return [(0,toHex/* bytesToHex */.ci)(data), 32];
     }
-    const value = (0,_data_slice_js__WEBPACK_IMPORTED_MODULE_3__/* .slice */ .tP)(data, position, position + parseInt(size), {
-        strict: true,
-    });
-    return { consumed: 32, value };
+    const value = (0,toHex/* bytesToHex */.ci)(cursor.readBytes(parseInt(size), 32));
+    return [value, 32];
 }
-function decodeNumber(value, { param }) {
+function decodeNumber(cursor, param) {
     const signed = param.type.startsWith('int');
     const size = parseInt(param.type.split('int')[1] || '256');
-    return {
-        consumed: 32,
-        value: size > 48
-            ? (0,_encoding_fromHex_js__WEBPACK_IMPORTED_MODULE_5__/* .hexToBigInt */ .y_)(value, { signed })
-            : (0,_encoding_fromHex_js__WEBPACK_IMPORTED_MODULE_5__/* .hexToNumber */ .ly)(value, { signed }),
-    };
+    const value = cursor.readBytes(32);
+    return [
+        size > 48
+            ? bytesToBigInt(value, { signed })
+            : bytesToNumber(value, { signed }),
+        32,
+    ];
 }
-function decodeString(data, { position }) {
-    const offset = (0,_encoding_fromHex_js__WEBPACK_IMPORTED_MODULE_5__/* .hexToNumber */ .ly)((0,_data_slice_js__WEBPACK_IMPORTED_MODULE_3__/* .slice */ .tP)(data, position, position + 32, { strict: true }));
-    const length = (0,_encoding_fromHex_js__WEBPACK_IMPORTED_MODULE_5__/* .hexToNumber */ .ly)((0,_data_slice_js__WEBPACK_IMPORTED_MODULE_3__/* .slice */ .tP)(data, offset, offset + 32, { strict: true }));
-    // If there is no length, we have zero data (empty string).
-    if (length === 0)
-        return { consumed: 32, value: '' };
-    const value = (0,_encoding_fromHex_js__WEBPACK_IMPORTED_MODULE_5__/* .hexToString */ .rR)((0,_data_trim_js__WEBPACK_IMPORTED_MODULE_6__/* .trim */ .f)((0,_data_slice_js__WEBPACK_IMPORTED_MODULE_3__/* .slice */ .tP)(data, offset + 32, offset + 32 + length, { strict: true })));
-    return { consumed: 32, value };
-}
-function decodeTuple(data, { param, position }) {
+function decodeTuple(cursor, param, { staticPosition }) {
     // Tuples can have unnamed components (i.e. they are arrays), so we must
     // determine whether the tuple is named or unnamed. In the case of a named
     // tuple, the value will be an object where each property is the name of the
@@ -11558,33 +12008,52 @@ function decodeTuple(data, { param, position }) {
     // If the tuple has a dynamic child, we must first decode the offset to the
     // tuple data.
     if (hasDynamicChild(param)) {
-        const offset = (0,_encoding_fromHex_js__WEBPACK_IMPORTED_MODULE_5__/* .hexToNumber */ .ly)((0,_data_slice_js__WEBPACK_IMPORTED_MODULE_3__/* .slice */ .tP)(data, position, position + 32, { strict: true }));
-        // Decode each component of the tuple, starting at the offset.
+        // Dealing with dynamic types, so get the offset of the tuple data.
+        const offset = bytesToNumber(cursor.readBytes(sizeOfOffset));
+        // Start is the static position of referencing slot + offset.
+        const start = staticPosition + offset;
         for (let i = 0; i < param.components.length; ++i) {
             const component = param.components[i];
-            const decodedChild = decodeParam({
-                data: (0,_data_slice_js__WEBPACK_IMPORTED_MODULE_3__/* .slice */ .tP)(data, offset),
-                param: component,
-                position: consumed,
+            cursor.setPosition(start + consumed);
+            const [data, consumed_] = decodeParameter(cursor, component, {
+                staticPosition: start,
             });
-            consumed += decodedChild.consumed;
-            value[hasUnnamedChild ? i : component?.name] = decodedChild.value;
+            consumed += consumed_;
+            value[hasUnnamedChild ? i : component?.name] = data;
         }
-        return { consumed: 32, value };
+        // As we have gone wondering, restore to the original position + next slot.
+        cursor.setPosition(staticPosition + 32);
+        return [value, 32];
     }
     // If the tuple has static children, we can just decode each component
     // in sequence.
     for (let i = 0; i < param.components.length; ++i) {
         const component = param.components[i];
-        const decodedChild = decodeParam({
-            data,
-            param: component,
-            position: position + consumed,
+        const [data, consumed_] = decodeParameter(cursor, component, {
+            staticPosition,
         });
-        consumed += decodedChild.consumed;
-        value[hasUnnamedChild ? i : component?.name] = decodedChild.value;
+        value[hasUnnamedChild ? i : component?.name] = data;
+        consumed += consumed_;
     }
-    return { consumed, value };
+    return [value, consumed];
+}
+function decodeString(cursor, { staticPosition }) {
+    // Get offset to start of string data.
+    const offset = bytesToNumber(cursor.readBytes(32));
+    // Start is the static position of current slot + offset.
+    const start = staticPosition + offset;
+    cursor.setPosition(start);
+    const length = bytesToNumber(cursor.readBytes(32));
+    // If there is no length, we have zero data (empty string).
+    if (length === 0) {
+        cursor.setPosition(staticPosition + 32);
+        return ['', 32];
+    }
+    const data = cursor.readBytes(length, 32);
+    const value = bytesToString((0,trim/* trim */.f)(data));
+    // As we have gone wondering, restore to the original position + next slot.
+    cursor.setPosition(staticPosition + 32);
+    return [value, 32];
 }
 function hasDynamicChild(param) {
     const { type } = param;
@@ -11596,7 +12065,7 @@ function hasDynamicChild(param) {
         return true;
     if (type === 'tuple')
         return param.components?.some(hasDynamicChild);
-    const arrayComponents = (0,_encodeAbiParameters_js__WEBPACK_IMPORTED_MODULE_2__/* .getArrayComponents */ .S)(param.type);
+    const arrayComponents = (0,encodeAbiParameters/* getArrayComponents */.S)(param.type);
     if (arrayComponents &&
         hasDynamicChild({ ...param, type: arrayComponents[1] }))
         return true;
@@ -11616,7 +12085,7 @@ function hasDynamicChild(param) {
 /* harmony import */ var _errors_abi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7412);
 /* harmony import */ var _data_slice_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3972);
 /* harmony import */ var _hash_getFunctionSelector_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(552);
-/* harmony import */ var _decodeAbiParameters_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(4450);
+/* harmony import */ var _decodeAbiParameters_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(5821);
 /* harmony import */ var _formatAbiItem_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(522);
 
 
@@ -11654,9 +12123,13 @@ function decodeErrorResult(parameters) {
 /* harmony export */   F: () => (/* binding */ decodeEventLog)
 /* harmony export */ });
 /* harmony import */ var _errors_abi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7412);
+/* harmony import */ var _data_size_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(9135);
 /* harmony import */ var _hash_getEventSelector_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4092);
-/* harmony import */ var _decodeAbiParameters_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(4450);
+/* harmony import */ var _errors_cursor_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6238);
+/* harmony import */ var _decodeAbiParameters_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(5821);
 /* harmony import */ var _formatAbiItem_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(522);
+
+
 
 
 
@@ -11705,12 +12178,13 @@ function decodeEventLog(parameters) {
             }
             catch (err) {
                 if (strict) {
-                    if (err instanceof _errors_abi_js__WEBPACK_IMPORTED_MODULE_0__/* .AbiDecodingDataSizeTooSmallError */ .xB)
+                    if (err instanceof _errors_abi_js__WEBPACK_IMPORTED_MODULE_0__/* .AbiDecodingDataSizeTooSmallError */ .xB ||
+                        err instanceof _errors_cursor_js__WEBPACK_IMPORTED_MODULE_4__/* .PositionOutOfBoundsError */ .lQ)
                         throw new _errors_abi_js__WEBPACK_IMPORTED_MODULE_0__/* .DecodeLogDataMismatch */ .SM({
                             abiItem,
-                            data: err.data,
-                            params: err.params,
-                            size: err.size,
+                            data: data,
+                            params: nonIndexedInputs,
+                            size: (0,_data_size_js__WEBPACK_IMPORTED_MODULE_5__/* .size */ .d)(data),
                         });
                     throw err;
                 }
@@ -11750,7 +12224,7 @@ function decodeTopic({ param, value }) {
 /* harmony export */   k: () => (/* binding */ decodeFunctionResult)
 /* harmony export */ });
 /* harmony import */ var _errors_abi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7412);
-/* harmony import */ var _decodeAbiParameters_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(4450);
+/* harmony import */ var _decodeAbiParameters_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5821);
 /* harmony import */ var _getAbiItem_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(840);
 
 
@@ -12890,9 +13364,10 @@ function size(value) {
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   T4: () => (/* binding */ sliceBytes),
 /* harmony export */   tP: () => (/* binding */ slice)
 /* harmony export */ });
-/* unused harmony exports sliceBytes, sliceHex */
+/* unused harmony export sliceHex */
 /* harmony import */ var _errors_data_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(9760);
 /* harmony import */ var _isHex_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5102);
 /* harmony import */ var _size_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9135);
@@ -13002,17 +13477,13 @@ function trim(hexOrBytes, { dir = 'left' } = {}) {
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   XA: () => (/* binding */ hexToBool),
 /* harmony export */   Yf: () => (/* binding */ assertSize),
 /* harmony export */   ly: () => (/* binding */ hexToNumber),
-/* harmony export */   rR: () => (/* binding */ hexToString),
 /* harmony export */   y_: () => (/* binding */ hexToBigInt)
 /* harmony export */ });
-/* unused harmony export fromHex */
+/* unused harmony exports fromHex, hexToBool, hexToString */
 /* harmony import */ var _errors_encoding_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7788);
 /* harmony import */ var _data_size_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9135);
-/* harmony import */ var _data_trim_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1836);
-/* harmony import */ var _toBytes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1187);
 
 
 
@@ -13027,8 +13498,8 @@ function assertSize(hexOrBytes, { size }) {
 /**
  * Decodes a hex string into a string, number, bigint, boolean, or byte array.
  *
- * - Docs: https://viem.sh/docs/utilities/fromHex.html
- * - Example: https://viem.sh/docs/utilities/fromHex.html#usage
+ * - Docs: https://viem.sh/docs/utilities/fromHex
+ * - Example: https://viem.sh/docs/utilities/fromHex#usage
  *
  * @param hex Hex string to decode.
  * @param toOrOpts Type to convert to or options.
@@ -13068,7 +13539,7 @@ function fromHex(hex, toOrOpts) {
 /**
  * Decodes a hex value into a bigint.
  *
- * - Docs: https://viem.sh/docs/utilities/fromHex.html#hextobigint
+ * - Docs: https://viem.sh/docs/utilities/fromHex#hextobigint
  *
  * @param hex Hex value to decode.
  * @param opts Options.
@@ -13100,7 +13571,7 @@ function hexToBigInt(hex, opts = {}) {
 /**
  * Decodes a hex value into a boolean.
  *
- * - Docs: https://viem.sh/docs/utilities/fromHex.html#hextobool
+ * - Docs: https://viem.sh/docs/utilities/fromHex#hextobool
  *
  * @param hex Hex value to decode.
  * @param opts Options.
@@ -13120,18 +13591,18 @@ function hexToBool(hex_, opts = {}) {
     let hex = hex_;
     if (opts.size) {
         assertSize(hex, { size: opts.size });
-        hex = (0,_data_trim_js__WEBPACK_IMPORTED_MODULE_2__/* .trim */ .f)(hex);
+        hex = trim(hex);
     }
-    if ((0,_data_trim_js__WEBPACK_IMPORTED_MODULE_2__/* .trim */ .f)(hex) === '0x00')
+    if (trim(hex) === '0x00')
         return false;
-    if ((0,_data_trim_js__WEBPACK_IMPORTED_MODULE_2__/* .trim */ .f)(hex) === '0x01')
+    if (trim(hex) === '0x01')
         return true;
-    throw new _errors_encoding_js__WEBPACK_IMPORTED_MODULE_1__/* .InvalidHexBooleanError */ .Cd(hex);
+    throw new InvalidHexBooleanError(hex);
 }
 /**
  * Decodes a hex string into a number.
  *
- * - Docs: https://viem.sh/docs/utilities/fromHex.html#hextonumber
+ * - Docs: https://viem.sh/docs/utilities/fromHex#hextonumber
  *
  * @param hex Hex value to decode.
  * @param opts Options.
@@ -13153,7 +13624,7 @@ function hexToNumber(hex, opts = {}) {
 /**
  * Decodes a hex value into a UTF-8 string.
  *
- * - Docs: https://viem.sh/docs/utilities/fromHex.html#hextostring
+ * - Docs: https://viem.sh/docs/utilities/fromHex#hextostring
  *
  * @param hex Hex value to decode.
  * @param opts Options.
@@ -13172,10 +13643,10 @@ function hexToNumber(hex, opts = {}) {
  * // 'Hello world'
  */
 function hexToString(hex, opts = {}) {
-    let bytes = (0,_toBytes_js__WEBPACK_IMPORTED_MODULE_3__/* .hexToBytes */ .nr)(hex);
+    let bytes = hexToBytes(hex);
     if (opts.size) {
         assertSize(bytes, { size: opts.size });
-        bytes = (0,_data_trim_js__WEBPACK_IMPORTED_MODULE_2__/* .trim */ .f)(bytes, { dir: 'right' });
+        bytes = trim(bytes, { dir: 'right' });
     }
     return new TextDecoder().decode(bytes);
 }
@@ -13206,8 +13677,8 @@ const encoder = /*#__PURE__*/ new TextEncoder();
 /**
  * Encodes a UTF-8 string, hex value, bigint, number or boolean to a byte array.
  *
- * - Docs: https://viem.sh/docs/utilities/toBytes.html
- * - Example: https://viem.sh/docs/utilities/toBytes.html#usage
+ * - Docs: https://viem.sh/docs/utilities/toBytes
+ * - Example: https://viem.sh/docs/utilities/toBytes#usage
  *
  * @param value Value to encode.
  * @param opts Options.
@@ -13240,7 +13711,7 @@ function toBytes(value, opts = {}) {
 /**
  * Encodes a boolean into a byte array.
  *
- * - Docs: https://viem.sh/docs/utilities/toBytes.html#booltobytes
+ * - Docs: https://viem.sh/docs/utilities/toBytes#booltobytes
  *
  * @param value Boolean value to encode.
  * @param opts Options.
@@ -13286,7 +13757,7 @@ function charCodeToBase16(char) {
 /**
  * Encodes a hex string into a byte array.
  *
- * - Docs: https://viem.sh/docs/utilities/toBytes.html#hextobytes
+ * - Docs: https://viem.sh/docs/utilities/toBytes#hextobytes
  *
  * @param hex Hex string to encode.
  * @param opts Options.
@@ -13326,7 +13797,7 @@ function hexToBytes(hex_, opts = {}) {
 /**
  * Encodes a number into a byte array.
  *
- * - Docs: https://viem.sh/docs/utilities/toBytes.html#numbertobytes
+ * - Docs: https://viem.sh/docs/utilities/toBytes#numbertobytes
  *
  * @param value Number to encode.
  * @param opts Options.
@@ -13349,7 +13820,7 @@ function numberToBytes(value, opts) {
 /**
  * Encodes a UTF-8 string into a byte array.
  *
- * - Docs: https://viem.sh/docs/utilities/toBytes.html#stringtobytes
+ * - Docs: https://viem.sh/docs/utilities/toBytes#stringtobytes
  *
  * @param value String to encode.
  * @param opts Options.
@@ -13397,8 +13868,8 @@ const hexes = /*#__PURE__*/ Array.from({ length: 256 }, (_v, i) => i.toString(16
 /**
  * Encodes a string, number, bigint, or ByteArray into a hex string
  *
- * - Docs: https://viem.sh/docs/utilities/toHex.html
- * - Example: https://viem.sh/docs/utilities/toHex.html#usage
+ * - Docs: https://viem.sh/docs/utilities/toHex
+ * - Example: https://viem.sh/docs/utilities/toHex#usage
  *
  * @param value Value to encode.
  * @param opts Options.
@@ -13432,7 +13903,7 @@ function toHex(value, opts = {}) {
 /**
  * Encodes a boolean into a hex string
  *
- * - Docs: https://viem.sh/docs/utilities/toHex.html#booltohex
+ * - Docs: https://viem.sh/docs/utilities/toHex#booltohex
  *
  * @param value Value to encode.
  * @param opts Options.
@@ -13464,7 +13935,7 @@ function boolToHex(value, opts = {}) {
 /**
  * Encodes a bytes array into a hex string
  *
- * - Docs: https://viem.sh/docs/utilities/toHex.html#bytestohex
+ * - Docs: https://viem.sh/docs/utilities/toHex#bytestohex
  *
  * @param value Value to encode.
  * @param opts Options.
@@ -13495,7 +13966,7 @@ function bytesToHex(value, opts = {}) {
 /**
  * Encodes a number or bigint into a hex string
  *
- * - Docs: https://viem.sh/docs/utilities/toHex.html#numbertohex
+ * - Docs: https://viem.sh/docs/utilities/toHex#numbertohex
  *
  * @param value Value to encode.
  * @param opts Options.
@@ -13546,7 +14017,7 @@ const encoder = /*#__PURE__*/ new TextEncoder();
 /**
  * Encodes a UTF-8 string into a hex string
  *
- * - Docs: https://viem.sh/docs/utilities/toHex.html#stringtohex
+ * - Docs: https://viem.sh/docs/utilities/toHex#stringtohex
  *
  * @param value Value to encode.
  * @param opts Options.
@@ -15032,7 +15503,7 @@ function domainSeparator({ domain }) {
 /**
  * Converts numerical wei to a string representation of ether.
  *
- * - Docs: https://viem.sh/docs/utilities/formatEther.html
+ * - Docs: https://viem.sh/docs/utilities/formatEther
  *
  * @example
  * import { formatEther } from 'viem'
@@ -15060,7 +15531,7 @@ function formatEther(wei, unit = 'wei') {
 /**
  * Converts numerical wei to a string representation of gwei.
  *
- * - Docs: https://viem.sh/docs/utilities/formatGwei.html
+ * - Docs: https://viem.sh/docs/utilities/formatGwei
  *
  * @example
  * import { formatGwei } from 'viem'
@@ -15084,7 +15555,7 @@ function formatGwei(wei, unit = 'wei') {
 /**
  *  Divides a number by a given exponent of base 10 (10exponent), and formats it into a string representation of the number..
  *
- * - Docs: https://viem.sh/docs/utilities/formatUnits.html
+ * - Docs: https://viem.sh/docs/utilities/formatUnits
  *
  * @example
  * import { formatUnits } from 'viem'
@@ -15118,7 +15589,7 @@ function formatUnits(value, decimals) {
 /**
  * Multiplies a string representation of a number by a given exponent of base 10 (10exponent).
  *
- * - Docs: https://viem.sh/docs/utilities/parseUnits.html
+ * - Docs: https://viem.sh/docs/utilities/parseUnits
  *
  * @example
  * import { parseUnits } from 'viem'
