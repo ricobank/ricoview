@@ -138,9 +138,7 @@ const updateUni = async () => {
     store.rack = ilk.rack
     store.par  = par
     store.debtStr = parseFloat(debt).toFixed(3)
-    const since = BigInt(Math.ceil(Date.now() / 1000)) - ilk.rho
-    $('#uniIlkStats0').textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)} Rico`
-    $('#uniIlkStats1').textContent = `Time since rate accumulator update: ${since} seconds`
+    $('#uniIlkStats').textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)} Rico`
     $('#uniUrnStats').textContent = `Deposited NFTS: ${store.ink}, Rico debt: ${store.debtStr}`
 
     let usrIDs = [];
@@ -148,12 +146,13 @@ const updateUni = async () => {
         $('#NFTList').textContent= `LP NFTs to deposit:`
         const idsProm = Array.from({ length: Number(numNFTs) }, (_, i) => nfpm.read.tokenOfOwnerByIndex([account, i]));
         usrIDs = await Promise.all(idsProm);
+        await valueNFTs([...usrIDs, ...store.ink])
         displayNfts(usrIDs)
     } else {
         $('#NFTList').textContent = `LP NFT IDS to withdraw:`;
+        await valueNFTs(store.ink)
         displayNfts(store.ink)
     }
-    await valueNFTs([...usrIDs, ...store.ink])
 }
 
 // store the liqr adjusted rico value of all NFTs
@@ -487,6 +486,8 @@ window.onload = async() => {
     // todo update on palms
 
     await Promise.all([updateRicoStats(), updateHook()]);
+    
+    await validateConstants()
 }
 
 const maxBigInt = (a, b) => a > b ? a : b
