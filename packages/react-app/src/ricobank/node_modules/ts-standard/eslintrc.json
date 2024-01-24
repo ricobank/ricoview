@@ -1,3 +1,0 @@
-{
-  "extends": ["standard-with-typescript", "standard-jsx"]
-}
