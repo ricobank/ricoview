@@ -146,13 +146,12 @@ const updateUni = async () => {
         $('#NFTList').textContent= `LP NFTs to deposit:`
         const idsProm = Array.from({ length: Number(numNFTs) }, (_, i) => nfpm.read.tokenOfOwnerByIndex([account, i]));
         usrIDs = await Promise.all(idsProm);
-        await valueNFTs([...usrIDs, ...store.ink])
         displayNfts(usrIDs)
     } else {
         $('#NFTList').textContent = `LP NFT IDS to withdraw:`;
-        await valueNFTs(store.ink)
         displayNfts(store.ink)
     }
+    await valueNFTs([...usrIDs, ...store.ink])
 }
 
 // store the liqr adjusted rico value of all NFTs
@@ -203,7 +202,6 @@ const valueNFTs = async (nfts) => {
 function displayNfts(nftIds) {
     const container = document.getElementById('nftContainer');
 
-    nftIds = nftIds.filter(id => store.idToVal[id] !== 0n)
     if (nftIds.length == 0) {
         container.textContent = 'none'
         return

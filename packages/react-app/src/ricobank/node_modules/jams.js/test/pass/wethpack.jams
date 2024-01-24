@@ -1,0 +1,18 @@
+{
+  format  dpack-1
+  network ethereum
+  types {
+    WETH9 {
+      typename WETH9
+      artifact {/ bafybeickwimswhizrefngf27ewnhi257zpapdujt3322uatk5co7o7teha }
+    }
+  }
+  objects {
+    weth9 {
+      objectname weth9
+      address    0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2
+      typename   WETH9
+      artifact   {/ bafybeickwimswhizrefngf27ewnhi257zpapdujt3322uatk5co7o7teha }
+    }
+  }
+}

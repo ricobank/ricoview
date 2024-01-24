@@ -1,0 +1,30 @@
+{
+  "format": "dpack-1",
+  "network": "goerli",
+  "types": {
+    "WETH9": {
+      "typename": "WETH9",
+      "artifact": {
+        "/": "bafkreifvknyyddk4kssfoik6zk7nqdqnsbtrf3qglfat3h72rgvec3u4oa"
+      }
+    }
+  },
+  "objects": {
+    "weth": {
+      "objectname": "weth",
+      "address": "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
+      "typename": "WETH9",
+      "artifact": {
+        "/": "bafkreifvknyyddk4kssfoik6zk7nqdqnsbtrf3qglfat3h72rgvec3u4oa"
+      }
+    },
+    "weth9": {
+      "objectname": "weth9",
+      "address": "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
+      "typename": "WETH9",
+      "artifact": {
+        "/": "bafkreifvknyyddk4kssfoik6zk7nqdqnsbtrf3qglfat3h72rgvec3u4oa"
+      }
+    }
+  }
+}

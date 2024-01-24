@@ -163,8 +163,7 @@ async function terserMinify(input, sourceMap, minimizerOptions, extractComments)
           extractedComments.push(commentText);
         }
       }
-      return (/** @type {{ preserve: ExtractCommentsFunction }} */condition.preserve(astNode, comment)
-      );
+      return /** @type {{ preserve: ExtractCommentsFunction }} */condition.preserve(astNode, comment);
     };
   };
 
@@ -249,10 +248,10 @@ async function terserMinify(input, sourceMap, minimizerOptions, extractComments)
     [filename]: code
   }, terserOptions);
   return {
-    code: /** @type {string} **/result.code,
+    code: ( /** @type {string} **/result.code),
     // @ts-ignore
     // eslint-disable-next-line no-undefined
-    map: result.map ? /** @type {SourceMapInput} **/result.map : undefined,
+    map: result.map ? ( /** @type {SourceMapInput} **/result.map) : undefined,
     extractedComments
   };
 }
@@ -361,8 +360,7 @@ async function uglifyJsMinify(input, sourceMap, minimizerOptions, extractComment
           extractedComments.push(commentText);
         }
       }
-      return (/** @type {{ preserve: ExtractCommentsFunction }} */condition.preserve(astNode, comment)
-      );
+      return /** @type {{ preserve: ExtractCommentsFunction }} */condition.preserve(astNode, comment);
     };
   };
 
@@ -606,8 +604,32 @@ esbuildMinify.getMinimizerVersion = () => {
   }
   return packageJson && packageJson.version;
 };
+
+/**
+ * @template T
+ * @param fn {(function(): any) | undefined}
+ * @returns {function(): T}
+ */
+function memoize(fn) {
+  let cache = false;
+  /** @type {T} */
+  let result;
+  return () => {
+    if (cache) {
+      return result;
+    }
+    result = /** @type {function(): any} */fn();
+    cache = true;
+    // Allow to clean up memory for fn
+    // and all dependent resources
+    // eslint-disable-next-line no-undefined, no-param-reassign
+    fn = undefined;
+    return result;
+  };
+}
 module.exports = {
   throttleAll,
+  memoize,
   terserMinify,
   uglifyJsMinify,
   swcMinify,

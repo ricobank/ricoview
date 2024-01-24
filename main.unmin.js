@@ -12,8 +12,8 @@ var toHex = __webpack_require__(2106);
 var parseAbi = __webpack_require__(7246);
 // EXTERNAL MODULE: ./node_modules/viem/_esm/utils/unit/formatUnits.js
 var formatUnits = __webpack_require__(5229);
-// EXTERNAL MODULE: ./node_modules/viem/_esm/utils/abi/decodeAbiParameters.js
-var decodeAbiParameters = __webpack_require__(4450);
+// EXTERNAL MODULE: ./node_modules/viem/_esm/utils/abi/decodeAbiParameters.js + 2 modules
+var decodeAbiParameters = __webpack_require__(5821);
 // EXTERNAL MODULE: ./node_modules/viem/_esm/utils/encoding/fromHex.js
 var fromHex = __webpack_require__(5946);
 // EXTERNAL MODULE: ./node_modules/viem/_esm/utils/unit/parseUnits.js
@@ -24,8 +24,8 @@ var encodeAbiParameters = __webpack_require__(5444);
 var pad = __webpack_require__(1769);
 // EXTERNAL MODULE: ./node_modules/viem/_esm/clients/transports/custom.js
 var custom = __webpack_require__(3980);
-// EXTERNAL MODULE: ./node_modules/viem/_esm/clients/transports/http.js + 3 modules
-var http = __webpack_require__(494);
+// EXTERNAL MODULE: ./node_modules/viem/_esm/clients/transports/http.js + 4 modules
+var http = __webpack_require__(8776);
 // EXTERNAL MODULE: ./node_modules/viem/_esm/clients/createWalletClient.js + 12 modules
 var createWalletClient = __webpack_require__(1677);
 // EXTERNAL MODULE: ./node_modules/viem/_esm/clients/createPublicClient.js + 46 modules
@@ -184,13 +184,12 @@ const updateUni = async () => {
         $('#NFTList').textContent= `LP NFTs to deposit:`
         const idsProm = Array.from({ length: Number(numNFTs) }, (_, i) => nfpm.read.tokenOfOwnerByIndex([account, i]));
         usrIDs = await Promise.all(idsProm);
-        await valueNFTs([...usrIDs, ...store.ink])
         displayNfts(usrIDs)
     } else {
         $('#NFTList').textContent = `LP NFT IDS to withdraw:`;
-        await valueNFTs(store.ink)
         displayNfts(store.ink)
     }
+    await valueNFTs([...usrIDs, ...store.ink])
 }
 
 // store the liqr adjusted rico value of all NFTs
@@ -241,7 +240,6 @@ const valueNFTs = async (nfts) => {
 function displayNfts(nftIds) {
     const container = document.getElementById('nftContainer');
 
-    nftIds = nftIds.filter(id => store.idToVal[id] !== 0n)
     if (nftIds.length == 0) {
         container.textContent = 'none'
         return
@@ -640,17 +638,6 @@ function sqrt(value) {
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	(() => {
 /******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/jsonp chunk loading */

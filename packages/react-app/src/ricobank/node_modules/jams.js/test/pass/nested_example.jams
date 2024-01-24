@@ -1,0 +1,14 @@
+{
+    basic_key basic_value
+    list_key [item1 item2]
+    nested [
+        {
+            key1 val1 
+            key2 val2
+        }
+        {
+            key3 [val3 val4]
+        }
+    ]
+    str_key "superfluous nesting"
+}

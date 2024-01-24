@@ -1,0 +1,30 @@
+{
+  "format": "dpack-1",
+  "network": "kovan",
+  "types": {
+    "WETH9": {
+      "typename": "WETH9",
+      "artifact": {
+        "/": "bafkreid6giy7ok5ybfaw3u3r62ywvwtmsnue2aipwgmjomdd5zse7trrn4"
+      }
+    }
+  },
+  "objects": {
+    "weth": {
+      "objectname": "weth",
+      "address": "0xd0A1E359811322d97991E03f863a0C30C2cF029C",
+      "typename": "WETH9",
+      "artifact": {
+        "/": "bafkreid6giy7ok5ybfaw3u3r62ywvwtmsnue2aipwgmjomdd5zse7trrn4"
+      }
+    },
+    "weth9": {
+      "objectname": "weth9",
+      "address": "0xd0A1E359811322d97991E03f863a0C30C2cF029C",
+      "typename": "WETH9",
+      "artifact": {
+        "/": "bafkreid6giy7ok5ybfaw3u3r62ywvwtmsnue2aipwgmjomdd5zse7trrn4"
+      }
+    }
+  }
+}
