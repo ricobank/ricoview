@@ -65,6 +65,7 @@ import BankDiamond from './BankDiamond.json';
 const bankAbi = BankDiamond.abi
 
 const x32 = (s) => stringToHex(s, {size: 32})
+const x20 = (s) => stringToHex(s, {size: 20})
 const rpaddr = (a) => a + '00'.repeat(12)
 
 let account, transport, publicClient, walletClient
@@ -148,12 +149,13 @@ const updateUni = async () => {
         $('#NFTList').textContent= `LP NFTs to deposit:`
         const idsProm = Array.from({ length: Number(numNFTs) }, (_, i) => nfpm.read.tokenOfOwnerByIndex([account, i]));
         usrIDs = await Promise.all(idsProm);
+        await valueNFTs([...usrIDs, ...store.ink])
         displayNfts(usrIDs)
     } else {
         $('#NFTList').textContent = `LP NFT IDS to withdraw:`;
+        await valueNFTs(store.ink)
         displayNfts(store.ink)
     }
-    await valueNFTs([...usrIDs, ...store.ink])
 }
 
 // store the liqr adjusted rico value of all NFTs
@@ -162,8 +164,8 @@ const valueNFTs = async (nfts) => {
         const positions = await nfpm.read.positions([nft]);
         return [...positions, nft];
     });
-    const positions = await Promise.all(posiProms);
-    const tokens    = new Set(positions.flatMap(pos => [pos[t0], pos[t1]]))
+    let positions = await Promise.all(posiProms);
+    const tokens  = new Set(positions.flatMap(pos => [pos[t0], pos[t1]]))
 
     // get src, tag and liqr for all tokens in one multicall trip
     const argProms = {}
@@ -182,11 +184,17 @@ const valueNFTs = async (nfts) => {
 
     const feedProms = Array.from(tokens).map(async tok => {
         const { src, tag } = tokToArgs[tok]
-        const [val] = await feed.read.pull([src, tag])
+        let val = x32('')
+        if (src !== x20('')) [val] = await feed.read.pull([src, tag])
         return [tok, hexToBigInt(val, { size: 32 })]
     })
     const prices = await Promise.all(feedProms)
     const gemToPrice = Object.fromEntries(prices)
+
+    // filter positions containing token without feed
+    positions = positions.filter(pos =>
+        tokToArgs[pos[t0]].src !== x20('') && tokToArgs[pos[t1]].src !== x20('')
+    );
 
     const valProms = positions.map(async pos => {
         const sqrtPriceX96 = sqrt(gemToPrice[pos[t1]] * X96 * X96 / gemToPrice[pos[t0]])
@@ -204,6 +212,8 @@ const valueNFTs = async (nfts) => {
 function displayNfts(nftIds) {
     const container = document.getElementById('nftContainer');
 
+    // only display positions where both tokens have feeds
+    nftIds = nftIds.filter(id => store.idToVal[id] !== undefined)
     if (nftIds.length == 0) {
         container.textContent = 'none'
         return
@@ -287,7 +297,9 @@ const updateERC20 = async () => {
     store.usrGemAllowance = usrGemAllowance
     store.usrGemBal = usrGemBal
     store.debtStr = parseFloat(debt).toFixed(3)
-    $('#ilkStats').textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)} Rico, LTV: ${round(ltv * 100)}%`
+    const since = BigInt(Math.ceil(Date.now() / 1000)) - ilk.rho
+    $('#ilkStats0').textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)} Rico, LTV: ${round(ltv * 100)}%`
+    $('#ilkStats1').textContent = `Time since rate accumulator update: ${since} seconds`
     $('#urnStats').textContent = `Deposited ${gemName}: ${parseFloat(inkStr).toFixed(3)}, Rico debt: ${store.debtStr}`
 }
 
@@ -295,7 +307,7 @@ const updateDricoLabel = (container, input) => {
     if (borrowing()) {
         container.textContent = 'Borrow Rico:'
     } else {
-        container.innerHTML = `Repay Rico(<input type="checkbox" id="dricoAllCheckbox">all):`
+        container.innerHTML = `Repay Rico(<input type="checkbox" id="dricoAllCheckbox" title="Wipe all debt">all):`
         $('#dricoAllCheckbox').addEventListener('change', (event) => {
             store.repayAll = input.disabled = event.target.checked
             if(store.repayAll) input.value = store.debtStr
@@ -484,9 +496,12 @@ window.onload = async() => {
         });
     });
 
-    // todo update on palms
-
-    await Promise.all([updateRicoStats(), updateHook()]);
+    await walletClient.switchChain({ id: sepolia.id })
+    await Promise.all([updateRicoStats(), updateHook()])
+    bank.watchEvent.NewFlog(
+        { caller: account },
+        { async onLogs(logs) { await Promise.all([updateRicoStats(), updateHook()]) } }
+    )
 }
 
 const maxBigInt = (a, b) => a > b ? a : b
