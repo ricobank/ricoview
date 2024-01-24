@@ -287,7 +287,9 @@ const updateERC20 = async () => {
     store.usrGemAllowance = usrGemAllowance
     store.usrGemBal = usrGemBal
     store.debtStr = parseFloat(debt).toFixed(3)
-    $('#ilkStats').textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)} Rico, LTV: ${round(ltv * 100)}%`
+    const since = BigInt(Math.ceil(Date.now() / 1000)) - ilk.rho
+    $('#ilkStats0').textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)} Rico, LTV: ${round(ltv * 100)}%`
+    $('#ilkStats1').textContent = `Time since rate accumulator update: ${since} seconds`
     $('#urnStats').textContent = `Deposited ${gemName}: ${parseFloat(inkStr).toFixed(3)}, Rico debt: ${store.debtStr}`
 }
 
