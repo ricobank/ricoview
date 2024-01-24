@@ -496,10 +496,12 @@ window.onload = async() => {
         });
     });
 
-    // todo update on palms
-
-    await Promise.all([updateRicoStats(), updateHook()]);
     await walletClient.switchChain({ id: sepolia.id })
+    await Promise.all([updateRicoStats(), updateHook()])
+    bank.watchEvent.NewFlog(
+        { caller: account },
+        { async onLogs(logs) { await Promise.all([updateRicoStats(), updateHook()]) } }
+    )
 }
 
 const maxBigInt = (a, b) => a > b ? a : b
