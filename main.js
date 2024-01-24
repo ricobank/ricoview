@@ -138,7 +138,9 @@ const updateUni = async () => {
     store.rack = ilk.rack
     store.par  = par
     store.debtStr = parseFloat(debt).toFixed(3)
-    $('#uniIlkStats').textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)} Rico`
+    const since = BigInt(Math.ceil(Date.now() / 1000)) - ilk.rho
+    $('#uniIlkStats0').textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)} Rico`
+    $('#uniIlkStats1').textContent = `Time since rate accumulator update: ${since} seconds`
     $('#uniUrnStats').textContent = `Deposited NFTS: ${store.ink}, Rico debt: ${store.debtStr}`
 
     let usrIDs = [];
@@ -182,7 +184,6 @@ const valueNFTs = async (nfts) => {
         const { src, tag } = tokToArgs[tok]
         const [val] = await feed.read.pull([src, tag])
         return [tok, hexToBigInt(val, { size: 32 })]
-
     })
     const prices = await Promise.all(feedProms)
     const gemToPrice = Object.fromEntries(prices)
@@ -486,8 +487,6 @@ window.onload = async() => {
     // todo update on palms
 
     await Promise.all([updateRicoStats(), updateHook()]);
-    
-    await validateConstants()
 }
 
 const maxBigInt = (a, b) => a > b ? a : b
