@@ -153,8 +153,8 @@ const updateUni = async () => {
         displayNfts(usrIDs)
     } else {
         $('#NFTList').textContent = `LP NFT IDS to withdraw:`;
-        displayNfts(store.ink)
         await valueNFTs(store.ink)
+        displayNfts(store.ink)
     }
 }
 
@@ -307,7 +307,7 @@ const updateDricoLabel = (container, input) => {
     if (borrowing()) {
         container.textContent = 'Borrow Rico:'
     } else {
-        container.innerHTML = `Repay Rico(<input type="checkbox" id="dricoAllCheckbox">all):`
+        container.innerHTML = `Repay Rico(<input type="checkbox" id="dricoAllCheckbox" title="Wipe all debt">all):`
         $('#dricoAllCheckbox').addEventListener('change', (event) => {
             store.repayAll = input.disabled = event.target.checked
             if(store.repayAll) input.value = store.debtStr
@@ -499,6 +499,7 @@ window.onload = async() => {
     // todo update on palms
 
     await Promise.all([updateRicoStats(), updateHook()]);
+    await walletClient.switchChain({ id: sepolia.id })
 }
 
 const maxBigInt = (a, b) => a > b ? a : b
