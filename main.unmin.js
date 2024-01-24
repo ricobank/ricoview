@@ -221,6 +221,7 @@ const valueNFTs = async (nfts) => {
         const [val] = await feed.read.pull([src, tag])
         return [tok, (0,fromHex/* hexToBigInt */.y_)(val, { size: 32 })]
     })
+
     const prices = await Promise.all(feedProms)
     const gemToPrice = Object.fromEntries(prices)
 
