@@ -241,14 +241,7 @@ const valueNFTs = async (nfts) => {
 function displayNfts(nftIds) {
     const container = document.getElementById('nftContainer');
 
-
-nftIds.forEach(id => {
-    const value = store.idToVal[id];
-    console.log(`Value: ${value}, Type: ${typeof value}`);
-});
-
-
-    nftIds = nftIds.filter(id => store.idToVal[id] !== 0);
+    nftIds = nftIds.filter(id => store.idToVal[id] !== 0n)
     if (nftIds.length == 0) {
         container.textContent = 'none'
         return
