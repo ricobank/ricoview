@@ -82,14 +82,14 @@ const version = '1.0.0';
 //# sourceMappingURL=version.js.map
 ;// CONCATENATED MODULE: ./node_modules/abitype/dist/esm/errors.js
 
-class errors_BaseError extends Error {
+class BaseError extends Error {
     constructor(shortMessage, args = {}) {
-        const details = args.cause instanceof errors_BaseError
+        const details = args.cause instanceof BaseError
             ? args.cause.details
             : args.cause?.message
                 ? args.cause.message
                 : args.details;
-        const docsPath = args.cause instanceof errors_BaseError
+        const docsPath = args.cause instanceof BaseError
             ? args.cause.docsPath || args.docsPath
             : args.docsPath;
         const message = [
@@ -142,7 +142,7 @@ class errors_BaseError extends Error {
 //# sourceMappingURL=errors.js.map
 ;// CONCATENATED MODULE: ./node_modules/abitype/dist/esm/human-readable/errors/abiItem.js
 
-class InvalidAbiItemError extends (/* unused pure expression or super */ null && (BaseError)) {
+class InvalidAbiItemError extends BaseError {
     constructor({ signature }) {
         super('Failed to parse ABI item.', {
             details: `parseAbiItem(${JSON.stringify(signature, null, 2)})`,
@@ -156,7 +156,7 @@ class InvalidAbiItemError extends (/* unused pure expression or super */ null &&
         });
     }
 }
-class UnknownTypeError extends errors_BaseError {
+class UnknownTypeError extends BaseError {
     constructor({ type }) {
         super('Unknown type.', {
             metaMessages: [
@@ -171,7 +171,7 @@ class UnknownTypeError extends errors_BaseError {
         });
     }
 }
-class UnknownSolidityTypeError extends errors_BaseError {
+class UnknownSolidityTypeError extends BaseError {
     constructor({ type }) {
         super('Unknown type.', {
             metaMessages: [`Type "${type}" is not a valid ABI type.`],
@@ -187,7 +187,7 @@ class UnknownSolidityTypeError extends errors_BaseError {
 //# sourceMappingURL=abiItem.js.map
 ;// CONCATENATED MODULE: ./node_modules/abitype/dist/esm/human-readable/errors/abiParameter.js
 
-class InvalidAbiParameterError extends (/* unused pure expression or super */ null && (BaseError)) {
+class InvalidAbiParameterError extends BaseError {
     constructor({ param }) {
         super('Failed to parse ABI parameter.', {
             details: `parseAbiParameter(${JSON.stringify(param, null, 2)})`,
@@ -201,7 +201,7 @@ class InvalidAbiParameterError extends (/* unused pure expression or super */ nu
         });
     }
 }
-class InvalidAbiParametersError extends (/* unused pure expression or super */ null && (BaseError)) {
+class InvalidAbiParametersError extends BaseError {
     constructor({ params }) {
         super('Failed to parse ABI parameters.', {
             details: `parseAbiParameters(${JSON.stringify(params, null, 2)})`,
@@ -215,7 +215,7 @@ class InvalidAbiParametersError extends (/* unused pure expression or super */ n
         });
     }
 }
-class InvalidParameterError extends errors_BaseError {
+class InvalidParameterError extends BaseError {
     constructor({ param }) {
         super('Invalid ABI parameter.', {
             details: param,
@@ -228,7 +228,7 @@ class InvalidParameterError extends errors_BaseError {
         });
     }
 }
-class SolidityProtectedKeywordError extends errors_BaseError {
+class SolidityProtectedKeywordError extends BaseError {
     constructor({ param, name }) {
         super('Invalid ABI parameter.', {
             details: param,
@@ -244,7 +244,7 @@ class SolidityProtectedKeywordError extends errors_BaseError {
         });
     }
 }
-class InvalidModifierError extends errors_BaseError {
+class InvalidModifierError extends BaseError {
     constructor({ param, type, modifier, }) {
         super('Invalid ABI parameter.', {
             details: param,
@@ -260,7 +260,7 @@ class InvalidModifierError extends errors_BaseError {
         });
     }
 }
-class InvalidFunctionModifierError extends errors_BaseError {
+class InvalidFunctionModifierError extends BaseError {
     constructor({ param, type, modifier, }) {
         super('Invalid ABI parameter.', {
             details: param,
@@ -277,7 +277,7 @@ class InvalidFunctionModifierError extends errors_BaseError {
         });
     }
 }
-class InvalidAbiTypeParameterError extends errors_BaseError {
+class InvalidAbiTypeParameterError extends BaseError {
     constructor({ abiParameter, }) {
         super('Invalid ABI parameter.', {
             details: JSON.stringify(abiParameter, null, 2),
@@ -294,7 +294,7 @@ class InvalidAbiTypeParameterError extends errors_BaseError {
 //# sourceMappingURL=abiParameter.js.map
 ;// CONCATENATED MODULE: ./node_modules/abitype/dist/esm/human-readable/errors/signature.js
 
-class InvalidSignatureError extends errors_BaseError {
+class InvalidSignatureError extends BaseError {
     constructor({ signature, type, }) {
         super(`Invalid ${type} signature.`, {
             details: signature,
@@ -307,7 +307,7 @@ class InvalidSignatureError extends errors_BaseError {
         });
     }
 }
-class UnknownSignatureError extends errors_BaseError {
+class UnknownSignatureError extends BaseError {
     constructor({ signature }) {
         super('Unknown signature.', {
             details: signature,
@@ -320,7 +320,7 @@ class UnknownSignatureError extends errors_BaseError {
         });
     }
 }
-class InvalidStructSignatureError extends errors_BaseError {
+class InvalidStructSignatureError extends BaseError {
     constructor({ signature }) {
         super('Invalid struct signature.', {
             details: signature,
@@ -337,7 +337,7 @@ class InvalidStructSignatureError extends errors_BaseError {
 //# sourceMappingURL=signature.js.map
 ;// CONCATENATED MODULE: ./node_modules/abitype/dist/esm/human-readable/errors/struct.js
 
-class CircularReferenceError extends errors_BaseError {
+class CircularReferenceError extends BaseError {
     constructor({ type }) {
         super('Circular reference detected.', {
             metaMessages: [`Struct "${type}" is a circular reference.`],
@@ -353,7 +353,7 @@ class CircularReferenceError extends errors_BaseError {
 //# sourceMappingURL=struct.js.map
 ;// CONCATENATED MODULE: ./node_modules/abitype/dist/esm/human-readable/errors/splitParameters.js
 
-class InvalidParenthesisError extends errors_BaseError {
+class InvalidParenthesisError extends BaseError {
     constructor({ current, depth }) {
         super('Unbalanced parentheses.', {
             metaMessages: [
@@ -9080,7 +9080,7 @@ class AbiConstructorParamsNotFoundError extends _base_js__WEBPACK_IMPORTED_MODUL
         });
     }
 }
-class AbiDecodingDataSizeInvalidError extends (/* unused pure expression or super */ null && (BaseError)) {
+class AbiDecodingDataSizeInvalidError extends _base_js__WEBPACK_IMPORTED_MODULE_0__/* .BaseError */ .G {
     constructor({ data, size }) {
         super([
             `Data size of ${size} bytes is invalid.`,
@@ -9131,7 +9131,7 @@ class AbiDecodingDataSizeTooSmallError extends _base_js__WEBPACK_IMPORTED_MODULE
         this.size = size;
     }
 }
-class AbiDecodingOffsetOutOfBoundsError extends (/* unused pure expression or super */ null && (BaseError)) {
+class AbiDecodingOffsetOutOfBoundsError extends _base_js__WEBPACK_IMPORTED_MODULE_0__/* .BaseError */ .G {
     constructor({ offset, position }) {
         super(`Offset at "${offset}" is out-of-bounds (current position: "${position}").`);
         Object.defineProperty(this, "name", {
@@ -9194,7 +9194,7 @@ class AbiEncodingLengthMismatchError extends _base_js__WEBPACK_IMPORTED_MODULE_0
         });
     }
 }
-class AbiErrorInputsNotFoundError extends (/* unused pure expression or super */ null && (BaseError)) {
+class AbiErrorInputsNotFoundError extends _base_js__WEBPACK_IMPORTED_MODULE_0__/* .BaseError */ .G {
     constructor(errorName, { docsPath }) {
         super([
             `Arguments (\`args\`) were provided to "${errorName}", but "${errorName}" on the ABI does not contain any parameters (\`inputs\`).`,
@@ -9211,7 +9211,7 @@ class AbiErrorInputsNotFoundError extends (/* unused pure expression or super */
         });
     }
 }
-class AbiErrorNotFoundError extends (/* unused pure expression or super */ null && (BaseError)) {
+class AbiErrorNotFoundError extends _base_js__WEBPACK_IMPORTED_MODULE_0__/* .BaseError */ .G {
     constructor(errorName, { docsPath } = {}) {
         super([
             `Error ${errorName ? `"${errorName}" ` : ''}not found on ABI.`,
@@ -9330,7 +9330,7 @@ class AbiFunctionOutputsNotFoundError extends _base_js__WEBPACK_IMPORTED_MODULE_
         });
     }
 }
-class AbiFunctionSignatureNotFoundError extends (/* unused pure expression or super */ null && (BaseError)) {
+class AbiFunctionSignatureNotFoundError extends _base_js__WEBPACK_IMPORTED_MODULE_0__/* .BaseError */ .G {
     constructor(signature, { docsPath }) {
         super([
             `Encoded function signature "${signature}" not found on ABI.`,
@@ -9496,7 +9496,7 @@ class InvalidDefinitionTypeError extends _base_js__WEBPACK_IMPORTED_MODULE_0__/*
         });
     }
 }
-class UnsupportedPackedAbiType extends (/* unused pure expression or super */ null && (BaseError)) {
+class UnsupportedPackedAbiType extends _base_js__WEBPACK_IMPORTED_MODULE_0__/* .BaseError */ .G {
     constructor(type) {
         super(`Type "${type}" is not supported for packed encoding.`);
         Object.defineProperty(this, "name", {
@@ -9757,7 +9757,7 @@ class ClientChainNotConfiguredError extends _base_js__WEBPACK_IMPORTED_MODULE_0_
         });
     }
 }
-class InvalidChainIdError extends (/* unused pure expression or super */ null && (BaseError)) {
+class InvalidChainIdError extends _base_js__WEBPACK_IMPORTED_MODULE_0__/* .BaseError */ .G {
     constructor({ chainId }) {
         super(`Chain ID "${chainId}" is invalid.`);
         Object.defineProperty(this, "name", {
@@ -10222,7 +10222,7 @@ class InvalidBytesBooleanError extends _base_js__WEBPACK_IMPORTED_MODULE_0__/* .
         });
     }
 }
-class InvalidHexBooleanError extends (/* unused pure expression or super */ null && (BaseError)) {
+class InvalidHexBooleanError extends _base_js__WEBPACK_IMPORTED_MODULE_0__/* .BaseError */ .G {
     constructor(hex) {
         super(`Hex value "${hex}" is not a valid boolean. The hex value must be "0x0" (false) or "0x1" (true).`);
         Object.defineProperty(this, "name", {
@@ -10233,7 +10233,7 @@ class InvalidHexBooleanError extends (/* unused pure expression or super */ null
         });
     }
 }
-class InvalidHexValueError extends (/* unused pure expression or super */ null && (BaseError)) {
+class InvalidHexValueError extends _base_js__WEBPACK_IMPORTED_MODULE_0__/* .BaseError */ .G {
     constructor(value) {
         super(`Hex value "${value}" is an odd length (${value.length}). It must be an even length.`);
         Object.defineProperty(this, "name", {
@@ -10638,11 +10638,11 @@ class HttpRequestError extends _base_js__WEBPACK_IMPORTED_MODULE_0__/* .BaseErro
         this.url = url;
     }
 }
-class WebSocketRequestError extends (/* unused pure expression or super */ null && (BaseError)) {
+class WebSocketRequestError extends _base_js__WEBPACK_IMPORTED_MODULE_0__/* .BaseError */ .G {
     constructor({ body, details, url, }) {
         super('WebSocket request failed.', {
             details,
-            metaMessages: [`URL: ${getUrl(url)}`, `Request body: ${stringify(body)}`],
+            metaMessages: [`URL: ${(0,_utils_js__WEBPACK_IMPORTED_MODULE_1__/* .getUrl */ .Gr)(url)}`, `Request body: ${(0,_utils_stringify_js__WEBPACK_IMPORTED_MODULE_2__/* .stringify */ .P)(body)}`],
         });
         Object.defineProperty(this, "name", {
             enumerable: true,
@@ -11192,7 +11192,7 @@ class FeeConflictError extends _base_js__WEBPACK_IMPORTED_MODULE_0__/* .BaseErro
         });
     }
 }
-class InvalidLegacyVError extends (/* unused pure expression or super */ null && (BaseError)) {
+class InvalidLegacyVError extends _base_js__WEBPACK_IMPORTED_MODULE_0__/* .BaseError */ .G {
     constructor({ v }) {
         super(`Invalid \`v\` value "${v}". Expected 27 or 28.`);
         Object.defineProperty(this, "name", {
@@ -11227,7 +11227,7 @@ class InvalidSerializableTransactionError extends _base_js__WEBPACK_IMPORTED_MOD
         });
     }
 }
-class InvalidSerializedTransactionTypeError extends (/* unused pure expression or super */ null && (BaseError)) {
+class InvalidSerializedTransactionTypeError extends _base_js__WEBPACK_IMPORTED_MODULE_0__/* .BaseError */ .G {
     constructor({ serializedType }) {
         super(`Serialized transaction type "${serializedType}" is invalid.`);
         Object.defineProperty(this, "name", {
@@ -11245,7 +11245,7 @@ class InvalidSerializedTransactionTypeError extends (/* unused pure expression o
         this.serializedType = serializedType;
     }
 }
-class InvalidSerializedTransactionError extends (/* unused pure expression or super */ null && (BaseError)) {
+class InvalidSerializedTransactionError extends _base_js__WEBPACK_IMPORTED_MODULE_0__/* .BaseError */ .G {
     constructor({ attributes, serializedTransaction, type, }) {
         const missing = Object.entries(attributes)
             .map(([key, value]) => (typeof value === 'undefined' ? key : undefined))
@@ -11278,7 +11278,7 @@ class InvalidSerializedTransactionError extends (/* unused pure expression or su
         this.type = type;
     }
 }
-class InvalidStorageKeySizeError extends (/* unused pure expression or super */ null && (BaseError)) {
+class InvalidStorageKeySizeError extends _base_js__WEBPACK_IMPORTED_MODULE_0__/* .BaseError */ .G {
     constructor({ storageKey }) {
         super(`Size for storage key "${storageKey}" is invalid. Expected 32 bytes. Got ${Math.floor((storageKey.length - 2) / 2)} bytes.`);
         Object.defineProperty(this, "name", {

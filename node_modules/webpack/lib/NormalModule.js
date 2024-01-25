@@ -132,14 +132,14 @@ const contextifySourceMap = (context, sourceMap, associatedObjectForCache) => {
 	const mapper = !sourceRoot
 		? source => source
 		: sourceRoot.endsWith("/")
-		? source =>
-				source.startsWith("/")
-					? `${sourceRoot.slice(0, -1)}${source}`
-					: `${sourceRoot}${source}`
-		: source =>
-				source.startsWith("/")
-					? `${sourceRoot}${source}`
-					: `${sourceRoot}/${source}`;
+			? source =>
+					source.startsWith("/")
+						? `${sourceRoot.slice(0, -1)}${source}`
+						: `${sourceRoot}${source}`
+			: source =>
+					source.startsWith("/")
+						? `${sourceRoot}${source}`
+						: `${sourceRoot}/${source}`;
 	const newSources = sourceMap.sources.map(source =>
 		contextifySourceUrl(context, mapper(source), associatedObjectForCache)
 	);
@@ -782,7 +782,7 @@ class NormalModule extends Module {
 						currentLoader
 							? compilation.runtimeTemplate.requestShortener.shorten(
 									currentLoader.loader
-							  )
+								)
 							: "unknown"
 					}) didn't return a Buffer or String`
 				);
@@ -1181,6 +1181,7 @@ class NormalModule extends Module {
 		moduleGraph,
 		chunkGraph,
 		runtime,
+		runtimes,
 		concatenationScope,
 		codeGenerationResults,
 		sourceTypes
@@ -1204,7 +1205,7 @@ class NormalModule extends Module {
 			const source = this.error
 				? new RawSource(
 						"throw new Error(" + JSON.stringify(this.error.message) + ");"
-				  )
+					)
 				: this.generator.generate(this, {
 						dependencyTemplates,
 						runtimeTemplate,
@@ -1212,11 +1213,12 @@ class NormalModule extends Module {
 						chunkGraph,
 						runtimeRequirements,
 						runtime,
+						runtimes,
 						concatenationScope,
 						codeGenerationResults,
 						getData,
 						type
-				  });
+					});
 
 			if (source) {
 				sources.set(type, new CachedSource(source));
