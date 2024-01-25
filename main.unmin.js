@@ -33,7 +33,7 @@ var createPublicClient = __webpack_require__(7759);
 // EXTERNAL MODULE: ./node_modules/viem/_esm/actions/getContract.js
 var getContract = __webpack_require__(8541);
 // EXTERNAL MODULE: ./node_modules/viem/_esm/chains/definitions/sepolia.js + 1 modules
-var sepolia = __webpack_require__(5040);
+var sepolia = __webpack_require__(4813);
 ;// CONCATENATED MODULE: ./BankDiamond.json
 const BankDiamond_namespaceObject = JSON.parse('{"Mt":[{"inputs":[],"name":"ErrBound","type":"error"},{"inputs":[],"name":"ErrIntOver","type":"error"},{"inputs":[],"name":"ErrIntUnder","type":"error"},{"inputs":[],"name":"ErrUintOver","type":"error"},{"inputs":[],"name":"ErrUintUnder","type":"error"},{"inputs":[],"name":"ErrWrongKey","type":"error"},{"inputs":[],"name":"ErrWrongUrn","type":"error"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"caller","type":"address"},{"indexed":true,"internalType":"bytes4","name":"sig","type":"bytes4"},{"indexed":false,"internalType":"bytes","name":"data","type":"bytes"}],"name":"NewFlog","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"key","type":"bytes32"},{"indexed":false,"internalType":"bytes32","name":"val","type":"bytes32"}],"name":"NewPalm0","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"key","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"idx0","type":"bytes32"},{"indexed":false,"internalType":"bytes32","name":"val","type":"bytes32"}],"name":"NewPalm1","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"key","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"idx0","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"idx1","type":"bytes32"},{"indexed":false,"internalType":"bytes32","name":"val","type":"bytes32"}],"name":"NewPalm2","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"key","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"idx0","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"idx1","type":"bytes32"},{"indexed":false,"internalType":"bytes","name":"val","type":"bytes"}],"name":"NewPalmBytes2","type":"event"},{"anonymous":false,"inputs":[{"components":[{"internalType":"address","name":"target","type":"address"},{"internalType":"enum IDiamondCuttable.FacetCutAction","name":"action","type":"uint8"},{"internalType":"bytes4[]","name":"selectors","type":"bytes4[]"}],"indexed":false,"internalType":"struct IDiamondCuttable.FacetCut[]","name":"facetCuts","type":"tuple[]"},{"indexed":false,"internalType":"address","name":"target","type":"address"},{"indexed":false,"internalType":"bytes","name":"data","type":"bytes"}],"name":"DiamondCut","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"inputs":[],"name":"acceptOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"components":[{"internalType":"address","name":"target","type":"address"},{"internalType":"enum IDiamondCuttable.FacetCutAction","name":"action","type":"uint8"},{"internalType":"bytes4[]","name":"selectors","type":"bytes4[]"}],"internalType":"struct IDiamondCuttable.FacetCut[]","name":"facetCuts","type":"tuple[]"},{"internalType":"address","name":"target","type":"address"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"diamondCut","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"selector","type":"bytes4"}],"name":"facetAddress","outputs":[{"internalType":"address","name":"facet","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"facetAddresses","outputs":[{"internalType":"address[]","name":"addresses","type":"address[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"facet","type":"address"}],"name":"facetFunctionSelectors","outputs":[{"internalType":"bytes4[]","name":"selectors","type":"bytes4[]"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"facets","outputs":[{"components":[{"internalType":"address","name":"target","type":"address"},{"internalType":"bytes4[]","name":"selectors","type":"bytes4[]"}],"internalType":"struct IDiamondLoupe.Facet[]","name":"diamondFacets","type":"tuple[]"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getFallbackAddress","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"nomineeOwner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"fallbackAddress","type":"address"}],"name":"setFallbackAddress","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"ErrBound","type":"error"},{"inputs":[],"name":"ErrIntOver","type":"error"},{"inputs":[],"name":"ErrIntUnder","type":"error"},{"inputs":[],"name":"ErrUintOver","type":"error"},{"inputs":[],"name":"ErrUintUnder","type":"error"},{"inputs":[],"name":"ErrWrongKey","type":"error"},{"inputs":[],"name":"ErrWrongUrn","type":"error"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"caller","type":"address"},{"indexed":true,"internalType":"bytes4","name":"sig","type":"bytes4"},{"indexed":false,"internalType":"bytes","name":"data","type":"bytes"}],"name":"NewFlog","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"key","type":"bytes32"},{"indexed":false,"internalType":"bytes32","name":"val","type":"bytes32"}],"name":"NewPalm0","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"key","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"idx0","type":"bytes32"},{"indexed":false,"internalType":"bytes32","name":"val","type":"bytes32"}],"name":"NewPalm1","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"key","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"idx0","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"idx1","type":"bytes32"},{"indexed":false,"internalType":"bytes32","name":"val","type":"bytes32"}],"name":"NewPalm2","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"key","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"idx0","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"idx1","type":"bytes32"},{"indexed":false,"internalType":"bytes","name":"val","type":"bytes"}],"name":"NewPalmBytes2","type":"event"},{"inputs":[],"name":"CAP_MAX","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[],"name":"REL_MAX","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[],"name":"fb","outputs":[{"internalType":"contract Feedbase","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"key","type":"bytes32"},{"internalType":"bytes32","name":"val","type":"bytes32"}],"name":"file","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"rico","outputs":[{"internalType":"contract Gem","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"ErrBound","type":"error"},{"inputs":[],"name":"ErrDebtCeil","type":"error"},{"inputs":[],"name":"ErrHookCallerNotBank","type":"error"},{"inputs":[],"name":"ErrHookData","type":"error"},{"inputs":[],"name":"ErrIlkInit","type":"error"},{"inputs":[],"name":"ErrIntOver","type":"error"},{"inputs":[],"name":"ErrIntUnder","type":"error"},{"inputs":[],"name":"ErrLock","type":"error"},{"inputs":[],"name":"ErrMultiIlk","type":"error"},{"inputs":[],"name":"ErrNoHook","type":"error"},{"inputs":[],"name":"ErrNotSafe","type":"error"},{"inputs":[],"name":"ErrSafeBail","type":"error"},{"inputs":[],"name":"ErrUintOver","type":"error"},{"inputs":[],"name":"ErrUintUnder","type":"error"},{"inputs":[],"name":"ErrUrnDust","type":"error"},{"inputs":[],"name":"ErrWrongKey","type":"error"},{"inputs":[],"name":"ErrWrongUrn","type":"error"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"caller","type":"address"},{"indexed":true,"internalType":"bytes4","name":"sig","type":"bytes4"},{"indexed":false,"internalType":"bytes","name":"data","type":"bytes"}],"name":"NewFlog","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"key","type":"bytes32"},{"indexed":false,"internalType":"bytes32","name":"val","type":"bytes32"}],"name":"NewPalm0","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"key","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"idx0","type":"bytes32"},{"indexed":false,"internalType":"bytes32","name":"val","type":"bytes32"}],"name":"NewPalm1","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"key","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"idx0","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"idx1","type":"bytes32"},{"indexed":false,"internalType":"bytes32","name":"val","type":"bytes32"}],"name":"NewPalm2","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"key","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"idx0","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"idx1","type":"bytes32"},{"indexed":false,"internalType":"bytes","name":"val","type":"bytes"}],"name":"NewPalmBytes2","type":"event"},{"inputs":[],"name":"FEE_MAX","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[],"name":"MINT","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"bytes32","name":"i","type":"bytes32"},{"internalType":"address","name":"u","type":"address"}],"name":"bail","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"ceil","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"debt","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"i","type":"bytes32"}],"name":"drip","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"ilk","type":"bytes32"},{"internalType":"bytes32","name":"key","type":"bytes32"},{"internalType":"bytes32[]","name":"xs","type":"bytes32[]"},{"internalType":"bytes32","name":"val","type":"bytes32"}],"name":"filh","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"ilk","type":"bytes32"},{"internalType":"bytes32","name":"key","type":"bytes32"},{"internalType":"bytes32","name":"val","type":"bytes32"}],"name":"filk","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address","name":"code","type":"address"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"flash","outputs":[{"internalType":"bytes","name":"result","type":"bytes"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"i","type":"bytes32"},{"internalType":"address","name":"u","type":"address"},{"internalType":"bytes","name":"dink","type":"bytes"},{"internalType":"int256","name":"dart","type":"int256"}],"name":"frob","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"ilk","type":"bytes32"},{"internalType":"bytes32","name":"key","type":"bytes32"},{"internalType":"bytes32[]","name":"xs","type":"bytes32[]"}],"name":"geth","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"i","type":"bytes32"},{"internalType":"bytes","name":"indata","type":"bytes"}],"name":"hookcallext","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"i","type":"bytes32"}],"name":"ilks","outputs":[{"components":[{"internalType":"uint256","name":"tart","type":"uint256"},{"internalType":"uint256","name":"rack","type":"uint256"},{"internalType":"uint256","name":"line","type":"uint256"},{"internalType":"uint256","name":"dust","type":"uint256"},{"internalType":"uint256","name":"fee","type":"uint256"},{"internalType":"uint256","name":"rho","type":"uint256"},{"internalType":"uint256","name":"chop","type":"uint256"},{"internalType":"address","name":"hook","type":"address"}],"internalType":"struct Bank.Ilk","name":"","type":"tuple"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"ilk","type":"bytes32"},{"internalType":"address","name":"hook","type":"address"}],"name":"init","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"i","type":"bytes32"},{"internalType":"address","name":"u","type":"address"}],"name":"ink","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"joy","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"par","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"rest","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"i","type":"bytes32"},{"internalType":"address","name":"u","type":"address"}],"name":"safe","outputs":[{"internalType":"enum Vat.Spot","name":"","type":"uint8"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"sin","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"i","type":"bytes32"},{"internalType":"address","name":"u","type":"address"}],"name":"urns","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"ErrBound","type":"error"},{"inputs":[],"name":"ErrIntOver","type":"error"},{"inputs":[],"name":"ErrIntUnder","type":"error"},{"inputs":[],"name":"ErrOutDated","type":"error"},{"inputs":[],"name":"ErrReflop","type":"error"},{"inputs":[],"name":"ErrUintOver","type":"error"},{"inputs":[],"name":"ErrUintUnder","type":"error"},{"inputs":[],"name":"ErrWrongKey","type":"error"},{"inputs":[],"name":"ErrWrongUrn","type":"error"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"caller","type":"address"},{"indexed":true,"internalType":"bytes4","name":"sig","type":"bytes4"},{"indexed":false,"internalType":"bytes","name":"data","type":"bytes"}],"name":"NewFlog","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"key","type":"bytes32"},{"indexed":false,"internalType":"bytes32","name":"val","type":"bytes32"}],"name":"NewPalm0","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"key","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"idx0","type":"bytes32"},{"indexed":false,"internalType":"bytes32","name":"val","type":"bytes32"}],"name":"NewPalm1","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"key","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"idx0","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"idx1","type":"bytes32"},{"indexed":false,"internalType":"bytes32","name":"val","type":"bytes32"}],"name":"NewPalm2","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"key","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"idx0","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"idx1","type":"bytes32"},{"indexed":false,"internalType":"bytes","name":"val","type":"bytes"}],"name":"NewPalmBytes2","type":"event"},{"inputs":[],"name":"RISK","outputs":[{"internalType":"contract Gem","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32[]","name":"ilks","type":"bytes32[]"}],"name":"keep","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"loot","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"plat","outputs":[{"components":[{"internalType":"uint256","name":"pep","type":"uint256"},{"internalType":"uint256","name":"pop","type":"uint256"},{"internalType":"int256","name":"pup","type":"int256"}],"internalType":"struct Bank.Plx","name":"","type":"tuple"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"plot","outputs":[{"components":[{"internalType":"uint256","name":"pep","type":"uint256"},{"internalType":"uint256","name":"pop","type":"uint256"},{"internalType":"int256","name":"pup","type":"int256"}],"internalType":"struct Bank.Plx","name":"","type":"tuple"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"ramp","outputs":[{"components":[{"internalType":"uint256","name":"bel","type":"uint256"},{"internalType":"uint256","name":"cel","type":"uint256"},{"internalType":"uint256","name":"rel","type":"uint256"},{"internalType":"uint256","name":"wel","type":"uint256"}],"internalType":"struct Bank.Ramp","name":"","type":"tuple"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"rudd","outputs":[{"components":[{"internalType":"address","name":"src","type":"address"},{"internalType":"bytes32","name":"tag","type":"bytes32"}],"internalType":"struct Bank.Rudd","name":"","type":"tuple"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"ErrBound","type":"error"},{"inputs":[],"name":"ErrIntOver","type":"error"},{"inputs":[],"name":"ErrIntUnder","type":"error"},{"inputs":[],"name":"ErrUintOver","type":"error"},{"inputs":[],"name":"ErrUintUnder","type":"error"},{"inputs":[],"name":"ErrWrongKey","type":"error"},{"inputs":[],"name":"ErrWrongUrn","type":"error"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"caller","type":"address"},{"indexed":true,"internalType":"bytes4","name":"sig","type":"bytes4"},{"indexed":false,"internalType":"bytes","name":"data","type":"bytes"}],"name":"NewFlog","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"key","type":"bytes32"},{"indexed":false,"internalType":"bytes32","name":"val","type":"bytes32"}],"name":"NewPalm0","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"key","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"idx0","type":"bytes32"},{"indexed":false,"internalType":"bytes32","name":"val","type":"bytes32"}],"name":"NewPalm1","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"key","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"idx0","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"idx1","type":"bytes32"},{"indexed":false,"internalType":"bytes32","name":"val","type":"bytes32"}],"name":"NewPalm2","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"key","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"idx0","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"idx1","type":"bytes32"},{"indexed":false,"internalType":"bytes","name":"val","type":"bytes"}],"name":"NewPalmBytes2","type":"event"},{"inputs":[],"name":"cap","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"how","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"poke","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"tau","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"tip","outputs":[{"components":[{"internalType":"address","name":"src","type":"address"},{"internalType":"bytes32","name":"tag","type":"bytes32"}],"internalType":"struct Bank.Rudd","name":"","type":"tuple"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"way","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]}');
 ;// CONCATENATED MODULE: ./main.js
@@ -76,6 +76,9 @@ const nfpmAbi = (0,parseAbi/* parseAbi */.V)([
 const wrapAbi = (0,parseAbi/* parseAbi */.V)([
     "function total(address nfpm, uint tokenId, uint160 sqrtPriceX96) external view returns (uint amount0, uint amount1)"
 ])
+const multicall3Abi = (0,parseAbi/* parseAbi */.V)([
+    "function getCurrentBlockTimestamp() external view returns (uint256 timestamp)"
+])
 
 const BLN = BigInt(10) ** BigInt(9)
 const WAD = BigInt(10) ** BigInt(18)
@@ -117,6 +120,7 @@ const MAXUINT  = BigInt(2)**BigInt(256) - BigInt(1);
 const FREE = MAXUINT  // -1
 const LOCK = BigInt(1)
 const X96 = BigInt(2) ** BigInt(96)
+const chain = sepolia/* sepolia */.F
 
 // Uni Position() return value indices
 const t0 = 2
@@ -164,24 +168,28 @@ const updateUni = async () => {
     NFTsContainer.innerHTML = '';
     updateDricoLabel($('#uniDricoLabelContainer'), $('#uniDrico'))
 
-    const [numNFTs, ilk, ink, urn, par] = await Promise.all([
+    const [numNFTs, ilk, ink, urn, par, timestamp] = await Promise.all([
         nfpm.read.balanceOf([account]),
         bank.read.ilks([uniIlk]),
         bank.read.ink( [uniIlk, account]),
         bank.read.urns([uniIlk, account]),
-        bank.read.par()
+        bank.read.par(),
+        publicClient.readContract({
+            address: chain.contracts.multicall3.address,
+            abi: multicall3Abi,
+            functionName: 'getCurrentBlockTimestamp'
+        }),
     ])
+    const stretchedRack = grow(ilk.rack, ilk.fee, timestamp - ilk.rho)
     const fee  = apy(ilk.fee)
     const dust = (0,formatUnits/* formatUnits */.b)(ilk.dust, 45)
-    const debt = (0,formatUnits/* formatUnits */.b)(urn * ilk.rack, 45)
+    const debt = (0,formatUnits/* formatUnits */.b)(urn * stretchedRack, 45)
     store.ink  = (0,decodeAbiParameters/* decodeAbiParameters */.r)([{ name: 'ink', type: 'uint[]' }], ink)[0]
     store.art  = urn
-    store.rack = ilk.rack
+    store.rack = stretchedRack
     store.par  = par
     store.debtStr = parseFloat(debt).toFixed(3)
-    const since = BigInt(Math.ceil(Date.now() / 1000)) - ilk.rho
     $('#uniIlkStats0').textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)} Rico`
-    $('#uniIlkStats1').textContent = `Time since rate accumulator update: ${since} seconds`
     $('#uniUrnStats').textContent = `Deposited NFTS: ${store.ink}, Rico debt: ${store.debtStr}`
 
     let usrIDs = [];
@@ -248,7 +256,6 @@ const valueNFTs = async (nfts) => {
 
 // todo this displays checkboxes for each uni nft with token IDs for labels
 // ~"symbol/symbol [min price, max price]" could be better. Or people can find id in uni app
-// should also filter positions with at least one unsupported tok
 function displayNfts(nftIds) {
     const container = document.getElementById('nftContainer');
 
@@ -302,7 +309,7 @@ const updateERC20 = async () => {
     ])
     const src = srcB32.slice(0, 42)
 
-    const [ilk, urn, ink, par, liqr, usrGemAllowance, usrGemBal, feedData] = await Promise.all([
+    const [ilk, urn, ink, par, liqr, usrGemAllowance, usrGemBal, feedData, timestamp] = await Promise.all([
         bank.read.ilks([ilkHex]),
         bank.read.urns([ilkHex, account]),
         bank.read.ink( [ilkHex, account]),
@@ -321,25 +328,29 @@ const updateERC20 = async () => {
             args: [account]
         }),
         feed.read.pull([src, tag]),
+        publicClient.readContract({
+            address: chain.contracts.multicall3.address,
+            abi: multicall3Abi,
+            functionName: 'getCurrentBlockTimestamp'
+        }),
     ])
 
+    const stretchedRack = grow(ilk.rack, ilk.fee, timestamp - ilk.rho)
     const fee  = apy(ilk.fee)
     const dust = (0,formatUnits/* formatUnits */.b)(ilk.dust, 45)
-    const debt = (0,formatUnits/* formatUnits */.b)(urn * ilk.rack, 45)
+    const debt = (0,formatUnits/* formatUnits */.b)(urn * stretchedRack, 45)
     const inkStr = (0,formatUnits/* formatUnits */.b)(BigInt(ink), tokenData[ilkStr].decimals)
     const ltv  = Number(BLN) / Number(BigInt(liqr) / WAD)
     store.ink  = BigInt(ink)
     store.art  = urn
     store.par  = par
-    store.rack = ilk.rack
+    store.rack = stretchedRack
     store.liqr = BigInt(liqr)
     store.feed = BigInt(feedData[0])
     store.usrGemAllowance = usrGemAllowance
     store.usrGemBal = usrGemBal
     store.debtStr = parseFloat(debt).toFixed(3)
-    const since = BigInt(Math.ceil(Date.now() / 1000)) - ilk.rho
     $('#ilkStats0').textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)} Rico, LTV: ${round(ltv * 100)}%`
-    $('#ilkStats1').textContent = `Time since rate accumulator update: ${since} seconds`
     $('#urnStats').textContent = `Deposited ${gemName}: ${parseFloat(inkStr).toFixed(3)}, Rico debt: ${store.debtStr}`
 }
 
@@ -484,14 +495,14 @@ window.onload = async() => {
     [account, transport] = await simpleConnect();
     walletClient = (0,createWalletClient/* createWalletClient */.K)({
       account,
-      chain: sepolia/* sepolia */.F,
+      chain: chain,
       transport: transport
     })
     publicClient = (0,createPublicClient/* createPublicClient */.v)({
       batch: {
         multicall: true,
       },
-      chain: sepolia/* sepolia */.F,
+      chain: chain,
       transport: (0,http/* http */.d)(),  // todo should replace with a dedicated RPC URL to prevent rate-limiting
     })
     const _client = {public: publicClient, wallet: walletClient}
@@ -536,7 +547,7 @@ window.onload = async() => {
         });
     });
 
-    await walletClient.switchChain({ id: sepolia/* sepolia */.F.id })
+    await walletClient.switchChain({ id: chain.id })
     await Promise.all([updateRicoStats(), updateHook()])
     bank.watchEvent.NewFlog(
         { caller: account },
@@ -545,6 +556,13 @@ window.onload = async() => {
 }
 
 const maxBigInt = (a, b) => a > b ? a : b
+
+const grow = (amt, ray, dt) => {
+    for (let i = 0; i < dt; i++) {
+        amt = amt * ray / RAY
+    }
+    return amt
+}
 
 // https://stackoverflow.com/questions/53683995/javascript-big-integer-square-root
 function sqrt(value) {

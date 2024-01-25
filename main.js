@@ -38,6 +38,9 @@ const nfpmAbi = parseAbi([
 const wrapAbi = parseAbi([
     "function total(address nfpm, uint tokenId, uint160 sqrtPriceX96) external view returns (uint amount0, uint amount1)"
 ])
+const multicall3Abi = parseAbi([
+    "function getCurrentBlockTimestamp() external view returns (uint256 timestamp)"
+])
 
 const BLN = BigInt(10) ** BigInt(9)
 const WAD = BigInt(10) ** BigInt(18)
@@ -79,6 +82,7 @@ const MAXUINT  = BigInt(2)**BigInt(256) - BigInt(1);
 const FREE = MAXUINT  // -1
 const LOCK = BigInt(1)
 const X96 = BigInt(2) ** BigInt(96)
+const chain = sepolia
 
 // Uni Position() return value indices
 const t0 = 2
@@ -126,24 +130,28 @@ const updateUni = async () => {
     NFTsContainer.innerHTML = '';
     updateDricoLabel($('#uniDricoLabelContainer'), $('#uniDrico'))
 
-    const [numNFTs, ilk, ink, urn, par] = await Promise.all([
+    const [numNFTs, ilk, ink, urn, par, timestamp] = await Promise.all([
         nfpm.read.balanceOf([account]),
         bank.read.ilks([uniIlk]),
         bank.read.ink( [uniIlk, account]),
         bank.read.urns([uniIlk, account]),
-        bank.read.par()
+        bank.read.par(),
+        publicClient.readContract({
+            address: chain.contracts.multicall3.address,
+            abi: multicall3Abi,
+            functionName: 'getCurrentBlockTimestamp'
+        }),
     ])
+    const stretchedRack = grow(ilk.rack, ilk.fee, timestamp - ilk.rho)
     const fee  = apy(ilk.fee)
     const dust = formatUnits(ilk.dust, 45)
-    const debt = formatUnits(urn * ilk.rack, 45)
+    const debt = formatUnits(urn * stretchedRack, 45)
     store.ink  = decodeAbiParameters([{ name: 'ink', type: 'uint[]' }], ink)[0]
     store.art  = urn
-    store.rack = ilk.rack
+    store.rack = stretchedRack
     store.par  = par
     store.debtStr = parseFloat(debt).toFixed(3)
-    const since = BigInt(Math.ceil(Date.now() / 1000)) - ilk.rho
     $('#uniIlkStats0').textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)} Rico`
-    $('#uniIlkStats1').textContent = `Time since rate accumulator update: ${since} seconds`
     $('#uniUrnStats').textContent = `Deposited NFTS: ${store.ink}, Rico debt: ${store.debtStr}`
 
     let usrIDs = [];
@@ -210,7 +218,6 @@ const valueNFTs = async (nfts) => {
 
 // todo this displays checkboxes for each uni nft with token IDs for labels
 // ~"symbol/symbol [min price, max price]" could be better. Or people can find id in uni app
-// should also filter positions with at least one unsupported tok
 function displayNfts(nftIds) {
     const container = document.getElementById('nftContainer');
 
@@ -264,7 +271,7 @@ const updateERC20 = async () => {
     ])
     const src = srcB32.slice(0, 42)
 
-    const [ilk, urn, ink, par, liqr, usrGemAllowance, usrGemBal, feedData] = await Promise.all([
+    const [ilk, urn, ink, par, liqr, usrGemAllowance, usrGemBal, feedData, timestamp] = await Promise.all([
         bank.read.ilks([ilkHex]),
         bank.read.urns([ilkHex, account]),
         bank.read.ink( [ilkHex, account]),
@@ -283,25 +290,29 @@ const updateERC20 = async () => {
             args: [account]
         }),
         feed.read.pull([src, tag]),
+        publicClient.readContract({
+            address: chain.contracts.multicall3.address,
+            abi: multicall3Abi,
+            functionName: 'getCurrentBlockTimestamp'
+        }),
     ])
 
+    const stretchedRack = grow(ilk.rack, ilk.fee, timestamp - ilk.rho)
     const fee  = apy(ilk.fee)
     const dust = formatUnits(ilk.dust, 45)
-    const debt = formatUnits(urn * ilk.rack, 45)
+    const debt = formatUnits(urn * stretchedRack, 45)
     const inkStr = formatUnits(BigInt(ink), tokenData[ilkStr].decimals)
     const ltv  = Number(BLN) / Number(BigInt(liqr) / WAD)
     store.ink  = BigInt(ink)
     store.art  = urn
     store.par  = par
-    store.rack = ilk.rack
+    store.rack = stretchedRack
     store.liqr = BigInt(liqr)
     store.feed = BigInt(feedData[0])
     store.usrGemAllowance = usrGemAllowance
     store.usrGemBal = usrGemBal
     store.debtStr = parseFloat(debt).toFixed(3)
-    const since = BigInt(Math.ceil(Date.now() / 1000)) - ilk.rho
     $('#ilkStats0').textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)} Rico, LTV: ${round(ltv * 100)}%`
-    $('#ilkStats1').textContent = `Time since rate accumulator update: ${since} seconds`
     $('#urnStats').textContent = `Deposited ${gemName}: ${parseFloat(inkStr).toFixed(3)}, Rico debt: ${store.debtStr}`
 }
 
@@ -446,14 +457,14 @@ window.onload = async() => {
     [account, transport] = await simpleConnect();
     walletClient = createWalletClient({
       account,
-      chain: sepolia,
+      chain: chain,
       transport: transport
     })
     publicClient = createPublicClient({
       batch: {
         multicall: true,
       },
-      chain: sepolia,
+      chain: chain,
       transport: http(),  // todo should replace with a dedicated RPC URL to prevent rate-limiting
     })
     const _client = {public: publicClient, wallet: walletClient}
@@ -498,7 +509,7 @@ window.onload = async() => {
         });
     });
 
-    await walletClient.switchChain({ id: sepolia.id })
+    await walletClient.switchChain({ id: chain.id })
     await Promise.all([updateRicoStats(), updateHook()])
     bank.watchEvent.NewFlog(
         { caller: account },
@@ -507,6 +518,13 @@ window.onload = async() => {
 }
 
 const maxBigInt = (a, b) => a > b ? a : b
+
+const grow = (amt, ray, dt) => {
+    for (let i = 0; i < dt; i++) {
+        amt = amt * ray / RAY
+    }
+    return amt
+}
 
 // https://stackoverflow.com/questions/53683995/javascript-big-integer-square-root
 function sqrt(value) {
