@@ -1,3 +1,5 @@
+// Copyright (C) 2024 halys
+
 import { createPublicClient, createWalletClient, custom, decodeAbiParameters, encodeAbiParameters, formatUnits,
     getContract, hexToBigInt, http, pad, parseAbi, parseUnits, stringToHex, toHex } from 'viem'
 import { sepolia } from 'viem/chains'
