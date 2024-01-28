@@ -110,7 +110,7 @@ const updateRicoStats = async () => {
     const par = formatUnits(parRay, 27)
     const way = apy(wayRay)
     const mar = formatUnits(BigInt(feedData[0]), 27)
-    ricoStats.textContent = `Rico system price: ${round(par)}, Price rate: ${way}%, Market price: ${round(mar)}`
+    ricoStats.textContent = `Par: ${round(par)}, Price rate: ${way}%, Market: ${round(mar)}`
 }
 
 const updateHook = async () => {
@@ -132,7 +132,7 @@ const updateUni = async () => {
     NFTsContainer.innerHTML = '';
     updateDricoLabel($('#uniDricoLabelContainer'), $('#uniDrico'))
 
-    const [numNFTs, ilk, ink, urn, par, timestamp] = await Promise.all([
+    const [numNFTs, ilk, ink, urn, par, timestamp, usrRico] = await Promise.all([
         nfpm.read.balanceOf([account]),
         bank.read.ilks([uniIlk]),
         bank.read.ink( [uniIlk, account]),
@@ -143,18 +143,26 @@ const updateUni = async () => {
             abi: multicall3Abi,
             functionName: 'getCurrentBlockTimestamp'
         }),
+        publicClient.readContract({
+            address: rico_addr,
+            abi: gemAbi,
+            functionName: 'balanceOf',
+            args: [account]
+        }),
     ])
     const stretchedRack = grow(ilk.rack, ilk.fee, timestamp - ilk.rho)
     const fee  = apy(ilk.fee)
     const dust = formatUnits(ilk.dust, 45)
     const debt = formatUnits(urn * stretchedRack, 45)
+    const ricoStr = formatBalance(usrRico)
     store.ink  = decodeAbiParameters([{ name: 'ink', type: 'uint[]' }], ink)[0]
     store.art  = urn
     store.rack = stretchedRack
     store.par  = par
     store.debtStr = parseFloat(debt).toFixed(3)
+    const inkStr = store.ink.length === 0 ? 'none' : store.ink
     $('#uniIlkStats0').textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)} Rico`
-    $('#uniUrnStats').textContent = `Deposited NFTS: ${store.ink}, Rico debt: ${store.debtStr}`
+    $('#uniUrnStats').textContent = `Deposited NFTS: ${inkStr}, Rico debt: ${store.debtStr}, Rico: ${ricoStr}`
 
     let usrIDs = [];
     if (borrowing()) {
@@ -273,7 +281,7 @@ const updateERC20 = async () => {
     ])
     const src = srcB32.slice(0, 42)
 
-    const [ilk, urn, ink, par, liqr, usrGemAllowance, usrGemBal, feedData, timestamp] = await Promise.all([
+    const [ilk, urn, ink, par, liqr, usrGemAllowance, usrGemBal, feedData, timestamp, usrRico] = await Promise.all([
         bank.read.ilks([ilkHex]),
         bank.read.urns([ilkHex, account]),
         bank.read.ink( [ilkHex, account]),
@@ -297,6 +305,12 @@ const updateERC20 = async () => {
             abi: multicall3Abi,
             functionName: 'getCurrentBlockTimestamp'
         }),
+        publicClient.readContract({
+            address: rico_addr,
+            abi: gemAbi,
+            functionName: 'balanceOf',
+            args: [account]
+        }),
     ])
 
     const stretchedRack = grow(ilk.rack, ilk.fee, timestamp - ilk.rho)
@@ -305,6 +319,7 @@ const updateERC20 = async () => {
     const debt = formatUnits(urn * stretchedRack, 45)
     const inkStr = formatUnits(BigInt(ink), tokenData[ilkStr].decimals)
     const ltv  = Number(BLN) / Number(BigInt(liqr) / WAD)
+    const ricoStr = formatBalance(usrRico)
     store.ink  = BigInt(ink)
     store.art  = urn
     store.par  = par
@@ -315,7 +330,15 @@ const updateERC20 = async () => {
     store.usrGemBal = usrGemBal
     store.debtStr = parseFloat(debt).toFixed(3)
     $('#ilkStats0').textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)} Rico, LTV: ${round(ltv * 100)}%`
-    $('#urnStats').textContent = `Deposited ${gemName}: ${parseFloat(inkStr).toFixed(3)}, Rico debt: ${store.debtStr}`
+    $('#urnStats').textContent = `Deposited ${gemName}: ${parseFloat(inkStr).toFixed(3)}, Rico debt: ${store.debtStr}, Rico: ${ricoStr}`
+}
+
+const formatBalance = (usrRico) => {
+    // round down in case someone copies to repay
+    const decimals = 4
+    const truncate = BigInt(10) ** BigInt(18 - decimals) / 2n
+    const bal = usrRico > truncate ? usrRico - truncate : usrRico
+    return parseFloat(formatUnits(bal, 18)).toFixed(decimals)
 }
 
 const updateDricoLabel = (container, input) => {
