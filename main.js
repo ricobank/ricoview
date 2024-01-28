@@ -82,6 +82,7 @@ const MAXUINT  = BigInt(2)**BigInt(256) - BigInt(1);
 const FREE = MAXUINT  // -1
 const LOCK = BigInt(1)
 const X96 = BigInt(2) ** BigInt(96)
+const ERR_ACCT = '0x' + '1'.repeat(40);
 const chain = sepolia
 
 // Uni Position() return value indices
@@ -114,15 +115,16 @@ const updateRicoStats = async () => {
 
 const updateHook = async () => {
     reset()
-    $('#btnFrob').disabled = true
+    const frobBtn = $('#btnFrob')
+    const preState = frobBtn.disabled
     const showUni = uniMode()
 
+    frobBtn.disabled = true
     document.getElementById("uniHook").style.display   = showUni ? "block" : "none";
     document.getElementById("erc20Hook").style.display = showUni ? "none"  : "block";
     await (showUni ? updateUni() : updateERC20());
     updateSafetyFactor()
-
-    $('#btnFrob').disabled = false
+    frobBtn.disabled = preState
 }
 
 const updateUni = async () => {
@@ -445,7 +447,7 @@ const simpleConnect = async () => {
         [_account] = await window.ethereum.request({ method: 'eth_requestAccounts' });
         _transport = custom(window.ethereum)
     } catch (error) {
-        _account = '0x' + '1'.repeat(40);
+        _account = ERR_ACCT
         _transport = http()
         $('#btnFrob').disabled = true
         $('#connectionError').style.display = "block"
@@ -509,7 +511,7 @@ window.onload = async() => {
         });
     });
 
-    await walletClient.switchChain({ id: chain.id })
+    if(account !== ERR_ACCT) await walletClient.switchChain({ id: chain.id })
     await Promise.all([updateRicoStats(), updateHook()])
     bank.watchEvent.NewFlog(
         { caller: account },
