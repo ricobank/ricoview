@@ -16,22 +16,22 @@ input[type="checkbox"] {
 #uniHook {
     justify-content: center;
 }
-.flex-item {
-    margin: 10px;
-}
 
 #erc20Hook {
     justify-content: center;
-}
-.flex-item {
-    margin: 10px;
 }
 
 #uniFrobControls {
     justify-content: center;
 }
-#frobControls {
+.flex-item {
+    margin: 10px;
+}
+#erc20FrobControls {
     justify-content: center;
+}
+.flex-item {
+    margin: 10px;
 }
 #nftContainer {
     display: flex;
