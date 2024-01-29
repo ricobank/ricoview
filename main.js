@@ -3,6 +3,7 @@
 import { createPublicClient, createWalletClient, custom, decodeAbiParameters, encodeAbiParameters, formatUnits,
     getContract, hexToBigInt, http, pad, parseAbi, parseUnits, stringToHex, toHex } from 'viem'
 import { sepolia } from 'viem/chains'
+import BankDiamond from './BankDiamond.json';
 
 // sepolia addresses
 const bankAddress  = "0x343d30cCCe6c02987329C4fE2664E20F0aD39aa2"
@@ -10,7 +11,6 @@ const feedAddress  = "0x16Bb244cd38C2B5EeF3E5a1d5F7B6CC56d52AeF3"
 const nfpmAddress  = "0x1238536071E1c677A632429e3655c799b22cDA52"
 const wrapAddress  = "0x7fA88e1014B0640833a03ACfEC71F242b5fBDC85"
 const rico_addr    = "0x6c9BFDfBbAd23418b5c19e4c7aF2f926ffAbaDfa"
-const dai_addr     = "0x290eCE67DDA5eEc618b3Bb5DF04BE96f38894e29"
 
 const arb_addr     = "0x3c6765dd58D75786CD2B20968Aa13beF2a1D85B8"
 const stable_addr  = "0x698DEE4d8b5B9cbD435705ca523095230340D875"
@@ -41,58 +41,32 @@ const wrapAbi = parseAbi([
 const multicall3Abi = parseAbi([
     "function getCurrentBlockTimestamp() external view returns (uint256 timestamp)"
 ])
+const bankAbi = BankDiamond.abi
 
+const $ = document.querySelector.bind(document);
 const BLN = BigInt(10) ** BigInt(9)
 const WAD = BigInt(10) ** BigInt(18)
 const RAY = BigInt(10) ** BigInt(27)
-
-const tokenData = {
-    "mar":          { decimals: 0 },
-    "arb":          { decimals: 18 },
-    [arb_addr]:     { decimals: 18 },
-    "stable":       { decimals: 18 },
-    [stable_addr]:  { decimals: 18 },
-    "wdiveth":      { decimals: 18 },
-    [wdiveth_addr]: { decimals: 18 },
-};
-const gems = {
-    arb:     arb_addr,
-    wdiveth: wdiveth_addr,
-    stable:  stable_addr
-}
-const strToDisplay = {
-    arb:     "ARB",
-    wdiveth: "wdivETH",
-    stable:  "STABLE"
-}
-
-import BankDiamond from './BankDiamond.json';
-const bankAbi = BankDiamond.abi
-
-const x32 = (s) => stringToHex(s, {size: 32})
-const x20 = (s) => stringToHex(s, {size: 20})
-const rpaddr = (a) => a + '00'.repeat(12)
-
-let account, transport, publicClient, walletClient
-let bank, feed, nfpm, wrap
-
-const $ = document.querySelector.bind(document);
 const BANKYEAR = ((365 * 24) + 6) * 3600
 const MAXUINT  = BigInt(2)**BigInt(256) - BigInt(1);
 const FREE = MAXUINT  // -1
 const LOCK = BigInt(1)
 const X96 = BigInt(2) ** BigInt(96)
+const ERR_ACCT = '0x' + '1'.repeat(40);
 const chain = sepolia
-
 // Uni Position() return value indices
 const t0 = 2
 const t1 = 3
 const id = 12
+const tokenData = {
+    arb:     {decimals: 18, address: arb_addr,     display: "ARB", },
+    wdiveth: {decimals: 18, address: wdiveth_addr, display: "wdivETH", },
+    stable:  {decimals: 18, address: stable_addr,  display: "STABLE", },
+}
 
+let account, transport, publicClient, walletClient
+let bank, feed, nfpm, wrap
 let store = {}
-
-const apy =r=> round(((Number(r) / 10**27) ** BANKYEAR - 1) * 100)
-const round =f=> parseFloat(f).toPrecision(4)
 
 const borrowing =()=> $('input[name="sign"]:checked').value === "Borrow/deposit"
 const uniMode =()=> $('input[name="ctype"]:checked').value == "UNIV3 LP NFTs"
@@ -109,20 +83,23 @@ const updateRicoStats = async () => {
     const par = formatUnits(parRay, 27)
     const way = apy(wayRay)
     const mar = formatUnits(BigInt(feedData[0]), 27)
-    ricoStats.textContent = `Rico system price: ${round(par)}, Price rate: ${way}%, Market price: ${round(mar)}`
+    ricoStats.textContent = `Par: ${round(par)}, Price rate: ${way}%, Market: ${round(mar)}`
 }
 
 const updateHook = async () => {
     reset()
-    $('#btnFrob').disabled = true
+    const frobBtn = $('#btnFrob')
     const showUni = uniMode()
 
+    frobBtn.disabled = true
     document.getElementById("uniHook").style.display   = showUni ? "block" : "none";
+    document.getElementById("uniFrobControls").style.display   = showUni ? "flex" : "none";
+
     document.getElementById("erc20Hook").style.display = showUni ? "none"  : "block";
+    document.getElementById("erc20FrobControls").style.display = showUni ? "none"  : "flex";
     await (showUni ? updateUni() : updateERC20());
     updateSafetyFactor()
-
-    $('#btnFrob').disabled = false
+    frobBtn.disabled = account === ERR_ACCT
 }
 
 const updateUni = async () => {
@@ -130,7 +107,7 @@ const updateUni = async () => {
     NFTsContainer.innerHTML = '';
     updateDricoLabel($('#uniDricoLabelContainer'), $('#uniDrico'))
 
-    const [numNFTs, ilk, ink, urn, par, timestamp] = await Promise.all([
+    const [numNFTs, ilk, ink, urn, par, timestamp, usrRico] = await Promise.all([
         nfpm.read.balanceOf([account]),
         bank.read.ilks([uniIlk]),
         bank.read.ink( [uniIlk, account]),
@@ -141,18 +118,26 @@ const updateUni = async () => {
             abi: multicall3Abi,
             functionName: 'getCurrentBlockTimestamp'
         }),
+        publicClient.readContract({
+            address: rico_addr,
+            abi: gemAbi,
+            functionName: 'balanceOf',
+            args: [account]
+        }),
     ])
     const stretchedRack = grow(ilk.rack, ilk.fee, timestamp - ilk.rho)
     const fee  = apy(ilk.fee)
     const dust = formatUnits(ilk.dust, 45)
     const debt = formatUnits(urn * stretchedRack, 45)
+    const ricoStr = formatBalance(usrRico)
     store.ink  = decodeAbiParameters([{ name: 'ink', type: 'uint[]' }], ink)[0]
     store.art  = urn
     store.rack = stretchedRack
     store.par  = par
     store.debtStr = parseFloat(debt).toFixed(3)
+    const inkStr = store.ink.length === 0 ? 'none' : store.ink
     $('#uniIlkStats0').textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)} Rico`
-    $('#uniUrnStats').textContent = `Deposited NFTS: ${store.ink}, Rico debt: ${store.debtStr}`
+    $('#uniUrnStats').textContent = `Deposited NFTS: ${inkStr}, Rico debt: ${store.debtStr}, Rico: ${ricoStr}`
 
     let usrIDs = [];
     if (borrowing()) {
@@ -261,7 +246,7 @@ function getSelectedNfts() {
 const updateERC20 = async () => {
     const ilkStr = $('input[name="ilk"]:checked').value
     const ilkHex = stringToHex(ilkStr, {size: 32})
-    const gemName = strToDisplay[ilkStr]
+    const gemName = tokenData[ilkStr].display
     updateDricoLabel($('#dricoLabelContainer'), $('#drico'))
     updateDinkLabel(ilkStr, gemName)
 
@@ -271,20 +256,20 @@ const updateERC20 = async () => {
     ])
     const src = srcB32.slice(0, 42)
 
-    const [ilk, urn, ink, par, liqr, usrGemAllowance, usrGemBal, feedData, timestamp] = await Promise.all([
+    const [ilk, urn, ink, par, liqr, usrGemAllowance, usrGemBal, feedData, timestamp, usrRico] = await Promise.all([
         bank.read.ilks([ilkHex]),
         bank.read.urns([ilkHex, account]),
         bank.read.ink( [ilkHex, account]),
         bank.read.par(),
         bank.read.geth([ilkHex, stringToHex('liqr', {size: 32}), []]),
         publicClient.readContract({
-            address: gems[ilkStr],
+            address: tokenData[ilkStr].address,
             abi: gemAbi,
             functionName: 'allowance',
             args: [account, bankAddress]
         }),
         publicClient.readContract({
-            address: gems[ilkStr],
+            address: tokenData[ilkStr].address,
             abi: gemAbi,
             functionName: 'balanceOf',
             args: [account]
@@ -295,6 +280,12 @@ const updateERC20 = async () => {
             abi: multicall3Abi,
             functionName: 'getCurrentBlockTimestamp'
         }),
+        publicClient.readContract({
+            address: rico_addr,
+            abi: gemAbi,
+            functionName: 'balanceOf',
+            args: [account]
+        }),
     ])
 
     const stretchedRack = grow(ilk.rack, ilk.fee, timestamp - ilk.rho)
@@ -303,6 +294,7 @@ const updateERC20 = async () => {
     const debt = formatUnits(urn * stretchedRack, 45)
     const inkStr = formatUnits(BigInt(ink), tokenData[ilkStr].decimals)
     const ltv  = Number(BLN) / Number(BigInt(liqr) / WAD)
+    const ricoStr = formatBalance(usrRico)
     store.ink  = BigInt(ink)
     store.art  = urn
     store.par  = par
@@ -313,7 +305,7 @@ const updateERC20 = async () => {
     store.usrGemBal = usrGemBal
     store.debtStr = parseFloat(debt).toFixed(3)
     $('#ilkStats0').textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)} Rico, LTV: ${round(ltv * 100)}%`
-    $('#urnStats').textContent = `Deposited ${gemName}: ${parseFloat(inkStr).toFixed(3)}, Rico debt: ${store.debtStr}`
+    $('#urnStats').textContent = `Deposited ${gemName}: ${parseFloat(inkStr).toFixed(3)}, Rico debt: ${store.debtStr}, Rico: ${ricoStr}`
 }
 
 const updateDricoLabel = (container, input) => {
@@ -411,19 +403,19 @@ const frobUni = async () => {
 }
 
 const frobERC20 = async () => {
-    const ilk = $('input[name="ilk"]:checked').value
+    const ilkStr = $('input[name="ilk"]:checked').value
     const sign = borrowing() ? "" : "-"
     const dart = readArt(sign, $('#drico'))
     let dink
     if(store.allInk) {
         dink = borrowing() ? store.usrGemBal : -store.ink
     } else {
-        dink = parseUnits(sign + $('#dink').value, tokenData[ilk].decimals);
+        dink = parseUnits(sign + $('#dink').value, tokenData[ilkStr].decimals);
     }
     if (dink > store.usrGemAllowance) {
         const {request} = await publicClient.simulateContract({
             abi: gemAbi,
-            address: gems[ilk],
+            address: tokenData[ilkStr].address,
             functionName: 'approve',
             args: [bankAddress, MAXUINT],
             account: account,
@@ -434,10 +426,10 @@ const frobERC20 = async () => {
     if (dink < 0) dink += (BigInt(2)**BigInt(256))
     const dinkB32 = pad(toHex(dink))
 
-    await bank.write.frob([stringToHex(ilk, {size: 32}), account, dinkB32, dart])
+    await bank.write.frob([stringToHex(ilkStr, {size: 32}), account, dinkB32, dart])
 }
 
-// attempt connect to injected window.ethereum. No connect button, direct wallet connect support, or dependency
+// attempt to connect to injected window.ethereum. No connect button, direct wallet connect support, or dependency
 const simpleConnect = async () => {
     let _account, _transport
     try {
@@ -445,7 +437,7 @@ const simpleConnect = async () => {
         [_account] = await window.ethereum.request({ method: 'eth_requestAccounts' });
         _transport = custom(window.ethereum)
     } catch (error) {
-        _account = '0x' + '1'.repeat(40);
+        _account = ERR_ACCT
         _transport = http()
         $('#btnFrob').disabled = true
         $('#connectionError').style.display = "block"
@@ -509,7 +501,7 @@ window.onload = async() => {
         });
     });
 
-    await walletClient.switchChain({ id: chain.id })
+    if(account !== ERR_ACCT) await walletClient.switchChain({ id: chain.id })
     await Promise.all([updateRicoStats(), updateHook()])
     bank.watchEvent.NewFlog(
         { caller: account },
@@ -517,7 +509,27 @@ window.onload = async() => {
     )
 }
 
+/* Pure helpers */
+
+const formatBalance = (usrRico) => {
+    // round down in case someone copies to repay
+    const decimals = 4
+    const truncate = BigInt(10) ** BigInt(18 - decimals) / 2n
+    const bal = usrRico > truncate ? usrRico - truncate : usrRico
+    return parseFloat(formatUnits(bal, 18)).toFixed(decimals)
+}
+
 const maxBigInt = (a, b) => a > b ? a : b
+
+const apy =r=> round(((Number(r) / 10**27) ** BANKYEAR - 1) * 100)
+
+const round =f=> parseFloat(f).toPrecision(4)
+
+const x32 = (s) => stringToHex(s, {size: 32})
+
+const x20 = (s) => stringToHex(s, {size: 20})
+
+const rpaddr = (a) => a + '00'.repeat(12)
 
 const grow = (amt, ray, dt) => {
     for (let i = 0; i < dt; i++) {

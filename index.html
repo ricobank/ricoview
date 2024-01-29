@@ -26,14 +26,6 @@
     <input type="radio" id="ERC20" name="ctype" value="ERC20">
     <label for="ERC20">ERC20 tokens</label>
 </div>
-<br>
-<div>
-    <pre style="display: inline;">Action:</pre>
-    <input type="radio" id="borrow" name="sign" value="Borrow/deposit" checked>
-    <label for="borrow">Borrow/deposit</label>
-    <input type="radio" id="repay" name="sign" value="Repay/withdraw">
-    <label for="repay">Repay/withdraw</label>
-</div>
 
 <br>
 
@@ -44,22 +36,10 @@
     <div>
         <pre id="uniUrnStats"></pre>
     </div>
-    <div id="uniFrobControls" style="display:flex">
-        <div class="flex-item">
-            <label id="NFTList"></label>
-            <div id="nftContainer"></div>
-        </div>
-        <div class="flex-item">
-            <label id="uniDricoLabelContainer"></label>
-            <div>
-                <input type="text" id="uniDrico" name="uniDrico" value="0" style='width:18ch'>
-            </div>
-        </div>
-    </div>
 </div>
-
 <div id="erc20Hook" style="display:none">
     <div>
+        <pre style="display: inline;">Token:</pre>
         <input type="radio" id="arb" name="ilk" value="arb" checked>
         <label for="arb">ARB</label>
         <input type="radio" id="wdiveth" name="ilk" value="wdiveth">
@@ -67,24 +47,52 @@
         <input type="radio" id="stable" name="ilk" value="stable">
         <label for="stable">STABLE</label>
     </div>
+
+    <br>
+
     <div>
         <pre id="ilkStats0"></pre>
     </div>
     <div>
         <pre id="urnStats"></pre>
     </div>
-    <div id="frobControls" style="display:flex">
-        <div class="flex-item">
-            <label id="dinkLabelContainer"></label>
-            <div>
-                <input type="text" id="dink" name="dink" value="0" style='width:15ch'>
-            </div>
+</div>
+
+<br>
+
+<div>
+    <pre style="display: inline;">Action:</pre>
+    <input type="radio" id="borrow" name="sign" value="Borrow/deposit" checked>
+    <label for="borrow">Borrow/deposit</label>
+    <input type="radio" id="repay" name="sign" value="Repay/withdraw">
+    <label for="repay">Repay/withdraw</label>
+</div>
+
+<br>
+
+<div id="uniFrobControls" style="display:flex">
+    <div class="flex-item">
+        <label id="NFTList"></label>
+        <div id="nftContainer"></div>
+    </div>
+    <div class="flex-item">
+        <label id="uniDricoLabelContainer"></label>
+        <div>
+            <input type="text" id="uniDrico" name="uniDrico" value="0" style='width:18ch'>
         </div>
-        <div class="flex-item">
-            <label id="dricoLabelContainer"></label>
-            <div>
-                <input type="text" id="drico" name="drico" value="0" style='width:15ch'>
-            </div>
+    </div>
+</div>
+<div id="erc20FrobControls" style="display:flex">
+    <div class="flex-item">
+        <label id="dinkLabelContainer"></label>
+        <div>
+            <input type="text" id="dink" name="dink" value="0" style='width:15ch'>
+        </div>
+    </div>
+    <div class="flex-item">
+        <label id="dricoLabelContainer"></label>
+        <div>
+            <input type="text" id="drico" name="drico" value="0" style='width:15ch'>
         </div>
     </div>
 </div>
@@ -95,6 +103,11 @@
     <pre style="display: inline;" id="safetyFactor" title="Liquidation possible when safety factor < 1.0">New safety factor: ∞</pre>
     <input type="button" id="btnFrob">
 </div>
+
+<div id="connectionError" style="display:none; color: red;">
+    <p>No account found, use a browser wallet like frame.sh/rabby/metamask and allow access</p>
+</div>
+
 <div style="height: 150px"></div>
 
 
@@ -108,10 +121,6 @@ This page is designed to be saved (as in "File > Save") and be usable even if DN
 While we try our best to avoid software errors, we can't guarantee their absence.  Use this site at your own risk and only if you know what you're doing.
 </p>
 <a href="https://github.com/ricobank/ricoview">Code for this site on GitHub</a>
-
-<div id="connectionError" style="display:none; color: red;">
-    <p>No account found, use a browser wallet like frame.sh/rabby/metamask and allow access</p>
-</div>
 
 <noscript>You need to enable JavaScript to use Rico.</noscript>
 </body>
