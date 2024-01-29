@@ -395,7 +395,8 @@ const frobUni = async () => {
     if (nfts.length > 0) {
         const dir = sign === "-" ? FREE : LOCK
         if (dir === LOCK && !await nfpm.read.isApprovedForAll([account, bankAddress])) {
-            await nfpm.write.setApprovalForAll([bankAddress, true])
+            const hash = await nfpm.write.setApprovalForAll([bankAddress, true])
+            await publicClient.waitForTransactionReceipt({hash})
         }
         dink = encodeAbiParameters([{ name: 'dink', type: 'uint[]' }], [[dir].concat(nfts)]);
     }
@@ -413,14 +414,13 @@ const frobERC20 = async () => {
         dink = parseUnits(sign + $('#dink').value, tokenData[ilkStr].decimals);
     }
     if (dink > store.usrGemAllowance) {
-        const {request} = await publicClient.simulateContract({
+        const hash = await walletClient.writeContract({
             abi: gemAbi,
             address: tokenData[ilkStr].address,
             functionName: 'approve',
             args: [bankAddress, MAXUINT],
-            account: account,
         })
-        await walletClient.writeContract(request)
+        await publicClient.waitForTransactionReceipt({hash})
     }
 
     if (dink < 0) dink += (BigInt(2)**BigInt(256))
