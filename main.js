@@ -400,7 +400,10 @@ const frobUni = async () => {
         }
         dink = encodeAbiParameters([{ name: 'dink', type: 'uint[]' }], [[dir].concat(nfts)]);
     }
-    await bank.write.frob([uniIlk, account, dink, dart])
+
+    const hash = await bank.write.frob([uniIlk, account, dink, dart])
+    await publicClient.waitForTransactionReceipt({hash})
+    await Promise.all([updateRicoStats(), updateHook()])
 }
 
 const frobERC20 = async () => {
@@ -426,7 +429,9 @@ const frobERC20 = async () => {
     if (dink < 0) dink += (BigInt(2)**BigInt(256))
     const dinkB32 = pad(toHex(dink))
 
-    await bank.write.frob([stringToHex(ilkStr, {size: 32}), account, dinkB32, dart])
+    const hash = await bank.write.frob([x32(ilkStr), account, dinkB32, dart])
+    await publicClient.waitForTransactionReceipt({hash})
+    await Promise.all([updateRicoStats(), updateHook()])
 }
 
 // attempt to connect to injected window.ethereum. No connect button, direct wallet connect support, or dependency
@@ -503,10 +508,6 @@ window.onload = async() => {
 
     if(account !== ERR_ACCT) await walletClient.switchChain({ id: chain.id })
     await Promise.all([updateRicoStats(), updateHook()])
-    bank.watchEvent.NewFlog(
-        { caller: account },
-        { async onLogs(logs) { await Promise.all([updateRicoStats(), updateHook()]) } }
-    )
 }
 
 /* Pure helpers */
