@@ -48,11 +48,13 @@ const bankAddress  = "0x343d30cCCe6c02987329C4fE2664E20F0aD39aa2"
 const feedAddress  = "0x16Bb244cd38C2B5EeF3E5a1d5F7B6CC56d52AeF3"
 const nfpmAddress  = "0x1238536071E1c677A632429e3655c799b22cDA52"
 const wrapAddress  = "0x7fA88e1014B0640833a03ACfEC71F242b5fBDC85"
-const rico_addr    = "0x6c9BFDfBbAd23418b5c19e4c7aF2f926ffAbaDfa"
+const ricoAddr    = "0x6c9BFDfBbAd23418b5c19e4c7aF2f926ffAbaDfa"
 
-const arb_addr     = "0x3c6765dd58D75786CD2B20968Aa13beF2a1D85B8"
-const stable_addr  = "0x698DEE4d8b5B9cbD435705ca523095230340D875"
-const wdiveth_addr = "0x69619b71b52826B93205299e33259E1547ff3331"
+const arbAddr     = "0x3c6765dd58D75786CD2B20968Aa13beF2a1D85B8"
+const stableAddr  = "0x698DEE4d8b5B9cbD435705ca523095230340D875"
+const wdivethAddr = "0x69619b71b52826B93205299e33259E1547ff3331"
+const wethAddress = "0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9"
+
 
 const uniIlk = (0,toHex/* stringToHex */.$G)(":uninft", {size: 32})
 
@@ -77,7 +79,12 @@ const wrapAbi = (0,parseAbi/* parseAbi */.V)([
     "function total(address nfpm, uint tokenId, uint160 sqrtPriceX96) external view returns (uint amount0, uint amount1)"
 ])
 const multicall3Abi = (0,parseAbi/* parseAbi */.V)([
-    "function getCurrentBlockTimestamp() external view returns (uint256 timestamp)"
+    "function getCurrentBlockTimestamp() external view returns (uint256 timestamp)",
+    "function getEthBalance(address addr) external view returns (uint256 balance)"
+])
+const wethAbi = (0,parseAbi/* parseAbi */.V)([
+    "function deposit() external payable",
+    "function withdraw(uint256 wad) external"
 ])
 const bankAbi = BankDiamond_namespaceObject.Mt
 
@@ -91,19 +98,21 @@ const FREE = MAXUINT  // -1
 const LOCK = BigInt(1)
 const X96 = BigInt(2) ** BigInt(96)
 const ERR_ACCT = '0x' + '1'.repeat(40);
+const MIN_ETH = BigInt(10) ** BigInt(17)  // TODO on arb this could be smaller(17->16)
 const chain = sepolia/* sepolia */.F
 // Uni Position() return value indices
 const t0 = 2
 const t1 = 3
 const id = 12
 const tokenData = {
-    arb:     {decimals: 18, address: arb_addr,     display: "ARB", },
-    wdiveth: {decimals: 18, address: wdiveth_addr, display: "wdivETH", },
-    stable:  {decimals: 18, address: stable_addr,  display: "STABLE", },
+    arb:     {decimals: 18, address: arbAddr,     display: "ARB", },
+    wdiveth: {decimals: 18, address: wdivethAddr, display: "wdivETH", },
+    stable:  {decimals: 18, address: stableAddr,  display: "STABLE", },
+    weth:    {decimals: 18, address: wethAddress, display: "WETH", },
 }
 
 let account, transport, publicClient, walletClient
-let bank, feed, nfpm, wrap
+let bank, feed, nfpm, wrap, weth
 let store = {}
 
 const borrowing =()=> $('input[name="sign"]:checked').value === "Borrow/deposit"
@@ -157,7 +166,7 @@ const updateUni = async () => {
             functionName: 'getCurrentBlockTimestamp'
         }),
         publicClient.readContract({
-            address: rico_addr,
+            address: ricoAddr,
             abi: gemAbi,
             functionName: 'balanceOf',
             args: [account]
@@ -294,7 +303,7 @@ const updateERC20 = async () => {
     ])
     const src = srcB32.slice(0, 42)
 
-    const [ilk, urn, ink, par, liqr, usrGemAllowance, usrGemBal, feedData, timestamp, usrRico] = await Promise.all([
+    const [ilk, urn, ink, par, liqr, usrGemAllowance, usrGemBal, feedData, timestamp, ethBal, usrRico] = await Promise.all([
         bank.read.ilks([ilkHex]),
         bank.read.urns([ilkHex, account]),
         bank.read.ink( [ilkHex, account]),
@@ -319,7 +328,13 @@ const updateERC20 = async () => {
             functionName: 'getCurrentBlockTimestamp'
         }),
         publicClient.readContract({
-            address: rico_addr,
+            address: chain.contracts.multicall3.address,
+            abi: multicall3Abi,
+            functionName: 'getEthBalance',
+            args: [account]
+        }),
+        publicClient.readContract({
+            address: ricoAddr,
             abi: gemAbi,
             functionName: 'balanceOf',
             args: [account]
@@ -333,6 +348,7 @@ const updateERC20 = async () => {
     const inkStr = (0,formatUnits/* formatUnits */.b)(BigInt(ink), tokenData[ilkStr].decimals)
     const ltv  = Number(BLN) / Number(BigInt(liqr) / WAD)
     const ricoStr = formatBalance(usrRico)
+    const unwrapped = (ilkStr === 'weth') ? maxBigInt(ethBal - MIN_ETH, 0n) : 0
     store.ink  = BigInt(ink)
     store.art  = urn
     store.par  = par
@@ -341,6 +357,7 @@ const updateERC20 = async () => {
     store.feed = BigInt(feedData[0])
     store.usrGemAllowance = usrGemAllowance
     store.usrGemBal = usrGemBal
+    store.unwrapped = unwrapped
     store.debtStr = parseFloat(debt).toFixed(3)
     $('#ilkStats0').textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)} Rico, LTV: ${round(ltv * 100)}%`
     $('#urnStats').textContent = `Deposited ${gemName}: ${parseFloat(inkStr).toFixed(3)}, Rico debt: ${store.debtStr}, Rico: ${ricoStr}`
@@ -368,7 +385,7 @@ const updateDinkLabel = (ilkStr, gemName) => {
 
     $('#dinkAllCheckbox').addEventListener('change', event => {
         store.allInk = input.disabled = event.target.checked
-        let inkValue = borrowing() ? store.usrGemBal : store.ink
+        let inkValue = borrowing() ? store.usrGemBal + store.unwrapped : store.ink
         let inkLongText = (0,formatUnits/* formatUnits */.b)(inkValue, tokenData[ilkStr].decimals)
         if(store.allInk) input.value = parseFloat(inkLongText).toFixed(3)
         updateSafetyFactor()
@@ -433,11 +450,15 @@ const frobUni = async () => {
     if (nfts.length > 0) {
         const dir = sign === "-" ? FREE : LOCK
         if (dir === LOCK && !await nfpm.read.isApprovedForAll([account, bankAddress])) {
-            await nfpm.write.setApprovalForAll([bankAddress, true])
+            const hash = await nfpm.write.setApprovalForAll([bankAddress, true])
+            await publicClient.waitForTransactionReceipt({hash})
         }
         dink = (0,encodeAbiParameters/* encodeAbiParameters */.E)([{ name: 'dink', type: 'uint[]' }], [[dir].concat(nfts)]);
     }
-    await bank.write.frob([uniIlk, account, dink, dart])
+
+    const hash = await bank.write.frob([uniIlk, account, dink, dart])
+    await publicClient.waitForTransactionReceipt({hash})
+    await Promise.all([updateRicoStats(), updateHook()])
 }
 
 const frobERC20 = async () => {
@@ -446,25 +467,32 @@ const frobERC20 = async () => {
     const dart = readArt(sign, $('#drico'))
     let dink
     if(store.allInk) {
-        dink = borrowing() ? store.usrGemBal : -store.ink
+        dink = borrowing() ? store.usrGemBal + store.unwrapped : -store.ink
     } else {
         dink = (0,parseUnits/* parseUnits */.v)(sign + $('#dink').value, tokenData[ilkStr].decimals);
     }
     if (dink > store.usrGemAllowance) {
-        const {request} = await publicClient.simulateContract({
+        const hash = await walletClient.writeContract({
             abi: gemAbi,
             address: tokenData[ilkStr].address,
             functionName: 'approve',
             args: [bankAddress, MAXUINT],
-            account: account,
         })
-        await walletClient.writeContract(request)
+        await publicClient.waitForTransactionReceipt({hash})
     }
-
+    if (dink > store.usrGemBal) {
+        const hash = await weth.write.deposit([], {value: dink - store.usrGemBal})
+        await publicClient.waitForTransactionReceipt({hash})
+    }
+    const unwrap = -dink
     if (dink < 0) dink += (BigInt(2)**BigInt(256))
     const dinkB32 = (0,pad/* pad */.vk)((0,toHex/* toHex */.NC)(dink))
 
-    await bank.write.frob([(0,toHex/* stringToHex */.$G)(ilkStr, {size: 32}), account, dinkB32, dart])
+    const hash = await bank.write.frob([x32(ilkStr), account, dinkB32, dart])
+    await publicClient.waitForTransactionReceipt({hash})
+    await Promise.all([updateRicoStats(), updateHook()])
+
+    if (unwrap > 0 && ilkStr === 'weth') await weth.write.withdraw([unwrap])
 }
 
 // attempt to connect to injected window.ethereum. No connect button, direct wallet connect support, or dependency
@@ -513,6 +541,11 @@ window.onload = async() => {
       abi: nfpmAbi,
       client: _client
     })
+    weth = (0,getContract/* getContract */.uN)({
+      address: wethAddress,
+      abi: wethAbi,
+      client: _client
+    })
     wrap = (0,getContract/* getContract */.uN)({
       address: wrapAddress,
       abi: wrapAbi,
@@ -541,10 +574,6 @@ window.onload = async() => {
 
     if(account !== ERR_ACCT) await walletClient.switchChain({ id: chain.id })
     await Promise.all([updateRicoStats(), updateHook()])
-    bank.watchEvent.NewFlog(
-        { caller: account },
-        { async onLogs(logs) { await Promise.all([updateRicoStats(), updateHook()]) } }
-    )
 }
 
 /* Pure helpers */
