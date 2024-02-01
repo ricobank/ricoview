@@ -2,21 +2,23 @@
 
 import { createPublicClient, createWalletClient, custom, decodeAbiParameters, encodeAbiParameters, formatUnits,
     getContract, hexToBigInt, http, pad, parseAbi, parseUnits, stringToHex, toHex } from 'viem'
-import { sepolia } from 'viem/chains'
+import { arbitrum } from 'viem/chains'
 import BankDiamond from './BankDiamond.json';
 
-// sepolia addresses
-const bankAddress  = "0x343d30cCCe6c02987329C4fE2664E20F0aD39aa2"
-const feedAddress  = "0x16Bb244cd38C2B5EeF3E5a1d5F7B6CC56d52AeF3"
-const nfpmAddress  = "0x1238536071E1c677A632429e3655c799b22cDA52"
-const wrapAddress  = "0x7fA88e1014B0640833a03ACfEC71F242b5fBDC85"
-const ricoAddr    = "0x6c9BFDfBbAd23418b5c19e4c7aF2f926ffAbaDfa"
-
-const arbAddr     = "0x3c6765dd58D75786CD2B20968Aa13beF2a1D85B8"
-const stableAddr  = "0x698DEE4d8b5B9cbD435705ca523095230340D875"
-const wdivethAddr = "0x69619b71b52826B93205299e33259E1547ff3331"
-const wethAddress = "0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9"
-
+const bankAddr   = "0x598C6c1cd9459F882530FC9D7dA438CB74C6CB3b"
+const feedAddr   = "0xa84F3ad46f6Fa8D09B52EbC61f1C25aeF33231F8"
+const nfpmAddr   = "0xC36442b4a4522E871399CD717aBDD847Ab11FE88"
+const wrapAddr   = "0xf18eA2cf7A87C3F11fF8FF6B073DdEDfE2497f03"
+const ricoAddr   = "0x5374EcC160A4bd68446B43B5A6B132F9c001C54C"
+const arbAddr    = "0x912CE59144191C1204E64559FE8253a0e49E6548"
+const daiAddr    = "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1"
+const linkAddr   = "0xf97f4df75117a78c1A5a0DBb814Af92458539FB4"
+const rethAddr   = "0xEC70Dcb4A1EFa46b8F2D97C310C9c4790ba5ffA8"
+const usdcAddr   = "0xaf88d065e77c8cC2239327C5EDb3A432268e5831"
+const usdc_eAddr = "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8"
+const wbtcAddr   = "0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f"
+const wethAddr   = "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1"
+const wstethAddr = "0x5979D7b546E38E414F7E9822514be443A4800529"
 
 const uniIlk = stringToHex(":uninft", {size: 32})
 
@@ -60,17 +62,23 @@ const FREE = MAXUINT  // -1
 const LOCK = BigInt(1)
 const X96 = BigInt(2) ** BigInt(96)
 const ERR_ACCT = '0x' + '1'.repeat(40);
-const MIN_ETH = BigInt(10) ** BigInt(17)  // TODO on arb this could be smaller(17->16)
-const chain = sepolia
+const MIN_ETH = BigInt(10) ** BigInt(16)
+const chain = arbitrum
 // Uni Position() return value indices
 const t0 = 2
 const t1 = 3
 const id = 12
+const x32 = (s) => stringToHex(s, {size: 32})
 const tokenData = {
-    arb:     {decimals: 18, address: arbAddr,     display: "ARB", },
-    wdiveth: {decimals: 18, address: wdivethAddr, display: "wdivETH", },
-    stable:  {decimals: 18, address: stableAddr,  display: "STABLE", },
-    weth:    {decimals: 18, address: wethAddress, display: "WETH", },
+    arb:    {decimals: 18, address: arbAddr,    display: "ARB",    ilk: x32("arb")},
+    dai:    {decimals: 18, address: daiAddr,    display: "DAI",    ilk: x32("dai")},
+    link:   {decimals: 18, address: linkAddr,   display: "LINK",   ilk: x32("link")},
+    reth:   {decimals: 18, address: rethAddr,   display: "rETH",   ilk: x32("reth")},
+    usdc:   {decimals: 6,  address: usdcAddr,   display: "USDC",   ilk: x32("usdc")},
+    usdc_e: {decimals: 6,  address: usdc_eAddr, display: "USDC.e", ilk: x32("usdc.e")},
+    wbtc:   {decimals: 8,  address: wbtcAddr,   display: "WBTC",   ilk: x32("wbtc")},
+    weth:   {decimals: 18, address: wethAddr,   display: "WETH",   ilk: x32("weth")},
+    wsteth: {decimals: 18, address: wstethAddr, display: "wstETH", ilk: x32("wsteth")},
 }
 
 let account, transport, publicClient, walletClient
@@ -202,7 +210,7 @@ const valueNFTs = async (nfts) => {
 
     const valProms = positions.map(async pos => {
         const sqrtPriceX96 = sqrt(gemToPrice[pos[t1]] * X96 * X96 / gemToPrice[pos[t0]])
-        const [amt0, amt1] = await wrap.read.total([nfpmAddress, pos[id], sqrtPriceX96])
+        const [amt0, amt1] = await wrap.read.total([nfpmAddr, pos[id], sqrtPriceX96])
         const liqr = maxBigInt(BigInt(tokToArgs[pos[t0]].liqr), BigInt(tokToArgs[pos[t1]].liqr))
         return [pos[id], (amt0 * gemToPrice[pos[t0]] + amt1 * gemToPrice[pos[t1]]) / liqr]
     })
@@ -254,7 +262,7 @@ function getSelectedNfts() {
 
 const updateERC20 = async () => {
     const ilkStr = $('input[name="ilk"]:checked').value
-    const ilkHex = stringToHex(ilkStr, {size: 32})
+    const ilkHex = tokenData[ilkStr].ilk
     const gemName = tokenData[ilkStr].display
     updateDricoLabel($('#dricoLabelContainer'), $('#drico'))
     updateDinkLabel(ilkStr, gemName)
@@ -275,7 +283,7 @@ const updateERC20 = async () => {
             address: tokenData[ilkStr].address,
             abi: gemAbi,
             functionName: 'allowance',
-            args: [account, bankAddress]
+            args: [account, bankAddr]
         }),
         publicClient.readContract({
             address: tokenData[ilkStr].address,
@@ -411,8 +419,8 @@ const frobUni = async () => {
     const nfts = getSelectedNfts()
     if (nfts.length > 0) {
         const dir = sign === "-" ? FREE : LOCK
-        if (dir === LOCK && !await nfpm.read.isApprovedForAll([account, bankAddress])) {
-            const hash = await nfpm.write.setApprovalForAll([bankAddress, true])
+        if (dir === LOCK && !await nfpm.read.isApprovedForAll([account, bankAddr])) {
+            const hash = await nfpm.write.setApprovalForAll([bankAddr, true])
             await publicClient.waitForTransactionReceipt({hash})
         }
         dink = encodeAbiParameters([{ name: 'dink', type: 'uint[]' }], [[dir].concat(nfts)]);
@@ -438,7 +446,7 @@ const frobERC20 = async () => {
             abi: gemAbi,
             address: tokenData[ilkStr].address,
             functionName: 'approve',
-            args: [bankAddress, MAXUINT],
+            args: [bankAddr, MAXUINT],
         })
         await publicClient.waitForTransactionReceipt({hash})
     }
@@ -450,7 +458,7 @@ const frobERC20 = async () => {
     if (dink < 0) dink += (BigInt(2)**BigInt(256))
     const dinkB32 = pad(toHex(dink))
 
-    const hash = await bank.write.frob([x32(ilkStr), account, dinkB32, dart])
+    const hash = await bank.write.frob([tokenData[ilkStr].ilk, account, dinkB32, dart])
     await publicClient.waitForTransactionReceipt({hash})
     await Promise.all([updateRicoStats(), updateHook()])
 
@@ -489,27 +497,27 @@ window.onload = async() => {
     })
     const _client = {public: publicClient, wallet: walletClient}
     bank = getContract({
-      address: bankAddress,
+      address: bankAddr,
       abi: bankAbi,
       client: _client
     })
     feed = getContract({
-      address: feedAddress,
+      address: feedAddr,
       abi: feedAbi,
       client: _client
     })
     nfpm = getContract({
-      address: nfpmAddress,
+      address: nfpmAddr,
       abi: nfpmAbi,
       client: _client
     })
     weth = getContract({
-      address: wethAddress,
+      address: wethAddr,
       abi: wethAbi,
       client: _client
     })
     wrap = getContract({
-      address: wrapAddress,
+      address: wrapAddr,
       abi: wrapAbi,
       client: _client
     })
@@ -553,8 +561,6 @@ const maxBigInt = (a, b) => a > b ? a : b
 const apy =r=> round(((Number(r) / 10**27) ** BANKYEAR - 1) * 100)
 
 const round =f=> parseFloat(f).toPrecision(4)
-
-const x32 = (s) => stringToHex(s, {size: 32})
 
 const x20 = (s) => stringToHex(s, {size: 20})
 
