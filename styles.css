@@ -8,9 +8,18 @@ body {
 
 input[type="radio"] {
     accent-color: black;
+    margin: 0;
+    vertical-align: text-top;
 }
 input[type="checkbox"] {
     accent-color: black;
+    margin: 0;
+    vertical-align: text-top;
+}
+
+label {
+    margin-left: 0;
+    margin-right: 5px;
 }
 
 #uniHook {

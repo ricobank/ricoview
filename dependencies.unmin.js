@@ -3243,13 +3243,13 @@ async function writeContract(client, parameters) {
 
 /***/ }),
 
-/***/ 4813:
+/***/ 5433:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  F: () => (/* binding */ sepolia)
+  y: () => (/* binding */ arbitrum)
 });
 
 ;// CONCATENATED MODULE: ./node_modules/viem/_esm/utils/chain/defineChain.js
@@ -3262,38 +3262,32 @@ function defineChain(chain) {
     };
 }
 //# sourceMappingURL=defineChain.js.map
-;// CONCATENATED MODULE: ./node_modules/viem/_esm/chains/definitions/sepolia.js
+;// CONCATENATED MODULE: ./node_modules/viem/_esm/chains/definitions/arbitrum.js
 
-const sepolia = /*#__PURE__*/ defineChain({
-    id: 11155111,
-    name: 'Sepolia',
-    nativeCurrency: { name: 'Sepolia Ether', symbol: 'SEP', decimals: 18 },
+const arbitrum = /*#__PURE__*/ defineChain({
+    id: 42161,
+    name: 'Arbitrum One',
+    nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
     rpcUrls: {
         default: {
-            http: ['https://rpc.sepolia.org'],
+            http: ['https://arb1.arbitrum.io/rpc'],
         },
     },
     blockExplorers: {
         default: {
-            name: 'Etherscan',
-            url: 'https://sepolia.etherscan.io',
-            apiUrl: 'https://api-sepolia.etherscan.io/api',
+            name: 'Arbiscan',
+            url: 'https://arbiscan.io',
+            apiUrl: 'https://api.arbiscan.io/api',
         },
     },
     contracts: {
         multicall3: {
             address: '0xca11bde05977b3631167028862be2a173976ca11',
-            blockCreated: 751532,
-        },
-        ensRegistry: { address: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e' },
-        ensUniversalResolver: {
-            address: '0xBaBC7678D7A63104f1658c11D6AE9A21cdA09725',
-            blockCreated: 5043334,
+            blockCreated: 7654707,
         },
     },
-    testnet: true,
 });
-//# sourceMappingURL=sepolia.js.map
+//# sourceMappingURL=arbitrum.js.map
 
 /***/ }),
 
@@ -3431,7 +3425,7 @@ var concat = __webpack_require__(7040);
 // EXTERNAL MODULE: ./node_modules/viem/_esm/utils/encoding/toBytes.js
 var toBytes = __webpack_require__(1187);
 // EXTERNAL MODULE: ./node_modules/viem/_esm/utils/hash/keccak256.js + 4 modules
-var keccak256 = __webpack_require__(7044);
+var keccak256 = __webpack_require__(4813);
 // EXTERNAL MODULE: ./node_modules/viem/_esm/utils/data/isHex.js
 var isHex = __webpack_require__(5102);
 ;// CONCATENATED MODULE: ./node_modules/viem/_esm/utils/ens/encodedLabelToLabelhash.js
@@ -12444,7 +12438,7 @@ class FilterTypeNotSupportedError extends base/* BaseError */.G {
 // EXTERNAL MODULE: ./node_modules/viem/_esm/utils/encoding/toBytes.js
 var toBytes = __webpack_require__(1187);
 // EXTERNAL MODULE: ./node_modules/viem/_esm/utils/hash/keccak256.js + 4 modules
-var keccak256 = __webpack_require__(7044);
+var keccak256 = __webpack_require__(4813);
 // EXTERNAL MODULE: ./node_modules/viem/_esm/utils/hash/toEventSelector.js
 var toEventSelector = __webpack_require__(6005);
 // EXTERNAL MODULE: ./node_modules/viem/_esm/utils/abi/encodeAbiParameters.js
@@ -12808,7 +12802,7 @@ function parseEventLogs({ abi, eventName, logs, strict = true, }) {
 /* harmony export */ });
 /* harmony import */ var _errors_address_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(6087);
 /* harmony import */ var _encoding_toBytes_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1187);
-/* harmony import */ var _hash_keccak256_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7044);
+/* harmony import */ var _hash_keccak256_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4813);
 /* harmony import */ var _isAddress_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(9321);
 
 
@@ -14320,7 +14314,7 @@ name) {
 
 /***/ }),
 
-/***/ 7044:
+/***/ 4813:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 
@@ -14870,7 +14864,7 @@ __webpack_require__.d(__webpack_exports__, {
 // EXTERNAL MODULE: ./node_modules/viem/_esm/utils/encoding/toBytes.js
 var toBytes = __webpack_require__(1187);
 // EXTERNAL MODULE: ./node_modules/viem/_esm/utils/hash/keccak256.js + 4 modules
-var keccak256 = __webpack_require__(7044);
+var keccak256 = __webpack_require__(4813);
 ;// CONCATENATED MODULE: ./node_modules/viem/_esm/utils/hash/hashSignature.js
 
 
