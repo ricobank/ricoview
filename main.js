@@ -100,7 +100,7 @@ const updateRicoStats = async () => {
     const par = formatUnits(parRay, 27)
     const way = apy(wayRay)
     const mar = formatUnits(BigInt(feedData[0]), 27)
-    ricoStats.textContent = `Par: ${round(par)}, Price rate: ${way}%, Market: ${round(mar)}`
+    ricoStats.textContent = `Par: ${round7(par)}, Price rate: ${way}%, Market: ${round(mar)}`
 }
 
 const updateHook = async () => {
@@ -561,6 +561,7 @@ const maxBigInt = (a, b) => a > b ? a : b
 const apy =r=> round(((Number(r) / 10**27) ** BANKYEAR - 1) * 100)
 
 const round =f=> parseFloat(f).toPrecision(4)
+const round7 =f=> parseFloat(f).toPrecision(7)
 
 const x20 = (s) => stringToHex(s, {size: 20})
 
