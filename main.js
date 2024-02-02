@@ -225,6 +225,7 @@ function displayNfts(nftIds) {
 
     // only display positions where both tokens have feeds
     nftIds = nftIds.filter(id => store.idToVal[id] !== undefined)
+    nftIds = nftIds.filter(id => store.idToVal[id] > 0)
     if (nftIds.length == 0) {
         container.textContent = 'none'
         return
