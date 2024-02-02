@@ -159,11 +159,10 @@ const updateUni = async () => {
     let usrIDs = [];
     if (borrowing()) {
         $('#NFTList').textContent= `LP NFTs to deposit:`
-        const idsProm = Array.from({ length: Number(numNFTs) }, (_, i) => nfpm.read.tokenOfOwnerByIndex([account, i]))
+        const idsProm = Array.from({ length: Number(numNFTs) }, (_, i) => nfpm.read.tokenOfOwnerByIndex([account, i]));
         usrIDs = await Promise.all(idsProm);
-        let openIDs = (await Promise.all(usrIDs.map(id => nfpm.read.positions([id])))).filter(x => x.liquidity > 0)
-        await valueNFTs([...openIDs, ...store.ink])
-        displayNfts(openIDs)
+        await valueNFTs([...usrIDs, ...store.ink])
+        displayNfts(usrIDs)
     } else {
         $('#NFTList').textContent = `LP NFT IDS to withdraw:`;
         await valueNFTs(store.ink)
@@ -226,6 +225,7 @@ function displayNfts(nftIds) {
 
     // only display positions where both tokens have feeds
     nftIds = nftIds.filter(id => store.idToVal[id] !== undefined)
+    nftIds = nftIds.filter(id => store.idToVal[id] > 0)
     if (nftIds.length == 0) {
         container.textContent = 'none'
         return
