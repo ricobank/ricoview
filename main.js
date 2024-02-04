@@ -100,7 +100,7 @@ const updateRicoStats = async () => {
     const par = formatUnits(parRay, 27)
     const way = apy(wayRay)
     const mar = formatUnits(BigInt(feedData[0]), 27)
-    ricoStats.textContent = `Par: ${round7(par)}, Price rate: ${way}%, Market: ${round(mar)}`
+    ricoStats.textContent = `Par: ${round7(par)}, Price rate: ${way}%, Market: ${round7(mar)}`
 }
 
 const updateHook = async () => {
