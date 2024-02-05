@@ -263,7 +263,7 @@ function displayNfts(nftIds) {
 
     // only display positions where both tokens have feeds
     nftIds = nftIds.filter(id => store.idToVal[id] !== undefined)
-    nftIds = nftIds.filter(id => store.idToVal[id] > 0)
+    nftIds = nftIds.filter(id => store.idToVal[id] > 0n)
     if (nftIds.length == 0) {
         container.textContent = 'none'
         return
@@ -357,7 +357,7 @@ const updateERC20 = async () => {
     const inkStr = (0,formatUnits/* formatUnits */.b)(BigInt(ink), tokenData[ilkStr].decimals)
     const ltv  = Number(BLN) / Number(BigInt(liqr) / WAD)
     const ricoStr = formatBalance(usrRico)
-    const unwrapped = (ilkStr === 'weth') ? maxBigInt(ethBal - MIN_ETH, 0n) : 0
+    const unwrapped = (ilkStr === 'weth') ? maxBigInt(ethBal - MIN_ETH, 0n) : 0n
     store.ink  = BigInt(ink)
     store.art  = urn
     store.par  = par
@@ -489,7 +489,7 @@ const frobERC20 = async () => {
         })
         await publicClient.waitForTransactionReceipt({hash})
     }
-    if (dink > store.usrGemBal) {
+    if (dink > store.usrGemBal && dink <= (store.usrGemBal + store.unwrapped)) {
         const hash = await weth.write.deposit([], {value: dink - store.usrGemBal})
         await publicClient.waitForTransactionReceipt({hash})
     }
