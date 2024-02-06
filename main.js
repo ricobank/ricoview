@@ -64,8 +64,6 @@ const X96 = BigInt(2) ** BigInt(96)
 const ERR_ACCT = '0x' + '1'.repeat(40);
 const MIN_ETH = BigInt(10) ** BigInt(16)
 const chain = arbitrum
-// Limited to RCS addresses
-const RPC_URL = "https://arb-mainnet.g.alchemy.com/v2/I79NcNnj21fI_QuSMa-XSkM6Hop4AxOR"
 // Uni Position() return value indices
 const t0 = 2
 const t1 = 3
@@ -517,7 +515,7 @@ const simpleConnect = async () => {
         _transport = custom(window.ethereum)
     } catch (error) {
         _account = ERR_ACCT
-        _transport = http(RPC_URL)
+        _transport = http()
         $('#btnFrob').disabled = true
         $('#connectionError').style.display = "block"
     }
@@ -536,7 +534,7 @@ window.onload = async() => {
         multicall: true,
       },
       chain: chain,
-      transport: http(RPC_URL),  // alternatively use "transport: transport,"
+      transport: transport,
     })
     const _client = {public: publicClient, wallet: walletClient}
     bank = getContract({
