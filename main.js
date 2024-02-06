@@ -1,7 +1,7 @@
 // Copyright (C) 2024 halys
 
 import { createPublicClient, createWalletClient, custom, decodeAbiParameters, encodeAbiParameters, formatUnits,
-    getContract, hexToBigInt, http, pad, parseAbi, parseUnits, stringToHex, toHex } from 'viem'
+    getContract, hexToBigInt, http, pad, parseAbi, parseUnits, stringToHex, toHex, UserRejectedRequestError } from 'viem'
 import { arbitrum } from 'viem/chains'
 import BankDiamond from './BankDiamond.json';
 
@@ -151,7 +151,9 @@ const updateUni = async () => {
     store.art  = urn
     store.rack = stretchedRack
     store.par  = par
+    store.dust  = ilk.dust
     store.debtStr = parseFloat(debt).toFixed(3)
+    store.usrRico = usrRico
     const inkStr = store.ink.length === 0 ? 'none' : store.ink
     $('#uniIlkStats0').textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)} Rico`
     $('#uniUrnStats').textContent = `Deposited NFTS: ${inkStr}, Rico debt: ${store.debtStr}, Rico: ${ricoStr}`
@@ -324,12 +326,14 @@ const updateERC20 = async () => {
     store.art  = urn
     store.par  = par
     store.rack = stretchedRack
+    store.dust = ilk.dust
     store.liqr = BigInt(liqr)
     store.feed = BigInt(feedData[0])
     store.usrGemAllowance = usrGemAllowance
     store.usrGemBal = usrGemBal
     store.unwrapped = unwrapped
     store.debtStr = parseFloat(debt).toFixed(3)
+    store.usrRico = usrRico
     $('#ilkStats0').textContent = `Quantity rate: ${fee}%, Min debt: ${round(dust)} Rico, LTV: ${round(ltv * 100)}%`
     $('#urnStats').textContent = `Deposited ${gemName}: ${parseFloat(inkStr).toFixed(3)}, Rico debt: ${store.debtStr}, Rico: ${ricoStr}`
 }
@@ -367,27 +371,29 @@ const updateSafetyFactor =()=> {
     let factor = ''
     let loan, value
     if (uniMode()) {
-        let art = store.art + readArt(borrowing() ? "" : "-", $('#uniDrico'))
+        let art = store.art + readDart()
         loan = art * store.rack / RAY * store.par / RAY
 
         const inkVal  = store.ink.reduce((acc, id) => acc + (store.idToVal[id]), BigInt(0));
         const dinkVal = getSelectedNfts().reduce((acc, id) => acc + (store.idToVal[id]), BigInt(0));
         value = inkVal + (borrowing() ? dinkVal : -dinkVal)
     } else {
-        const sign = borrowing() ? "" : "-"
-        let art = store.art + readArt(sign, $('#drico'))
+        let art = store.art + readDart()
         loan = art * store.rack * store.par / RAY  / RAY
 
         const ilk = $('input[name="ilk"]:checked').value
+        const sign = borrowing() ? "" : "-"
         let ink = store.ink + parseUnits(sign + $('#dink').value, tokenData[ilk].decimals)
         value = ink * store.feed / store.liqr
     }
 
     if (loan === 0n) {
         factor = '∞'
+        store.safetyNumber = Number.MAX_VALUE
     } else {
         // get Number ratio from BN WADs which may be > maximum Number
-        factor = round(Number(BLN * value / loan) / Number(BLN))
+        store.safetyNumber = Number(BLN * value / loan) / Number(BLN)
+        factor = round(store.safetyNumber)
     }
 
     $('#safetyFactor').textContent = `New safety factor: ${factor}`
@@ -400,26 +406,48 @@ const reset =()=> {
     $('#dink').value = $('#drico').value = $('#uniDrico').value = 0
     $('#btnFrob').value = $('input[name="sign"]:checked').value
     $('#safetyFactor').textContent = `New safety factor: …`
+    $('#frobError').style.display = "none"
 }
 
-const readArt =(sign, input)=> {
+const readDart =()=> {
+    const input = uniMode() ? $('#uniDrico') : $('#drico')
     let dart
-    if (store.repayAll && sign === "-")
+    if (store.repayAll && !borrowing())
         dart = -store.art
     else {
+        const sign = borrowing() ? "" : "-"
         const drico = parseUnits(sign + input.value, 18)
         dart = drico * RAY / store.rack
     }
     return dart
 }
 
+const displayFrobSimRevert =(err)=> {
+    if (err?.cause instanceof UserRejectedRequestError) return
+
+    const errElement = $('#frobError')
+    const dart = readDart()
+    const resultDebt = (store.art + dart) * store.rack
+    let reason = "Transaction simulation reverted."
+
+    if (resultDebt > 0n && resultDebt < store.dust) reason += " Resulting debt < minimum."
+    if (resultDebt < 0n) reason += " Excess wipe, use repay all checkbox"
+    if (store.safetyNumber >= 0 && store.safetyNumber < 1.0) reason += " Safety factor must be > 1.0."
+    if (store.usrRico < (-dart * store.rack / RAY)) reason += " Insufficient Rico balance."
+    if (!uniMode() && store.dink > store.usrGemBal) reason += " Insufficient collateral balance."
+    if (!uniMode() && store.dink > store.usrGemAllowance) reason += " Insufficient collateral allowance."
+    // This could be extended with time outs, debt ceilings, using error sigs/names etc
+
+    errElement.textContent = reason
+    errElement.style.display = "block"
+}
+
 const frobUni = async () => {
-    const sign = borrowing() ? "" : "-"
     let dink = "0x"
-    const dart = readArt(sign, $('#uniDrico'))
+    const dart = readDart()
     const nfts = getSelectedNfts()
     if (nfts.length > 0) {
-        const dir = sign === "-" ? FREE : LOCK
+        const dir = borrowing() ? LOCK : FREE
         if (dir === LOCK && !await nfpm.read.isApprovedForAll([account, bankAddr])) {
             const hash = await nfpm.write.setApprovalForAll([bankAddr, true])
             await publicClient.waitForTransactionReceipt({hash})
@@ -427,21 +455,27 @@ const frobUni = async () => {
         dink = encodeAbiParameters([{ name: 'dink', type: 'uint[]' }], [[dir].concat(nfts)]);
     }
 
-    const hash = await bank.write.frob([uniIlk, account, dink, dart])
-    await publicClient.waitForTransactionReceipt({hash})
-    await Promise.all([updateRicoStats(), updateHook()])
+    try {
+        const { request } = await bank.simulate.frob({account: account, args: [uniIlk, account, dink, dart]})
+        const hash = await walletClient.writeContract(request)
+        await publicClient.waitForTransactionReceipt({hash})
+        await Promise.all([updateRicoStats(), updateHook()])
+    } catch (err) {
+        displayFrobSimRevert(err)
+    }
 }
 
 const frobERC20 = async () => {
     const ilkStr = $('input[name="ilk"]:checked').value
-    const sign = borrowing() ? "" : "-"
-    const dart = readArt(sign, $('#drico'))
+    const dart = readDart()
     let dink
     if(store.allInk) {
         dink = borrowing() ? store.usrGemBal + store.unwrapped : -store.ink
     } else {
+        const sign = borrowing() ? "" : "-"
         dink = parseUnits(sign + $('#dink').value, tokenData[ilkStr].decimals);
     }
+    store.dink = dink
     if (dink > store.usrGemAllowance) {
         const hash = await walletClient.writeContract({
             abi: gemAbi,
@@ -450,6 +484,7 @@ const frobERC20 = async () => {
             args: [bankAddr, MAXUINT],
         })
         await publicClient.waitForTransactionReceipt({hash})
+        store.usrGemAllowance = MAXUINT
     }
     if (dink > store.usrGemBal && dink <= (store.usrGemBal + store.unwrapped)) {
         const hash = await weth.write.deposit([], {value: dink - store.usrGemBal})
@@ -459,9 +494,14 @@ const frobERC20 = async () => {
     if (dink < 0) dink += (BigInt(2)**BigInt(256))
     const dinkB32 = pad(toHex(dink))
 
-    const hash = await bank.write.frob([tokenData[ilkStr].ilk, account, dinkB32, dart])
-    await publicClient.waitForTransactionReceipt({hash})
-    await Promise.all([updateRicoStats(), updateHook()])
+    try {
+        const { request } = await bank.simulate.frob({account: account, args: [tokenData[ilkStr].ilk, account, dinkB32, dart]})
+        const hash = await walletClient.writeContract(request)
+        await publicClient.waitForTransactionReceipt({hash})
+        await Promise.all([updateRicoStats(), updateHook()])
+    } catch (err) {
+        displayFrobSimRevert(err)
+    }
 
     if (unwrap > 0 && ilkStr === 'weth') await weth.write.withdraw([unwrap])
 }
@@ -524,6 +564,7 @@ window.onload = async() => {
     })
 
     $('#btnFrob').addEventListener('click', async () => {
+        $('#frobError').style.display = "none"
         if (uniMode()) {
             await frobUni()
         } else {
