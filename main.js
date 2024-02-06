@@ -64,6 +64,8 @@ const X96 = BigInt(2) ** BigInt(96)
 const ERR_ACCT = '0x' + '1'.repeat(40);
 const MIN_ETH = BigInt(10) ** BigInt(16)
 const chain = arbitrum
+// Limited to RCS addresses
+const RPC_URL = "https://arb-mainnet.g.alchemy.com/v2/I79NcNnj21fI_QuSMa-XSkM6Hop4AxOR"
 // Uni Position() return value indices
 const t0 = 2
 const t1 = 3
@@ -431,7 +433,7 @@ const displayFrobSimRevert =(err)=> {
     let reason = "Transaction simulation reverted."
 
     if (resultDebt > 0n && resultDebt < store.dust) reason += " Resulting debt < minimum."
-    if (resultDebt < 0n) reason += " Excess wipe, use repay all checkbox"
+    if (resultDebt < 0n) reason += " Excess wipe, use repay all checkbox."
     if (store.safetyNumber >= 0 && store.safetyNumber < 1.0) reason += " Safety factor must be > 1.0."
     if (store.usrRico < (-dart * store.rack / RAY)) reason += " Insufficient Rico balance."
     if (!uniMode() && store.dink > store.usrGemBal) reason += " Insufficient collateral balance."
@@ -510,12 +512,12 @@ const frobERC20 = async () => {
 const simpleConnect = async () => {
     let _account, _transport
     try {
-        if (!window.ethereum) throw new Error("Ethereum wallet is not detected.");
+        if (!window.ethereum) throw new Error();
         [_account] = await window.ethereum.request({ method: 'eth_requestAccounts' });
         _transport = custom(window.ethereum)
     } catch (error) {
         _account = ERR_ACCT
-        _transport = http()
+        _transport = http(RPC_URL)
         $('#btnFrob').disabled = true
         $('#connectionError').style.display = "block"
     }
@@ -534,7 +536,7 @@ window.onload = async() => {
         multicall: true,
       },
       chain: chain,
-      transport: http(),  // todo should replace with a dedicated RPC URL to prevent rate-limiting
+      transport: http(RPC_URL),  // alternatively use "transport: transport,"
     })
     const _client = {public: publicClient, wallet: walletClient}
     bank = getContract({
