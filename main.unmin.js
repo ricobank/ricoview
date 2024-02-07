@@ -471,7 +471,7 @@ const displayFrobSimRevert =(err)=> {
     let reason = "Transaction simulation reverted."
 
     if (resultDebt > 0n && resultDebt < store.dust) reason += " Resulting debt < minimum."
-    if (resultDebt < 0n) reason += " Excess wipe, use repay all checkbox"
+    if (resultDebt < 0n) reason += " Excess wipe, use repay all checkbox."
     if (store.safetyNumber >= 0 && store.safetyNumber < 1.0) reason += " Safety factor must be > 1.0."
     if (store.usrRico < (-dart * store.rack / RAY)) reason += " Insufficient Rico balance."
     if (!uniMode() && store.dink > store.usrGemBal) reason += " Insufficient collateral balance."
@@ -550,7 +550,7 @@ const frobERC20 = async () => {
 const simpleConnect = async () => {
     let _account, _transport
     try {
-        if (!window.ethereum) throw new Error("Ethereum wallet is not detected.");
+        if (!window.ethereum) throw new Error();
         [_account] = await window.ethereum.request({ method: 'eth_requestAccounts' });
         _transport = (0,custom/* custom */.P)(window.ethereum)
     } catch (error) {
@@ -574,7 +574,7 @@ window.onload = async() => {
         multicall: true,
       },
       chain: chain,
-      transport: (0,http/* http */.d)(),  // todo should replace with a dedicated RPC URL to prevent rate-limiting
+      transport: transport,
     })
     const _client = {public: publicClient, wallet: walletClient}
     bank = (0,getContract/* getContract */.uN)({
