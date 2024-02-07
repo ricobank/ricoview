@@ -567,12 +567,11 @@ const frobERC20 = async () => {
         const { request } = await bank.simulate.frob({account: account, args: [tokenData[ilkStr].ilk, account, dinkB32, dart]})
         const hash = await walletClient.writeContract(request)
         await publicClient.waitForTransactionReceipt({hash})
+        if (unwrap > 0 && ilkStr === 'weth') await weth.write.withdraw([unwrap])
         await Promise.all([updateRicoStats(), updateHook()])
     } catch (err) {
         displayFrobSimRevert(err)
     }
-
-    if (unwrap > 0 && ilkStr === 'weth') await weth.write.withdraw([unwrap])
 }
 
 // attempt to connect to injected window.ethereum. No connect button, direct wallet connect support, or dependency
