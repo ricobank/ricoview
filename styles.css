@@ -22,6 +22,12 @@ label {
     margin-right: 5px;
 }
 
+@media screen and (max-width: 600px) {
+    #ricoStats {
+        white-space: normal;
+    }
+}
+
 #uniHook {
     justify-content: center;
 }
