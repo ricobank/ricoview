@@ -20,6 +20,9 @@ const wbtcAddr   = "0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f"
 const wethAddr   = "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1"
 const wstethAddr = "0x5979D7b546E38E414F7E9822514be443A4800529"
 
+const claAddr    = "0xAe0B1CC6044738b5a0eF030F8C075440738C6f99"
+const xauusdtag  = "0x7861753a75736400000000000000000000000000000000000000000000000000"
+
 const uniIlk = stringToHex(":uninft", {size: 32})
 
 const feedAbi  = parseAbi([
@@ -92,15 +95,41 @@ const updateRicoStats = async () => {
     const ricoStats = $('#ricoStats');
     ricoStats.textContent = ' '
     const tip = await bank.read.tip()
-    const [parRay, wayRay, feedData] = await Promise.all([
+    const [parRay, wayRay, tau, how, cap, now, marData, xauData] = await Promise.all([
         bank.read.par(),
         bank.read.way(),
-        feed.read.pull([tip.src, tip.tag])
+        bank.read.tau(),
+        bank.read.how(),
+        bank.read.cap(),
+        publicClient.readContract({
+            address: chain.contracts.multicall3.address,
+            abi: multicall3Abi,
+            functionName: 'getCurrentBlockTimestamp'
+        }),
+        feed.read.pull([tip.src, tip.tag]),
+        feed.read.pull([claAddr, xauusdtag]),
     ]);
+    const xauRay = BigInt(xauData[0])
+    const marRay = BigInt(marData[0])
     const par = formatUnits(parRay, 27)
     const way = apy(wayRay)
-    const mar = formatUnits(BigInt(feedData[0]), 27)
-    ricoStats.textContent = `Par: ${round7(par)}, Price rate: ${way}%, Market: ${round7(mar)}`
+    const mar = formatUnits(BigInt(marData[0]), 27)
+    const xau = formatUnits(xauRay, 27)
+    const parUsd = parseFloat(formatUnits(parRay * xauRay / RAY, 27)).toFixed(2)
+    const marUsd = parseFloat(formatUnits(marRay * xauRay / RAY, 27)).toFixed(2)
+    const lag = now - tau
+    let newWayRay = wayRay
+    if (marRay < parRay) {
+        newWayRay = minBigInt(cap, grow(wayRay, how, lag))
+    } else if (marRay > parRay) {
+        const iCap = RAY * RAY / cap
+        const iHow = RAY * RAY / how
+        newWayRay = maxBigInt(iCap, grow(wayRay, iHow, lag))
+    }
+    const newWay = apy(newWayRay)
+
+    ricoStats.textContent = `Par: ${round7(par)}($${parUsd}), Market: ${round7(mar)}($${marUsd}), Gold: $${xau}
+Price rate: ${way}%, Hours since update: ${(lag) / 3600n}, Rate if updated ${newWay}%`
 }
 
 const updateHook = async () => {
@@ -598,6 +627,7 @@ const formatBalance = (usrRico) => {
     return parseFloat(formatUnits(bal, 18)).toFixed(decimals)
 }
 
+const minBigInt = (a, b) => a < b ? a : b
 const maxBigInt = (a, b) => a > b ? a : b
 
 const apy =r=> round(((Number(r) / 10**27) ** BANKYEAR - 1) * 100)
