@@ -436,6 +436,7 @@ const reset =()=> {
     $('#btnFrob').value = $('input[name="sign"]:checked').value
     $('#safetyFactor').textContent = `New safety factor: …`
     $('#frobError').style.display = "none"
+    $('#btnPoke').value = 'Update par/price rate'
 }
 
 const readDart =()=> {
@@ -534,6 +535,17 @@ const frobERC20 = async () => {
     }
 }
 
+const poke = async () => {
+    try {
+        const { request } = await bank.simulate.poke()
+        const hash = await walletClient.writeContract(request)
+        await publicClient.waitForTransactionReceipt({hash})
+        await Promise.all([updateRicoStats(), updateHook()])
+    } catch (err) {
+        console.log('poke sim failed')
+    }
+}
+
 // attempt to connect to injected window.ethereum. No connect button, direct wallet connect support, or dependency
 const simpleConnect = async () => {
     let _account, _transport
@@ -598,6 +610,10 @@ window.onload = async() => {
         } else {
             await frobERC20()
         }
+    });
+
+    $('#btnPoke').addEventListener('click', async () => {
+        await poke()
     });
 
     document.querySelectorAll('input[name="ctype"], input[name="sign"], input[name="ilk"]').forEach((elem) => {
