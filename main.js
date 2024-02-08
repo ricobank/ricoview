@@ -612,7 +612,6 @@ window.onload = async() => {
         });
     });
 
-    await walletClient.addChain({ chain: chain })
     if(account !== ERR_ACCT) await walletClient.switchChain({ id: chain.id })
     await Promise.all([updateRicoStats(), updateHook()])
 }
