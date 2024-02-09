@@ -436,7 +436,6 @@ const reset =()=> {
     $('#btnFrob').value = $('input[name="sign"]:checked').value
     $('#safetyFactor').textContent = `New safety factor: …`
     $('#frobError').style.display = "none"
-    $('#btnPoke').value = 'Update par/price rate'
 }
 
 const readDart =()=> {
