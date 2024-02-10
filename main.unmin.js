@@ -574,6 +574,17 @@ const frobERC20 = async () => {
     }
 }
 
+const poke = async () => {
+    try {
+        const { request } = await bank.simulate.poke()
+        const hash = await walletClient.writeContract(request)
+        await publicClient.waitForTransactionReceipt({hash})
+        await Promise.all([updateRicoStats(), updateHook()])
+    } catch (err) {
+        console.log('poke sim failed')
+    }
+}
+
 // attempt to connect to injected window.ethereum. No connect button, direct wallet connect support, or dependency
 const simpleConnect = async () => {
     let _account, _transport
@@ -640,6 +651,10 @@ window.onload = async() => {
         }
     });
 
+    $('#btnPoke').addEventListener('click', async () => {
+        await poke()
+    });
+
     document.querySelectorAll('input[name="ctype"], input[name="sign"], input[name="ilk"]').forEach((elem) => {
         elem.addEventListener("change", async () => {
             await updateHook();
@@ -652,7 +667,14 @@ window.onload = async() => {
         });
     });
 
-    if(account !== ERR_ACCT) await walletClient.switchChain({ id: chain.id })
+    try {
+        // check connection to arb
+        await walletClient.switchChain({ id: chain.id })
+    } catch (err) {
+        await walletClient.addChain({ chain: chain })
+        await walletClient.switchChain({ id: chain.id })
+    }
+
     await Promise.all([updateRicoStats(), updateHook()])
 }
 
