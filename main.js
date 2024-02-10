@@ -612,7 +612,14 @@ window.onload = async() => {
         });
     });
 
-    if(account !== ERR_ACCT) await walletClient.switchChain({ id: chain.id })
+    try {
+        // check connection to arb
+        await walletClient.switchChain({ id: chain.id })
+    } catch (err) {
+        await walletClient.addChain({ chain: chain })
+        await walletClient.switchChain({ id: chain.id })
+    }
+
     await Promise.all([updateRicoStats(), updateHook()])
 }
 
