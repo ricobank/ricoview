@@ -667,12 +667,14 @@ window.onload = async() => {
         });
     });
 
-    try {
-        // check connection to arb
-        await walletClient.switchChain({ id: chain.id })
-    } catch (err) {
-        await walletClient.addChain({ chain: chain })
-        await walletClient.switchChain({ id: chain.id })
+    // if a wallet is connected, attempt to use arbitrum
+    if (account !== ERR_ACCT) {
+        try {
+            await walletClient.switchChain({ id: chain.id })
+        } catch (err) {
+            await walletClient.addChain({ chain: chain })
+            await walletClient.switchChain({ id: chain.id })
+        }
     }
 
     await Promise.all([updateRicoStats(), updateHook()])
