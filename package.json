@@ -5,8 +5,8 @@
   "url": "git+https://github.com/ricobank/ricoview",
   "homepage": "https://ricobank.github.io/ricoview",
   "scripts": {
-    "start": "parcel",
-    "build": "parcel build ./main.js",
+    "dev": "parcel serve index.html",
+    "build": "parcel build ./index.html",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d ."
   },
