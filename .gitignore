@@ -1,0 +1,7 @@
+node_modules
+.DS_Store
+*.lockb
+*.log
+*.unmin.js
+.parcel-cache
+dist
