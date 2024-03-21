@@ -118,10 +118,11 @@ const updateRicoStats = async () => {
     const parUsd = parseFloat(formatUnits(parRay * xauRay / RAY, 27)).toFixed(2)
     const marUsd = parseFloat(formatUnits(marRay * xauRay / RAY, 27)).toFixed(2)
     const lag = now - tau
+    const newParRay = grow(parRay, wayRay, lag)
     let newWayRay = wayRay
-    if (marRay < parRay) {
+    if (marRay < newParRay) {
         newWayRay = minBigInt(cap, grow(wayRay, how, lag))
-    } else if (marRay > parRay) {
+    } else if (marRay > newParRay) {
         const iCap = RAY * RAY / cap
         const iHow = RAY * RAY / how
         newWayRay = maxBigInt(iCap, grow(wayRay, iHow, lag))
