@@ -120,12 +120,13 @@ const updateStats = async () => {
 
     const [ink, art] = urnRes;
     const stretchedRack = grow(rack, fee, timestamp - rho)
-    const feepct = apy(fee)
+    const feepct = apy1DP(fee)
     const dustInk = dust * wal / RAY
     const dustInkStr = formatEther(dustInk)
     const debt = formatUnits(art * stretchedRack, 45)
     const inkStr = formatEther(BigInt(ink))
-    const ltv  = Number(BLN) / Number(BigInt(liqr) / WAD)
+    const ltv = Number(BLN) / Number(BigInt(liqr) / WAD)
+    const ltvStr = `${parseFloat(ltv * 100).toFixed(0)}%`
     const ricoStr = formatBalance(usrRico)
     const riskStr = formatBalance(usrRisk)
     const elapsed = timestamp - chi
@@ -138,7 +139,7 @@ const updateStats = async () => {
     store.usrRisk = usrRisk
     store.debtStr = parseFloat(debt).toFixed(3)
     store.usrRico = usrRico
-    $('#ilkStats').textContent = `Quantity rate: ${feepct}%, Min collateral: ${round(dustInkStr)} Risk, LTV: ${round(ltv * 100)}%`
+    $('#ilkStats').textContent = `Quantity rate: ${feepct}%, Min collateral: ${round(dustInkStr)} Risk, LTV: ${ltvStr}`
     $('#urnStats').textContent = `Risk held: ${riskStr}, ${ricoName} held: ${ricoStr} \n\n Deposited Risk: ${parseFloat(inkStr).toFixed(3)}, ${ricoName} debt: ${store.debtStr}`
     $('#stock').textContent = `Elapsed: ${elapsed} seconds`
 }
@@ -340,6 +341,7 @@ const formatBalance = (usrRico) => {
 }
 
 const apy =r=> round(((Number(r) / 10**27) ** BANKYEAR - 1) * 100)
+const apy1DP =r=> parseFloat(((Number(r) / 10**27) ** BANKYEAR - 1) * 100).toFixed(1)
 
 const round =f=> parseFloat(f).toPrecision(4)
 const round7 =f=> parseFloat(f).toPrecision(7)
