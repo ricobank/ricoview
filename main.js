@@ -1,10 +1,10 @@
 // Copyright (C) 2024 halys
 
-import { createPublicClient, createWalletClient, custom, formatEther, formatUnits, getContract, http, parseAbi, parseUnits,
-    UserRejectedRequestError } from 'viem'
+import { createPublicClient, createWalletClient, custom, formatEther, formatUnits, getContract, http, parseAbi,
+    parseUnits, UserRejectedRequestError } from 'viem'
 import { arbitrum, arbitrumSepolia } from 'viem/chains'
 
-const chain = arbitrumSepolia
+const chain = arbitrum
 const ricoName = 'Kola'
 
 let bankAddr, ricoAddr, riskAddr
@@ -14,8 +14,8 @@ if (chain === arbitrumSepolia) {
     ricoAddr = "0x03d710ead07D025d93aF5FEC773Ad0d81D7c8e72"
     riskAddr = "0x2d6E58a7C24D40b4cA5efd882994851154A47e7B"
 } else if (chain === arbitrum) {
-    bankAddr = "0x0"
-    ricoAddr = "0x0"
+    bankAddr = "0x7231C81266274a2Fe43AFF2e38954aF3d3f42114"
+    ricoAddr = "0x1253acE51EbADFb0b7bAd1903BDeE4f96A318231"
     riskAddr = "0x883DF9307095669a06C673e0D9026bedDBc7545a"
 } else {
     throw new Error(`Unsupported chain: ${chain}.`)
