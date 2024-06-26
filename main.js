@@ -1,8 +1,10 @@
 // Copyright (C) 2024 halys
 
-import { createPublicClient, createWalletClient, custom, formatEther, formatUnits, getContract, http, parseAbi,
-    parseUnits, UserRejectedRequestError } from 'viem'
-import { arbitrum, arbitrumSepolia } from 'viem/chains'
+import {
+    createPublicClient, createWalletClient, custom, formatEther, formatUnits, getContract, http, parseAbi,
+    parseUnits, UserRejectedRequestError
+} from 'viem'
+import {arbitrum, arbitrumSepolia} from 'viem/chains'
 
 const chain = arbitrum
 const ricoName = 'Kola'
@@ -61,7 +63,7 @@ let account, transport, publicClient, walletClient
 let bank
 let store = {}
 
-const borrowing =()=> $('input[name="sign"]:checked').value === "Borrow/deposit"
+const borrowing = () => $('input[name="sign"]:checked').value === "Borrow/deposit"
 
 const updateRicoStats = async () => {
     const ricoStats = $('#ricoStats');
@@ -130,9 +132,9 @@ const updateStats = async () => {
     const ricoStr = formatBalance(usrRico)
     const riskStr = formatBalance(usrRisk)
     const elapsed = timestamp - chi
-    store.ink  = BigInt(ink)
-    store.art  = art
-    store.par  = par
+    store.ink = BigInt(ink)
+    store.art = art
+    store.par = par
     store.rack = stretchedRack
     store.dustInk = dustInk
     store.liqr = BigInt(liqr)
@@ -151,7 +153,7 @@ const updateDricoLabel = (container, input) => {
         container.innerHTML = `Repay ${ricoName}(<input type="checkbox" id="dricoAllCheckbox" title="Wipe all debt">all):`
         $('#dricoAllCheckbox').addEventListener('change', (event) => {
             store.repayAll = input.disabled = event.target.checked
-            if(store.repayAll) input.value = store.debtStr
+            if (store.repayAll) input.value = store.debtStr
             updateSafetyFactor();
         })
     }
@@ -168,12 +170,12 @@ const updateDinkLabel = () => {
         store.allInk = input.disabled = event.target.checked
         let inkValue = borrowing() ? store.usrRisk : store.ink
         let inkLongText = formatEther(inkValue)
-        if(store.allInk) input.value = parseFloat(inkLongText).toFixed(3)
+        if (store.allInk) input.value = parseFloat(inkLongText).toFixed(3)
         updateSafetyFactor()
     })
 }
 
-const updateSafetyFactor =()=> {
+const updateSafetyFactor = () => {
     let factor = ''
     let art = store.art + readDart()
     let loan = art * store.rack * store.par / RAY / RAY
@@ -190,7 +192,7 @@ const updateSafetyFactor =()=> {
     }
     $('#safetyFactor').textContent = `New safety factor: ${factor}`
 }
-const reset = ()=> {
+const reset = () => {
     store = {}
     $('#dinkLabelContainer').innerHTML = $('#dricoLabelContainer').innerHTML = ':'
     $('#dink').disabled = $('#drico').disabled = false
@@ -200,7 +202,7 @@ const reset = ()=> {
     $('#frobError').style.display = "none"
 }
 
-const readDart =()=> {
+const readDart = () => {
     let dart
     if (store.repayAll && !borrowing())
         dart = -store.art
@@ -212,7 +214,7 @@ const readDart =()=> {
     return dart
 }
 
-const displayFrobSimRevert =(err)=> {
+const displayFrobSimRevert = (err) => {
     if (err?.cause instanceof UserRejectedRequestError) return
 
     const errElement = $('#frobError')
@@ -225,7 +227,7 @@ const displayFrobSimRevert =(err)=> {
     if (resultInk > 0n && resultInk < store.dustInk) reason += " Resulting collateral < minimum."
     if (resultDebt < 0n) reason += " Excess wipe, use repay all checkbox."
     if (store.safetyNumber >= 0 && store.safetyNumber < 1.0) reason += " Safety factor must be > 1.0."
-    if (store.usrRico < (-dart * store.rack / RAY)) reason +=  `Insufficient ${ricoName} balance.`
+    if (store.usrRico < (-dart * store.rack / RAY)) reason += `Insufficient ${ricoName} balance.`
     if (store.dink > store.usrRisk) reason += " Insufficient Risk balance."
     // This could be extended with time-outs, debt ceilings, using error sigs/names etc
 
@@ -236,7 +238,7 @@ const displayFrobSimRevert =(err)=> {
 const frob = async () => {
     const dart = readDart()
     let dink
-    if(store.allInk) {
+    if (store.allInk) {
         dink = borrowing() ? store.usrRisk : -store.ink
     } else {
         const sign = borrowing() ? "" : "-"
@@ -245,7 +247,7 @@ const frob = async () => {
     store.dink = dink
 
     try {
-        const { request } = await bank.simulate.frob({account: account, args: [dink, dart]})
+        const {request} = await bank.simulate.frob({account: account, args: [dink, dart]})
         const hash = await walletClient.writeContract(request)
         await publicClient.waitForTransactionReceipt({hash})
         await Promise.all([updateRicoStats(), update()])
@@ -265,7 +267,7 @@ const simpleConnect = async () => {
     let _account, _transport
     try {
         if (!window.ethereum) throw new Error();
-        [_account] = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        [_account] = await window.ethereum.request({method: 'eth_requestAccounts'});
         _transport = custom(window.ethereum)
     } catch (error) {
         _account = ERR_ACCT
@@ -276,25 +278,25 @@ const simpleConnect = async () => {
     return [_account, _transport]
 }
 
-window.onload = async() => {
+window.onload = async () => {
     [account, transport] = await simpleConnect();
     walletClient = createWalletClient({
-      account,
-      chain: chain,
-      transport: transport
+        account,
+        chain: chain,
+        transport: transport
     })
     publicClient = createPublicClient({
-      batch: {
-        multicall: true,
-      },
-      chain: chain,
-      transport: transport,
+        batch: {
+            multicall: true,
+        },
+        chain: chain,
+        transport: transport,
     })
     const _client = {public: publicClient, wallet: walletClient}
     bank = getContract({
-      address: bankAddr,
-      abi: bankAbi,
-      client: _client
+        address: bankAddr,
+        abi: bankAbi,
+        client: _client
     })
 
     $('#btnFrob').addEventListener('click', async () => {
@@ -320,10 +322,10 @@ window.onload = async() => {
     // if a wallet is connected, attempt to set chain
     if (account !== ERR_ACCT) {
         try {
-            await walletClient.switchChain({ id: chain.id })
+            await walletClient.switchChain({id: chain.id})
         } catch (err) {
-            await walletClient.addChain({ chain: chain })
-            await walletClient.switchChain({ id: chain.id })
+            await walletClient.addChain({chain: chain})
+            await walletClient.switchChain({id: chain.id})
         }
     }
 
@@ -340,11 +342,11 @@ const formatBalance = (usrRico) => {
     return parseFloat(formatEther(bal)).toFixed(decimals)
 }
 
-const apy =r=> round(((Number(r) / 10**27) ** BANKYEAR - 1) * 100)
-const apy1DP =r=> parseFloat(((Number(r) / 10**27) ** BANKYEAR - 1) * 100).toFixed(1)
+const apy = r => round(((Number(r) / 10 ** 27) ** BANKYEAR - 1) * 100)
+const apy1DP = r => parseFloat(((Number(r) / 10 ** 27) ** BANKYEAR - 1) * 100).toFixed(1)
 
-const round =f=> parseFloat(f).toPrecision(4)
-const round7 =f=> parseFloat(f).toPrecision(7)
+const round = f => parseFloat(f).toPrecision(4)
+const round7 = f => parseFloat(f).toPrecision(7)
 
 const grow = (amt, ray, dt) => {
     for (let i = 0; i < dt; i++) {
