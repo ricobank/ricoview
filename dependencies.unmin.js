@@ -3243,28 +3243,15 @@ async function writeContract(client, parameters) {
 
 /***/ }),
 
-/***/ 5433:
+/***/ 3210:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   y: () => (/* binding */ arbitrum)
+/* harmony export */ });
+/* harmony import */ var _utils_chain_defineChain_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6164);
 
-// EXPORTS
-__webpack_require__.d(__webpack_exports__, {
-  y: () => (/* binding */ arbitrum)
-});
-
-;// CONCATENATED MODULE: ./node_modules/viem/_esm/utils/chain/defineChain.js
-function defineChain(chain) {
-    return {
-        formatters: undefined,
-        fees: undefined,
-        serializers: undefined,
-        ...chain,
-    };
-}
-//# sourceMappingURL=defineChain.js.map
-;// CONCATENATED MODULE: ./node_modules/viem/_esm/chains/definitions/arbitrum.js
-
-const arbitrum = /*#__PURE__*/ defineChain({
+const arbitrum = /*#__PURE__*/ (0,_utils_chain_defineChain_js__WEBPACK_IMPORTED_MODULE_0__/* .defineChain */ .a)({
     id: 42161,
     name: 'Arbitrum One',
     nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
@@ -3288,6 +3275,46 @@ const arbitrum = /*#__PURE__*/ defineChain({
     },
 });
 //# sourceMappingURL=arbitrum.js.map
+
+/***/ }),
+
+/***/ 6900:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   Z: () => (/* binding */ arbitrumSepolia)
+/* harmony export */ });
+/* harmony import */ var _utils_chain_defineChain_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6164);
+
+const arbitrumSepolia = /*#__PURE__*/ (0,_utils_chain_defineChain_js__WEBPACK_IMPORTED_MODULE_0__/* .defineChain */ .a)({
+    id: 421614,
+    name: 'Arbitrum Sepolia',
+    nativeCurrency: {
+        name: 'Arbitrum Sepolia Ether',
+        symbol: 'ETH',
+        decimals: 18,
+    },
+    rpcUrls: {
+        default: {
+            http: ['https://sepolia-rollup.arbitrum.io/rpc'],
+        },
+    },
+    blockExplorers: {
+        default: {
+            name: 'Arbiscan',
+            url: 'https://sepolia.arbiscan.io',
+            apiUrl: 'https://sepolia.arbiscan.io/api',
+        },
+    },
+    contracts: {
+        multicall3: {
+            address: '0xca11bde05977b3631167028862be2a173976ca11',
+            blockCreated: 81930,
+        },
+    },
+    testnet: true,
+});
+//# sourceMappingURL=arbitrumSepolia.js.map
 
 /***/ }),
 
@@ -13094,6 +13121,24 @@ function assertCurrentChain({ chain, currentChainId, }) {
         throw new _errors_chain_js__WEBPACK_IMPORTED_MODULE_0__/* .ChainMismatchError */ .Yl({ chain, currentChainId });
 }
 //# sourceMappingURL=assertCurrentChain.js.map
+
+/***/ }),
+
+/***/ 6164:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   a: () => (/* binding */ defineChain)
+/* harmony export */ });
+function defineChain(chain) {
+    return {
+        formatters: undefined,
+        fees: undefined,
+        serializers: undefined,
+        ...chain,
+    };
+}
+//# sourceMappingURL=defineChain.js.map
 
 /***/ }),
 
