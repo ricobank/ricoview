@@ -17,60 +17,14 @@
     <pre id="ricoStats"></pre>
 </div>
 
+<div>
+    <pre id="ilkStats"></pre>
+</div>
+
 <br>
 
 <div>
-    <pre style="display: inline;">Collateral:</pre>
-    <input type="radio" id="UNIV3 LP NFTs" name="ctype" value="UNIV3 LP NFTs" checked>
-    <label for="UNIV3 LP NFTs">UNIV3 LP NFTs</label>
-    <input type="radio" id="ERC20" name="ctype" value="ERC20">
-    <label for="ERC20">ERC20 tokens</label>
-</div>
-
-<br>
-
-<div id="uniHook">
-    <div title="Uniswap v3 liquidity position NFTs can be used as collateral if the underlying tokens are any combination of these">
-        (Supported: RICO, ARB, DAI, LINK, USDC, USDC.e, WBTC, WETH, rETH, wstETH)
-    </div>
-    <div>
-        <pre id="uniIlkStats0"></pre>
-    </div>
-    <div>
-        <pre id="uniUrnStats"></pre>
-    </div>
-</div>
-<div id="erc20Hook" style="display:none">
-    <div>
-        <pre style="display: inline;">Token:</pre>
-        <input type="radio" id="arb" name="ilk" value="arb" checked>
-        <label for="arb">ARB</label>
-        <input type="radio" id="dai" name="ilk" value="dai">
-        <label for="dai">DAI</label>
-        <input type="radio" id="link" name="ilk" value="link">
-        <label for="link">LINK</label>
-        <input type="radio" id="reth" name="ilk" value="reth">
-        <label for="reth">rETH</label>
-        <input type="radio" id="usdc" name="ilk" value="usdc">
-        <label for="usdc">USDC</label>
-        <input type="radio" id="usdc_e" name="ilk" value="usdc_e">
-        <label for="usdc_e">USDC.e</label>
-        <input type="radio" id="wbtc" name="ilk" value="wbtc">
-        <label for="wbtc">WBTC</label>
-        <input type="radio" id="weth" name="ilk" value="weth">
-        <label for="weth">WETH</label>
-        <input type="radio" id="wsteth" name="ilk" value="wsteth">
-        <label for="wsteth">wstETH</label>
-    </div>
-
-    <br>
-
-    <div>
-        <pre id="ilkStats0"></pre>
-    </div>
-    <div>
-        <pre id="urnStats"></pre>
-    </div>
+    <pre id="urnStats"></pre>
 </div>
 
 <br>
@@ -85,19 +39,7 @@
 
 <br>
 
-<div id="uniFrobControls" style="display:flex">
-    <div class="flex-item">
-        <label id="NFTList"></label>
-        <div id="nftContainer"></div>
-    </div>
-    <div class="flex-item">
-        <label id="uniDricoLabelContainer"></label>
-        <div>
-            <input type="text" id="uniDrico" name="uniDrico" value="0" style='width:18ch'>
-        </div>
-    </div>
-</div>
-<div id="erc20FrobControls" style="display:flex">
+<div id="FrobControls" style="display:flex">
     <div class="flex-item">
         <label id="dinkLabelContainer"></label>
         <div>
@@ -121,10 +63,6 @@
 
 <br>
 
-<div>
-    <input type="button" id="btnPoke" value="Update par/price rate">
-</div>
-
 <div id="connectionError" style="display:none; color: red;">
     <p>No account found, use a browser wallet like frame.sh/rabby/metamask and allow access</p>
 </div>
@@ -134,6 +72,13 @@
 </div>
 
 <div style="height: 150px"></div>
+
+<div>
+    <pre style="display: inline;" id="stock" title="Claim all available Risk emissions">Risk available: 0</pre>
+    <input type="button" id="btnMine" value="Mine Risk">
+</div>
+
+<br>
 
 <p style="justify-content:center;">
 If you're confused about what some of these terms mean, see the <a href="https://bank.dev/app-explained">app explainer</a>.
