@@ -89,7 +89,7 @@ const updateStats = async () => {
     updateDricoLabel($('#dricoLabelContainer'), $('#drico'))
     updateDinkLabel()
 
-    const [urnRes, par, liqr, rack, fee, rho, dust, wal, chi, gif, mop, lax, timestamp, usrRisk, usrRico] = await Promise.all([
+    const [urnRes, par, liqr, rack, fee, rho, dust, wal, chi, timestamp, usrRisk, usrRico] = await Promise.all([
         bank.read.urns([account]),
         bank.read.par(),
         bank.read.liqr(),
@@ -99,9 +99,6 @@ const updateStats = async () => {
         bank.read.dust(),
         bank.read.wal(),
         bank.read.chi(),
-        bank.read.gif(),
-        bank.read.mop(),
-        bank.read.lax(),
         publicClient.readContract({
             address: chain.contracts.multicall3.address,
             abi: multicall3Abi,
