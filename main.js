@@ -132,9 +132,6 @@ const updateStats = async () => {
     const ricoStr = formatBalance(usrRico)
     const riskStr = formatBalance(usrRisk)
     const elapsed = timestamp - chi
-    const decayRate = grow(gif, mop, timestamp - chi)
-    const tailRate  = wal * lax / RAY
-    const stock = formatBalance((decayRate + tailRate) * elapsed);
     store.ink  = BigInt(ink)
     store.art  = art
     store.par  = par
@@ -146,7 +143,7 @@ const updateStats = async () => {
     store.usrRico = usrRico
     $('#ilkStats').textContent = `Quantity rate: ${feepct}%, Min collateral: ${round(dustInkStr)} Risk, LTV: ${round(ltv * 100)}%`
     $('#urnStats').textContent = `Risk held: ${riskStr}, ${ricoName} held: ${ricoStr} \n\n Deposited Risk: ${parseFloat(inkStr).toFixed(3)}, ${ricoName} debt: ${store.debtStr}`
-    $('#stock').textContent = `Available: ${stock}`
+    $('#stock').textContent = `Elapsed: ${elapsed} seconds`
 }
 
 const updateDricoLabel = (container, input) => {
