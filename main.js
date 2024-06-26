@@ -146,7 +146,7 @@ const updateStats = async () => {
     store.usrRico = usrRico
     $('#ilkStats').textContent = `Quantity rate: ${feepct}%, Min collateral: ${round(dustInkStr)} Risk, LTV: ${round(ltv * 100)}%`
     $('#urnStats').textContent = `Risk held: ${riskStr}, ${ricoName} held: ${ricoStr} \n\n Deposited Risk: ${parseFloat(inkStr).toFixed(3)}, ${ricoName} debt: ${store.debtStr}`
-    $('#stock').textContent = `Risk available: ${stock}`
+    $('#stock').textContent = `Available: ${stock}`
 }
 
 const updateDricoLabel = (container, input) => {
