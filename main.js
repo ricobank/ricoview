@@ -10,7 +10,7 @@ const ricoName = 'Kola'
 let bankAddr, ricoAddr, riskAddr
 
 if (chain === arbitrumSepolia) {
-    bankAddr = "0xb95e3D283d4793676c4fc68d6920C3A82b95Ac9f"
+    bankAddr = "0xE9392735212053Cdcc007F954342B63986386C58"
     ricoAddr = "0x03d710ead07D025d93aF5FEC773Ad0d81D7c8e72"
     riskAddr = "0x2d6E58a7C24D40b4cA5efd882994851154A47e7B"
 } else if (chain === arbitrum) {
