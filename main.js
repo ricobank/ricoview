@@ -1,4 +1,4 @@
-// Copyright (C) 2024 halys
+// Copyright (C) 2024 Free Software Foundation
 
 import {
     createPublicClient, createWalletClient, custom, formatEther, formatUnits, getContract, http, parseAbi,
