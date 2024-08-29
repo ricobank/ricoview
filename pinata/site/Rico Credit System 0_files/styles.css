@@ -1,0 +1,52 @@
+body {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    font-family: monospace;
+    justify-content: center;
+}
+
+input[type="radio"] {
+    accent-color: black;
+    margin: 0;
+    vertical-align: text-top;
+}
+input[type="checkbox"] {
+    accent-color: black;
+    margin: 0;
+    vertical-align: text-top;
+}
+
+label {
+    margin-left: 0;
+    margin-right: 5px;
+}
+
+@media screen and (max-width: 600px) {
+    #ricoStats {
+        white-space: normal;
+    }
+}
+
+#FrobControls {
+    justify-content: center;
+}
+.flex-item {
+    margin: 10px;
+}
+
+#dricoAllCheckbox {
+    vertical-align: text-top;
+    margin: 0;
+}
+#dinkAllCheckbox {
+    vertical-align: text-top;
+    margin: 0;
+}
+
+#btnFrob {
+    font-family: monospace;
+}
+#btnMine {
+    font-family: monospace;
+}
